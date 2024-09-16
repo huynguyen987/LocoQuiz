@@ -1,132 +1,141 @@
 package entity;
+import java.sql.Timestamp;
 
 public class User {
     private int id;
     private String username;
     private String email;
-    private String passwordhash;
-    private String fullname;
+    private String passwordHash;
+    private String fullName;
     private String gender;
-    private String user_role;
+    private int roleId;
     private String status;
-    private java.sql.Timestamp created_at;
-    private java.sql.Timestamp updated_at;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
     private byte[] avatar;
 
-    public User() {
-    }
+    // Default constructor
+    public User() {}
 
-    public User(int id, String username, String email, String passwordhash, String fullname, String gender, String user_role, String status, java.sql.Timestamp created_at, java.sql.Timestamp updated_at, byte[] avatar) {
+    // Parameterized constructor
+    public User(int id, String username, String email, String passwordHash, String fullName,
+                String gender, int roleId, String status, Timestamp createdAt,
+                Timestamp updatedAt, byte[] avatar) {
         this.id = id;
         this.username = username;
         this.email = email;
-        this.passwordhash = passwordhash;
-        this.fullname = fullname;
+        this.passwordHash = passwordHash;
+        this.fullName = fullName;
         this.gender = gender;
-        this.user_role = user_role;
+        this.roleId = roleId;
         this.status = status;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.avatar = avatar;
     }
 
-//    set and get all
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPasswordhash(String passwordhash) {
-        this.passwordhash = passwordhash;
-    }
-
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public void setUser_role(String user_role) {
-        this.user_role = user_role;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setCreated_at(java.sql.Timestamp created_at) {
-        this.created_at = created_at;
-    }
-
-    public void setUpdated_at(java.sql.Timestamp updated_at) {
-        this.updated_at = updated_at;
-    }
-
-    public void setAvatar(byte[] avatar) {
-        this.avatar = avatar;
-    }
-
+    // Getters and setters
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUsername() {
         return username;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getEmail() {
         return email;
     }
 
-    public String getPasswordhash() {
-        return passwordhash;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getFullname() {
-        return fullname;
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getGender() {
         return gender;
     }
 
-    public String getUser_role() {
-        return user_role;
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public int getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public java.sql.Timestamp getCreated_at() {
-        return created_at;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public java.sql.Timestamp getUpdated_at() {
-        return updated_at;
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public byte[] getAvatar() {
         return avatar;
     }
 
-//    toString method return name + role + id
+    public void setAvatar(byte[] avatar) {
+        this.avatar = avatar;
+    }
+
+    // toString method for debugging
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", user_role='" + user_role + '\'' +
+                ", email='" + email + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", gender='" + gender + '\'' +
+                ", roleId=" + roleId +
+                ", status='" + status + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
-
 }

@@ -1,33 +1,38 @@
 package entity;
 
-public class Registrations {
+import java.sql.Timestamp;
+import java.math.BigDecimal;
 
+public class Registrations {
     private int id;
     private int userId;
     private int subjectId;
-    private java.util.Date registered_date;
-    private java.util.Date expiration_date;
+    private Timestamp registrationDate;
+    private Timestamp expirationDate;
     private String status;
-//    price_paid DECIMAL(10,2) to java datatype: double
-    private double price_paid;
-    private java.util.Date created_at;
-    private java.util.Date updated_at;
+    private BigDecimal pricePaid;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
-    public Registrations() {
-    }
+    // Default constructor
+    public Registrations() {}
 
-    public Registrations(int id, int userId, int subjectId, java.util.Date registered_date, java.util.Date expiration_date, String status, double price_paid, java.util.Date created_at, java.util.Date updated_at) {
+    // Parameterized constructor
+    public Registrations(int id, int userId, int subjectId, Timestamp registrationDate,
+                        Timestamp expirationDate, String status, BigDecimal pricePaid,
+                        Timestamp createdAt, Timestamp updatedAt) {
         this.id = id;
         this.userId = userId;
         this.subjectId = subjectId;
-        this.registered_date = registered_date;
-        this.expiration_date = expiration_date;
+        this.registrationDate = registrationDate;
+        this.expirationDate = expirationDate;
         this.status = status;
-        this.price_paid = price_paid;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.pricePaid = pricePaid;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
+    // Getters and setters
     public int getId() {
         return id;
     }
@@ -52,20 +57,20 @@ public class Registrations {
         this.subjectId = subjectId;
     }
 
-    public java.util.Date getRegistered_date() {
-        return registered_date;
+    public Timestamp getRegistrationDate() {
+        return registrationDate;
     }
 
-    public void setRegistered_date(java.util.Date registered_date) {
-        this.registered_date = registered_date;
+    public void setRegistrationDate(Timestamp registrationDate) {
+        this.registrationDate = registrationDate;
     }
 
-    public java.util.Date getExpiration_date() {
-        return expiration_date;
+    public Timestamp getExpirationDate() {
+        return expirationDate;
     }
 
-    public void setExpiration_date(java.util.Date expiration_date) {
-        this.expiration_date = expiration_date;
+    public void setExpirationDate(Timestamp expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
     public String getStatus() {
@@ -76,32 +81,43 @@ public class Registrations {
         this.status = status;
     }
 
-    public double getPrice_paid() {
-        return price_paid;
+    public BigDecimal getPricePaid() {
+        return pricePaid;
     }
 
-    public void setPrice_paid(double price_paid) {
-        this.price_paid = price_paid;
+    public void setPricePaid(BigDecimal pricePaid) {
+        this.pricePaid = pricePaid;
     }
 
-    public java.util.Date getCreated_at() {
-        return created_at;
+    public Timestamp getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(java.util.Date created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public java.util.Date getUpdated_at() {
-        return updated_at;
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(java.util.Date updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
+    // toString method for debugging
     @Override
     public String toString() {
-        return "Registrations{" + "id=" + id + ", userId=" + userId + ", subjectId=" + subjectId + ", registered_date=" + registered_date + ", expiration_date=" + expiration_date + ", status=" + status + ", price_paid=" + price_paid + ", created_at=" + created_at + ", updated_at=" + updated_at + '}';
+        return "Registration{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", subjectId=" + subjectId +
+                ", registrationDate=" + registrationDate +
+                ", expirationDate=" + expirationDate +
+                ", status='" + status + '\'' +
+                ", pricePaid=" + pricePaid +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }

@@ -1,32 +1,27 @@
 package entity;
 
 import java.sql.Timestamp;
-import java.math.BigDecimal;
-
-public class PricePackage {
+public class Lessons {
     private int id;
     private int subjectId;
-    private String name;
-    private String description;
-    private BigDecimal price;
-    private int durationMonths;
+    private String title;
+    private String content;
+    private int order;
     private String status;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
     // Default constructor
-    public PricePackage() {}
+    public Lessons() {}
 
     // Parameterized constructor
-    public PricePackage(int id, int subjectId, String name, String description,
-                        BigDecimal price, int durationMonths, String status,
-                        Timestamp createdAt, Timestamp updatedAt) {
+    public Lessons(int id, int subjectId, String title, String content, int order,
+                  String status, Timestamp createdAt, Timestamp updatedAt) {
         this.id = id;
         this.subjectId = subjectId;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.durationMonths = durationMonths;
+        this.title = title;
+        this.content = content;
+        this.order = order;
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -49,36 +44,28 @@ public class PricePackage {
         this.subjectId = subjectId;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getDescription() {
-        return description;
+    public String getContent() {
+        return content;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public int getOrder() {
+        return order;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public int getDurationMonths() {
-        return durationMonths;
-    }
-
-    public void setDurationMonths(int durationMonths) {
-        this.durationMonths = durationMonths;
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     public String getStatus() {
@@ -108,17 +95,15 @@ public class PricePackage {
     // toString method for debugging
     @Override
     public String toString() {
-        return "PricePackage{" +
+        return "Quizzes{" +
                 "id=" + id +
                 ", subjectId=" + subjectId +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", price=" + price +
-                ", durationMonths=" + durationMonths +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", order=" + order +
                 ", status='" + status + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
     }
 }
-
