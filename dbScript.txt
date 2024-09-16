@@ -1,0 +1,380 @@
+-- Drop the database if it exists and create a new one
+DROP DATABASE IF EXISTS LearningManagementSystem;
+CREATE DATABASE IF NOT EXISTS LearningManagementSystem;
+
+USE LearningManagementSystem;
+
+-- Create Roles table
+CREATE TABLE Roles (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    role_name VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Create Users table
+CREATE TABLE Users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    full_name VARCHAR(100),
+    gender VARCHAR(10),
+    role_id INT,
+    status VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    avatar MEDIUMBLOB NULL,
+    FOREIGN KEY (role_id) REFERENCES Roles(id)
+);
+
+-- Create Subjects table
+CREATE TABLE Subjects (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    category VARCHAR(100),
+    thumbnail_url VARCHAR(255),
+    status VARCHAR(20),
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by) REFERENCES Users(id),
+    avatar MEDIUMBLOB NULL
+);
+
+-- Create Lessons table
+CREATE TABLE Lessons (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    subject_id INT,
+    title VARCHAR(255) NOT NULL,
+    content TEXT,
+    `order` INT,
+    status VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (subject_id) REFERENCES Subjects(id)
+);
+
+-- Create Quizzes table
+CREATE TABLE Quizzes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    subject_id INT,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    time_limit INT,
+    passing_score DECIMAL(5,2),
+    status VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (subject_id) REFERENCES Subjects(id)
+);
+
+-- Remove the Answers table and add answers field in the Questions table
+CREATE TABLE Questions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    quiz_id INT,
+    content TEXT NOT NULL,
+    question_type VARCHAR(50),
+    difficulty_level VARCHAR(50),
+    explanation TEXT,
+    answers JSON, -- New field to store answers
+    `order` INT DEFAULT 0, -- Question order for randomization
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (quiz_id) REFERENCES Quizzes(id)
+);
+
+-- Create Registrations table
+CREATE TABLE Registrations (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    subject_id INT,
+    registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expiration_date TIMESTAMP,
+    status VARCHAR(20),
+    price_paid DECIMAL(10,2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(id),
+    FOREIGN KEY (subject_id) REFERENCES Subjects(id)
+);
+
+-- Create BlogPosts table
+CREATE TABLE BlogPosts (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    content TEXT,
+    author_id INT,
+    status VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (author_id) REFERENCES Users(id),
+    avatar MEDIUMBLOB NULL
+);
+
+-- Create Settings table
+CREATE TABLE Settings (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    setting_key VARCHAR(100) NOT NULL,
+    setting_value TEXT,
+    setting_type VARCHAR(50),
+    description TEXT,
+    user_role VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create Sliders table
+CREATE TABLE Sliders (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255),
+    image_url VARCHAR(255),
+    link_url VARCHAR(255),
+    `order` INT,
+    status VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create UserQuizzes table
+CREATE TABLE UserQuizzes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    quiz_id INT,
+    start_time TIMESTAMP,
+    end_time TIMESTAMP,
+    score DECIMAL(5,2),
+    status VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(id),
+    FOREIGN KEY (quiz_id) REFERENCES Quizzes(id)
+);
+
+-- Create UserAnswers table
+CREATE TABLE UserAnswers (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_quiz_id INT,
+    question_id INT,
+    selected_answer TEXT, -- Field to store selected answer
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_quiz_id) REFERENCES UserQuizzes(id),
+    FOREIGN KEY (question_id) REFERENCES Questions(id)
+);
+
+-- Create PricePackages table
+CREATE TABLE PricePackages (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    subject_id INT,
+    name VARCHAR(255),
+    description TEXT,
+    price DECIMAL(10,2),
+    duration_months INT,
+    status VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (subject_id) REFERENCES Subjects(id)
+);
+
+-- Insert sample roles
+INSERT INTO Roles (role_name) VALUES
+('user'),
+('teacher'),
+('admin');
+
+-- Insert sample users
+INSERT INTO Users (username, email, password_hash, full_name, gender, role_id, status)
+VALUES
+('john_doe', 'john@example.com', 'hashed_password_1', 'John Doe', 'Male', 1, 'active'),
+('jane_smith', 'jane@example.com', 'hashed_password_2', 'Jane Smith', 'Female', 2, 'active'),
+('admin_user', 'admin@example.com', 'hashed_password_3', 'Admin User', 'Other', 3, 'active'),
+('michael_brown', 'michael@example.com', 'hashed_password_4', 'Michael Brown', 'Male', 1, 'active'),
+('emily_jones', 'emily@example.com', 'hashed_password_5', 'Emily Jones', 'Female', 2, 'active');
+
+-- Insert sample subjects
+INSERT INTO Subjects (title, description, category, thumbnail_url, status, created_by)
+VALUES
+('Mathematics 101', 'Basic mathematics course covering algebra and geometry.', 'Mathematics', 'math_thumbnail.jpg', 'active', 2),
+('Physics 101', 'Introduction to physics covering basic mechanics.', 'Science', 'physics_thumbnail.jpg', 'active', 2),
+('Programming with Python', 'Learn programming basics with Python.', 'Programming', 'python_thumbnail.jpg', 'active', 2),
+('History of Art', 'Course covering the history of art from ancient to modern times.', 'Art', 'art_thumbnail.jpg', 'active', 2);
+
+-- Insert sample lessons
+INSERT INTO Lessons (subject_id, title, content, `order`, status)
+VALUES
+(1, 'Introduction to Algebra', 'Lesson content for Algebra', 1, 'active'),
+(1, 'Basic Geometry', 'Lesson content for Geometry', 2, 'active'),
+(2, 'Introduction to Mechanics', 'Lesson content for Mechanics', 1, 'active'),
+(3, 'Python Basics', 'Lesson content for Python Basics', 1, 'active'),
+(3, 'Advanced Python', 'Lesson content for Advanced Python topics', 2, 'active'),
+(4, 'Art in Ancient Times', 'Lesson content for Art in Ancient Times', 1, 'active');
+
+-- Insert sample quizzes
+INSERT INTO Quizzes (subject_id, title, description, time_limit, passing_score, status)
+VALUES
+(1, 'Algebra Quiz', 'Quiz on basic algebra concepts.', 30, 70.00, 'active'),
+(2, 'Mechanics Quiz', 'Quiz on basic mechanics concepts.', 30, 70.00, 'active'),
+(3, 'Python Basics Quiz', 'Quiz on Python basics.', 45, 75.00, 'active'),
+(4, 'Art History Quiz', 'Quiz on the history of art.', 60, 65.00, 'active');
+
+-- Insert sample questions (answers stored as JSON)
+INSERT INTO Questions (quiz_id, content, question_type, difficulty_level, explanation, answers, `order`)
+VALUES
+(1, 'What is 2+2?', 'multiple_choice', 'easy', 'Basic arithmetic question.', 
+    '[{"answer": "3", "is_correct": false}, {"answer": "4", "is_correct": true}, {"answer": "5", "is_correct": false}]', 1),
+(1, 'What is 5*5?', 'multiple_choice', 'easy', 'Basic multiplication question.', 
+    '[{"answer": "20", "is_correct": false}, {"answer": "25", "is_correct": true}, {"answer": "30", "is_correct": false}]', 2),
+(2, 'What is Newton\'s First Law?', 'multiple_choice', 'medium', 'Law of inertia.', 
+    '[{"answer": "Action and reaction are equal", "is_correct": false}, {"answer": "An object in motion stays in motion", "is_correct": true}]', 1),
+(3, 'What is a variable in Python?', 'multiple_choice', 'easy', 'Definition of a variable.', 
+    '[{"answer": "A function", "is_correct": false}, {"answer": "A storage location", "is_correct": true}]', 1),
+(4, 'Which artist painted the Mona Lisa?', 'multiple_choice', 'medium', 'Famous painting question.', 
+    '[{"answer": "Van Gogh", "is_correct": false}, {"answer": "Leonardo da Vinci", "is_correct": true}, {"answer": "Picasso", "is_correct": false}]', 1);
+
+-- Insert sample registrations
+INSERT INTO Registrations (user_id, subject_id, registration_date, expiration_date, status, price_paid)
+VALUES
+(1, 1, NOW(), DATE_ADD(NOW(), INTERVAL 6 MONTH), 'active', 100.00),
+(2, 2, NOW(), DATE_ADD(NOW(), INTERVAL 12 MONTH), 'active', 150.00),
+(1, 3, NOW(), DATE_ADD(NOW(), INTERVAL 3 MONTH), 'active', 200.00),
+(4, 4, NOW(), DATE_ADD(NOW(), INTERVAL 9 MONTH), 'active', 120.00),
+(5, 1, NOW(), DATE_ADD(NOW(), INTERVAL 4 MONTH), 'active', 80.00);
+
+-- Insert sample blog posts
+INSERT INTO BlogPosts (title, content, author_id, status)
+VALUES
+('Understanding Algebra', 'This post explains the basics of algebra.', 2, 'published'),
+('Introduction to Physics', 'A guide to understanding mechanics.', 2, 'published'),
+('Learning Python Programming', 'Tips for learning Python programming effectively.', 2, 'published'),
+('The Evolution of Art', 'A journey through the history of art.', 5, 'published');
+
+-- Insert sample settings
+INSERT INTO Settings (setting_key, setting_value, setting_type, description, user_role)
+VALUES
+('site_name', 'Learning Management System', 'text', 'Name of the site.', 'admin'),
+('default_language', 'English', 'text', 'The default language of the platform.', 'admin'),
+('theme_color', 'blue', 'text', 'Default theme color for the site.', 'admin');
+
+-- Insert sample sliders
+INSERT INTO Sliders (title, image_url, link_url, `order`, status)
+VALUES
+('Welcome to Our LMS', 'slider_image_1.jpg', 'https://example.com/welcome', 1, 'active'),
+('Learn Mathematics', 'slider_image_2.jpg', 'https://example.com/mathematics', 2, 'active'),
+('Python Programming', 'slider_image_3.jpg', 'https://example.com/python', 3, 'active'),
+('Explore Art History', 'slider_image_4.jpg', 'https://example.com/art-history', 4, 'active');
+
+-- Insert sample user quizzes
+INSERT INTO UserQuizzes (user_id, quiz_id, start_time, end_time, score, status)
+VALUES
+(1, 1, NOW(), NOW(), 85.00, 'completed'),
+(2, 2, NOW(), NOW(), 72.50, 'completed'),
+(1, 3, NOW(), NOW(), 78.00, 'completed'),
+(4, 4, NOW(), NOW(), 66.00, 'completed'),
+(5, 1, NOW(), NOW(), 88.00, 'completed');
+
+-- Insert sample user answers
+INSERT INTO UserAnswers (user_quiz_id, question_id, selected_answer)
+VALUES
+(1, 1, '4'),
+(1, 2, '25'),
+(2, 3, 'An object in motion stays in motion'),
+(3, 4, 'A storage location'),
+(4, 5, 'Leonardo da Vinci'),
+(5, 1, '4');
+
+-- Insert sample price packages
+INSERT INTO PricePackages (subject_id, name, description, price, duration_months, status)
+VALUES
+(1, 'Standard Math Package', 'Access to Math 101 for 6 months.', 100.00, 6, 'active'),
+(2, 'Physics Premium', 'Access to Physics 101 for 12 months.', 150.00, 12, 'active'),
+(3, 'Python Basic', 'Access to Python Programming for 3 months.', 200.00, 3, 'active'),
+(4, 'Art History Package', 'Access to Art History course for 9 months.', 120.00, 9, 'active');
+
+
+DELIMITER $$
+
+-- Procedure to update user avatar
+CREATE PROCEDURE UpdateUserAvatar(IN userId INT, IN avatarFilePath VARCHAR(255))
+BEGIN 
+    UPDATE Users
+    SET avatar = LOAD_FILE(avatarFilePath)
+    WHERE id = userId;
+END$$
+
+-- Procedure to update subject avatar
+CREATE PROCEDURE UpdateSubjectAvatar(IN subjectId INT, IN avatarFilePath VARCHAR(255))
+BEGIN 
+    UPDATE Subjects
+    SET avatar = LOAD_FILE(avatarFilePath)
+    WHERE id = subjectId;
+END$$
+
+-- Procedure to update blog post avatar
+CREATE PROCEDURE UpdateBlogPostAvatar(IN postId INT, IN avatarFilePath VARCHAR(255))
+BEGIN 
+    UPDATE BlogPosts
+    SET avatar = LOAD_FILE(avatarFilePath)
+    WHERE id = postId;
+END$$
+
+CREATE PROCEDURE RandomizeQuizQuestionsAndAnswers(IN quizId INT)
+BEGIN
+    -- Declare variables and cursor at the top of the block
+    DECLARE done INT DEFAULT 0;
+    DECLARE curr_question_id INT;
+    
+    -- Declare the cursor to loop over all questions in the quiz
+    DECLARE question_cursor CURSOR FOR 
+        SELECT id FROM Questions WHERE quiz_id = quizId;
+    
+    -- Declare a handler for the end of the cursor
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+    
+    -- First, randomize the position of the questions within the quiz
+    UPDATE Questions
+    SET `order` = (SELECT FLOOR(1 + RAND() * 1000))
+    WHERE quiz_id = quizId;
+    
+    -- After assigning random order values, adjust them to ensure sequential order for questions
+    SET @rownum = 0;
+    UPDATE Questions
+    SET `order` = (@rownum := @rownum + 1)
+    WHERE quiz_id = quizId
+    ORDER BY `order`;
+
+    -- Open the cursor to start looping over each question
+    OPEN question_cursor;
+    
+    -- Loop through each question and randomize the answers for each
+    read_loop: LOOP
+        FETCH question_cursor INTO curr_question_id;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        
+        -- Call the RandomizeAnswerOrder procedure for each question
+        CALL RandomizeAnswerOrder(curr_question_id);
+    END LOOP;
+    
+    -- Close the cursor after finishing the loop
+    CLOSE question_cursor;
+END$$
+
+-- Stored procedure to check if the user is an admin
+CREATE PROCEDURE CheckAdminRole(IN userId INT)
+BEGIN
+    DECLARE userRole INT;
+    
+    -- Get the user's role based on their user ID
+    SELECT role_id INTO userRole
+    FROM Users
+    WHERE id = userId;
+    
+    -- Check if the user is not an admin (role_id = 3)
+    IF userRole != 3 THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Operation not allowed: Only admin users can perform this action.';
+    END IF;
+END$$
+
+DELIMITER ;
