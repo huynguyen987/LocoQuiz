@@ -1,28 +1,41 @@
 package entity;
 
-public class Question {
+import java.sql.Timestamp;
+//import org.json.JSONObject;
 
+public class Question {
     private int id;
     private int quizId;
     private String content;
-    private String difficulty_level;
+    private String questionType;
+    private String difficultyLevel;
     private String explanation;
-    private java.util.Date created_at;
-    private java.util.Date updated_at;
+    //    private JSONObject answers; // Using JSONObject to represent JSON data in Java
+    private int order;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
+    // Default constructor
     public Question() {
     }
 
-    public Question(int id, int quizId, String content, String difficulty_level, String explanation, java.util.Date created_at, java.util.Date updated_at) {
+    // Parameterized constructor
+    public Question(int id, int quizId, String content, String questionType,
+                    String difficultyLevel, String explanation,
+                    int order, Timestamp createdAt, Timestamp updatedAt) {
         this.id = id;
         this.quizId = quizId;
         this.content = content;
-        this.difficulty_level = difficulty_level;
+        this.questionType = questionType;
+        this.difficultyLevel = difficultyLevel;
         this.explanation = explanation;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+//        this.answers = answers;
+        this.order = order;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
+    // Getters and setters
     public int getId() {
         return id;
     }
@@ -47,12 +60,20 @@ public class Question {
         this.content = content;
     }
 
-    public String getDifficulty_level() {
-        return difficulty_level;
+    public String getQuestionType() {
+        return questionType;
     }
 
-    public void setDifficulty_level(String difficulty_level) {
-        this.difficulty_level = difficulty_level;
+    public void setQuestionType(String questionType) {
+        this.questionType = questionType;
+    }
+
+    public String getDifficultyLevel() {
+        return difficultyLevel;
+    }
+
+    public void setDifficultyLevel(String difficultyLevel) {
+        this.difficultyLevel = difficultyLevel;
     }
 
     public String getExplanation() {
@@ -63,25 +84,53 @@ public class Question {
         this.explanation = explanation;
     }
 
-    public java.util.Date getCreated_at() {
-        return created_at;
+//    public JSONObject getAnswers() {
+//        return answers;
+//    }
+//
+//    public void setAnswers(JSONObject answers) {
+//        this.answers = answers;
+//    }
+
+    public int getOrder() {
+        return order;
     }
 
-    public void setCreated_at(java.util.Date created_at) {
-        this.created_at = created_at;
+    public void setOrder(int order) {
+        this.order = order;
     }
 
-    public java.util.Date getUpdated_at() {
-        return updated_at;
+    public Timestamp getCreatedAt() {
+        return createdAt;
     }
 
-    public void setUpdated_at(java.util.Date updated_at) {
-        this.updated_at = updated_at;
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    // toString method for debugging
     @Override
     public String toString() {
-        return "Question{" + "id=" + id + ", quizId=" + quizId + ", content=" + content + ", difficulty_level=" + difficulty_level + ", explanation=" + explanation + ", created_at=" + created_at + ", updated_at=" + updated_at + '}';
+        return "Question{" +
+                "id=" + id +
+                ", quizId=" + quizId +
+                ", content='" + content + '\'' +
+                ", questionType='" + questionType + '\'' +
+                ", difficultyLevel='" + difficultyLevel + '\'' +
+                ", explanation='" + explanation + '\'' +
+//                ", answers=" + answers +  // Commented out because JSONObject is not a primitive data type
+                ", order=" + order +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
-
 }
+

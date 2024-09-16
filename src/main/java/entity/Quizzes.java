@@ -1,32 +1,29 @@
 package entity;
-
 import java.sql.Timestamp;
-import java.math.BigDecimal;
 
-public class PricePackage {
+public class Quizzes {
     private int id;
     private int subjectId;
-    private String name;
+    private String title;
     private String description;
-    private BigDecimal price;
-    private int durationMonths;
+    private int timeLimit;
+    private double passingScore;
     private String status;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
     // Default constructor
-    public PricePackage() {}
+    public Quizzes() {}
 
     // Parameterized constructor
-    public PricePackage(int id, int subjectId, String name, String description,
-                        BigDecimal price, int durationMonths, String status,
-                        Timestamp createdAt, Timestamp updatedAt) {
+    public Quizzes(int id, int subjectId, String title, String description, int timeLimit,
+                   double passingScore, String status, Timestamp createdAt, Timestamp updatedAt) {
         this.id = id;
         this.subjectId = subjectId;
-        this.name = name;
+        this.title = title;
         this.description = description;
-        this.price = price;
-        this.durationMonths = durationMonths;
+        this.timeLimit = timeLimit;
+        this.passingScore = passingScore;
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -49,12 +46,12 @@ public class PricePackage {
         this.subjectId = subjectId;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
@@ -65,20 +62,20 @@ public class PricePackage {
         this.description = description;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public int getTimeLimit() {
+        return timeLimit;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void setTimeLimit(int timeLimit) {
+        this.timeLimit = timeLimit;
     }
 
-    public int getDurationMonths() {
-        return durationMonths;
+    public double getPassingScore() {
+        return passingScore;
     }
 
-    public void setDurationMonths(int durationMonths) {
-        this.durationMonths = durationMonths;
+    public void setPassingScore(double passingScore) {
+        this.passingScore = passingScore;
     }
 
     public String getStatus() {
@@ -108,17 +105,16 @@ public class PricePackage {
     // toString method for debugging
     @Override
     public String toString() {
-        return "PricePackage{" +
+        return "Quiz{" +
                 "id=" + id +
                 ", subjectId=" + subjectId +
-                ", name='" + name + '\'' +
+                ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", price=" + price +
-                ", durationMonths=" + durationMonths +
+                ", timeLimit=" + timeLimit +
+                ", passingScore=" + passingScore +
                 ", status='" + status + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
     }
 }
-

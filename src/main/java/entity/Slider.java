@@ -1,38 +1,34 @@
 package entity;
 
-public class Slider {
-//    id INT PRIMARY KEY AUTO_INCREMENT,
-//    title VARCHAR(255),
-//    image_url VARCHAR(255),
-//    link_url VARCHAR(255),
-//    `order` INT,
-//    status VARCHAR(20),
-//    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-//    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+import java.sql.Timestamp;
 
+public class Slider {
     private int id;
     private String title;
-    private String image_url;
-    private String link_url;
+    private String imageUrl;
+    private String linkUrl;
     private int order;
     private String status;
-    private java.util.Date created_at;
-    private java.util.Date updated_at;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
-    public Slider() {
-    }
+    // Default constructor
+    public Slider() {}
 
-    public Slider(int id, String title, String image_url, String link_url, int order, String status, java.util.Date created_at, java.util.Date updated_at) {
+    // Parameterized constructor
+    public Slider(int id, String title, String imageUrl, String linkUrl, int order,
+                  String status, Timestamp createdAt, Timestamp updatedAt) {
         this.id = id;
         this.title = title;
-        this.image_url = image_url;
-        this.link_url = link_url;
+        this.imageUrl = imageUrl;
+        this.linkUrl = linkUrl;
         this.order = order;
         this.status = status;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
+    // Getters and setters
     public int getId() {
         return id;
     }
@@ -49,20 +45,20 @@ public class Slider {
         this.title = title;
     }
 
-    public String getImage_url() {
-        return image_url;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setImage_url(String image_url) {
-        this.image_url = image_url;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public String getLink_url() {
-        return link_url;
+    public String getLinkUrl() {
+        return linkUrl;
     }
 
-    public void setLink_url(String link_url) {
-        this.link_url = link_url;
+    public void setLinkUrl(String linkUrl) {
+        this.linkUrl = linkUrl;
     }
 
     public int getOrder() {
@@ -81,25 +77,35 @@ public class Slider {
         this.status = status;
     }
 
-    public java.util.Date getCreated_at() {
-        return created_at;
+    public Timestamp getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(java.util.Date created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public java.util.Date getUpdated_at() {
-        return updated_at;
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(java.util.Date updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
+    // toString method for debugging
     @Override
     public String toString() {
-        return "Slider{" + "id=" + id + ", title=" + title + ", image_url=" + image_url + ", link_url=" + link_url + ", order=" + order + ", status=" + status + ", created_at=" + created_at + ", updated_at=" + updated_at + '}';
+        return "Slider{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", linkUrl='" + linkUrl + '\'' +
+                ", order=" + order +
+                ", status='" + status + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
-
 }
+
