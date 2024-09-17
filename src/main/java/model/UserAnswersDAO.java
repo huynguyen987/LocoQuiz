@@ -117,6 +117,4 @@ public class UserAnswersDAO {
             System.out.println(userAnswer.getId() + " " + userAnswer.getUserQuizId() + " " + userAnswer.getQuestionId() + " " + userAnswer.getSelectedAnswer() + " " + userAnswer.getCreatedAt() + " " + userAnswer.getUpdatedAt());
         }
     }
-
-
 }
