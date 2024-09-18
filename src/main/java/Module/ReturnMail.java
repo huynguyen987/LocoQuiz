@@ -11,8 +11,8 @@ public class ReturnMail {
         // Gmail SMTP server configuration
         String host = "smtp.gmail.com";
         int port = 465;
-        String username = "vuthanhlam848@gmail.com"; // Your Gmail address
-        String password = "Lamvthe180779";      // Your App Password (no spaces)
+        String username = "lamvthe180779@fpt.edu.vn"; // Your Gmail address
+        String password = "kpfbvbyrbeicgnsc";      // Your App Password (no spaces)
 
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", "true");
@@ -63,6 +63,6 @@ public class ReturnMail {
 
     // Test the sendMail method
     public static void main(String[] args) {
-        sendMail("lamvthe180779@fpt.edu.vn"); // Replace with the recipient's email
+        sendMail("anhddhe180559@fpt.edu.vn"); // Replace with the recipient's email
     }
 }
