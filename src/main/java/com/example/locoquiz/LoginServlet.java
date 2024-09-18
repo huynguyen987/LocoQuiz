@@ -39,12 +39,12 @@ public class LoginServlet extends HttpServlet {
                 user.setId(rs.getInt("id"));
                 user.setUsername(rs.getString("username"));
                 user.setEmail(rs.getString("email"));
-                user.setFullname(rs.getString("fullname"));
+                user.setFullName(rs.getString("fullname"));
                 user.setGender(rs.getString("gender"));
-                user.setUser_role(rs.getString("user_role"));
+                user.setRoleId(rs.getInt("role_id"));
                 user.setStatus(rs.getString("status"));
-                user.setCreated_at(rs.getTimestamp("created_at"));
-                user.setUpdated_at(rs.getTimestamp("updated_at"));
+                user.setCreatedAt(rs.getTimestamp("created_at"));
+                user.setUpdatedAt(rs.getTimestamp("updated_at"));
                 user.setAvatar(rs.getBytes("avatar"));
 
                 // Set user in session
