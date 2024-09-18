@@ -10,7 +10,7 @@ public class Question {
     private String questionType;
     private String difficultyLevel;
     private String explanation;
-    //    private JSONObject answers; // Using JSONObject to represent JSON data in Java
+     //  private JSONObject answers; // Using JSONObject to represent JSON data in Java
     private int order;
     private Timestamp createdAt;
     private Timestamp updatedAt;
