@@ -35,7 +35,7 @@ public class loginController extends HttpServlet {
                 out.println("<script type=\"text/javascript\">");
                 out.println("alert('Invalid username or password');");
                 out.println("</script>");
-                response.sendRedirect("login.jsp");
+                response.sendRedirect("dangnhap.jsp");
             }
         }else if (service.equals("forgotPassword")) {
                 session.invalidate();

@@ -3,7 +3,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 import entity.User;
-import model;
+import model.*;
+import model.UserDAO;
 
 public class HashPassword {
     //hash password
@@ -37,10 +38,11 @@ public class HashPassword {
         String hashedPassword = HashPassword.hashPassword(password);
         User user = new User();
         user.setUsername("vuthanhlam124");
-        user.setPassword(hashedPassword);
-        user.setRole(1);
+        user.setPasswordHash(hashedPassword);
+        user.setRoleId(1);
+        user.setEmail("cutehotme@gmail.com");
         UserDAO userDAO = new UserDAO();
-        userDAO.insertUser(user);
+        userDAO.addUser(user);
         System.out.println("Hashed password: " + hashedPassword);
         
     }
