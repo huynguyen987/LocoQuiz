@@ -4,20 +4,24 @@ import java.io.File;
 import javax.swing.*;
 
 public class GetImage {
-    public static byte[] getImage(String path) {
-        byte[] image = null;
-        try {
-            File file = new File(path);
-            image = new byte[(int) file.length()];
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return image;
+//   use swing to plot the image
+    public static void plotImage(String path) {
+        JFrame frame = new JFrame();
+        ImageIcon icon = new ImageIcon(path);
+        JLabel label = new JLabel(icon);
+        frame.add(label);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
     }
-//test and plot the image
+
     public static void main(String[] args) {
-        String path = "\"D:\\CameraAI\\Lam.jpg\"";
-        byte[] image = getImage(path);
-        System.out.println(image);
+        String path = "/D:/CameraAI/Lam.jpg";
+        File file = new File(path);
+        if (file.exists()) {
+            plotImage(path);
+        } else {
+            System.out.println("File not found!");
+        }
     }
 }
