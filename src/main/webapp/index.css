@@ -32,6 +32,16 @@
     align-items: center;
     justify-content: center;
     padding: 12px;
+    cursor: pointer;
+    transition: transform 0.1s ease-in-out;
+}
+
+.button:hover {
+    background-color: #3d3d3d;
+}
+
+.button:active {
+    transform: scale(0.95);
 }
 .user-icon {
     width: 16px;

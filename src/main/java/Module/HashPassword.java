@@ -2,6 +2,8 @@ package Module;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
+import entity.User;
+import model;
 
 public class HashPassword {
     //hash password
@@ -31,8 +33,15 @@ public class HashPassword {
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter password: ");
         String password = sc.nextLine();
-        System.out.println("Hash password: " + hashPassword(password));
-        System.out.println("Hash 123456: " +hashPassword("123456"));
-
+        DBConnect db = new DBConnect();
+        String hashedPassword = HashPassword.hashPassword(password);
+        User user = new User();
+        user.setUsername("vuthanhlam124");
+        user.setPassword(hashedPassword);
+        user.setRole(1);
+        UserDAO userDAO = new UserDAO();
+        userDAO.insertUser(user);
+        System.out.println("Hashed password: " + hashedPassword);
+        
     }
 }

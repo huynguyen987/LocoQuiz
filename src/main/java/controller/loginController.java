@@ -13,7 +13,7 @@ import Module.*;
 
 import entity.User;
 
-@WebServlet(name = "loginController", value = "/loginController")
+@WebServlet(name = "loginController", value = "/login")
 public class loginController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

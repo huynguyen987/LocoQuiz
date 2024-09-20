@@ -1,6 +1,7 @@
 package Module;
 
 import java.sql.*;
+import entity.User;
 
 public class DBConnect {
 
@@ -50,6 +51,22 @@ public class DBConnect {
     public Connection getConnection() {
         return conn;
         
+    }
+
+    public User getUser(String username) {
+        User user = new User();
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE username = '" + username + "'");
+            if (rs.next()) {
+                user.setUsername(rs.getString("username"));
+                user.setPasswordHash(rs.getString("passwordHash"));
+                user.setRoleId(rs.getInt("roleId"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
     }
 
     // Main method to test the connection and data retrieval
