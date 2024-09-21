@@ -11,7 +11,7 @@ import Module.DBConnect;
 
 public class UserQuizzesDAO {
     // Add user quiz
-    public void addUserQuiz(UserQuizzes userQuiz) {
+    public void addUserQuiz(UserQuizzes userQuiz) throws SQLException, ClassNotFoundException {
         Connection connection = new DBConnect().getConnection();
         String query = "INSERT INTO UserQuizzes (user_id, quiz_id, start_time, end_time, score, status) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -34,7 +34,7 @@ public class UserQuizzesDAO {
     }
 
     // Get user quiz by id
-    public UserQuizzes getUserQuizById(int id) {
+    public UserQuizzes getUserQuizById(int id) throws SQLException, ClassNotFoundException {
         UserQuizzes userQuiz = null;
         Connection connection = new DBConnect().getConnection();
         String query = "SELECT * FROM UserQuizzes WHERE id = ?";
@@ -67,7 +67,7 @@ public class UserQuizzesDAO {
     }
 
     // Get all user quizzes
-    public ArrayList<UserQuizzes> getAllUserQuizzes() {
+    public ArrayList<UserQuizzes> getAllUserQuizzes() throws SQLException, ClassNotFoundException {
         ArrayList<UserQuizzes> userQuizzes = new ArrayList<>();
         Connection connection = new DBConnect().getConnection();
         String query = "SELECT * FROM UserQuizzes";
@@ -99,7 +99,7 @@ public class UserQuizzesDAO {
     }
 
     // Update user quiz
-    public void updateUserQuiz(UserQuizzes userQuiz) {
+    public void updateUserQuiz(UserQuizzes userQuiz) throws SQLException, ClassNotFoundException {
         Connection connection = new DBConnect().getConnection();
         String query = "UPDATE UserQuizzes SET user_id = ?, quiz_id = ?, start_time = ?, end_time = ?, score = ?, status = ?, updated_at = ? WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -124,7 +124,7 @@ public class UserQuizzesDAO {
     }
 
     // Delete user quiz
-    public void deleteUserQuiz(int id) {
+    public void deleteUserQuiz(int id) throws SQLException, ClassNotFoundException {
         Connection connection = new DBConnect().getConnection();
         String query = "DELETE FROM UserQuizzes WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -141,7 +141,7 @@ public class UserQuizzesDAO {
         }
     }
     //main method for testing
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException, ClassNotFoundException {
         UserQuizzesDAO dao = new UserQuizzesDAO();
         ArrayList<UserQuizzes> userQuizzes = dao.getAllUserQuizzes();
         for (UserQuizzes userQuiz : userQuizzes) {

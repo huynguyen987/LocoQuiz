@@ -31,6 +31,8 @@ public class QuizzesDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return quizzes;
     }
@@ -56,6 +58,8 @@ public class QuizzesDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return quiz;
     }
@@ -73,6 +77,8 @@ public class QuizzesDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return n > 0;
     }
@@ -91,6 +97,8 @@ public class QuizzesDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return n > 0;
     }
@@ -105,6 +113,8 @@ public class QuizzesDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return n > 0;
     }
@@ -130,6 +140,8 @@ public class QuizzesDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return quiz;
     }

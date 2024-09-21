@@ -29,6 +29,8 @@ public class UserDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
         return n > 0;
@@ -56,6 +58,8 @@ public class UserDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
         return user;
@@ -78,6 +82,8 @@ public class UserDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
         return n > 0;
@@ -93,6 +99,8 @@ public class UserDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
         return n > 0;
@@ -119,6 +127,8 @@ public class UserDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
         return list;

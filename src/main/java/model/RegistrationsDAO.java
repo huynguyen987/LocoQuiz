@@ -36,6 +36,8 @@ public class RegistrationsDAO {
             }
         } catch (SQLException ex) {
             System.err.println(ex);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         } finally {
             if (rs != null) try { rs.close(); } catch (SQLException ex) { System.err.println(ex); }
             if (ps != null) try { ps.close(); } catch (SQLException ex) { System.err.println(ex); }
@@ -70,6 +72,8 @@ public class RegistrationsDAO {
             }
         } catch (SQLException ex) {
             System.err.println(ex);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         } finally {
             if (rs != null) try { rs.close(); } catch (SQLException ex) { System.err.println(ex); }
             if (ps != null) try { ps.close(); } catch (SQLException ex) { System.err.println(ex); }
@@ -94,7 +98,7 @@ public class RegistrationsDAO {
             ps.setString(5, registration.getStatus());
             ps.setBigDecimal(6, registration.getPricePaid());
             n = ps.executeUpdate();
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
             System.err.println(ex);
         } finally {
             if (ps != null) try { ps.close(); } catch (SQLException ex) { System.err.println(ex); }
@@ -122,6 +126,8 @@ public class RegistrationsDAO {
             n = ps.executeUpdate();
         } catch (SQLException ex) {
             System.err.println(ex);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         } finally {
             if (ps != null) try { ps.close(); } catch (SQLException ex) { System.err.println(ex); }
             if (conn != null) try { conn.close(); } catch (SQLException ex) { System.err.println(ex); }
@@ -142,6 +148,8 @@ public class RegistrationsDAO {
             n = ps.executeUpdate();
         } catch (SQLException ex) {
             System.err.println(ex);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         } finally {
             if (ps != null) try { ps.close(); } catch (SQLException ex) { System.err.println(ex); }
             if (conn != null) try { conn.close(); } catch (SQLException ex) { System.err.println(ex); }

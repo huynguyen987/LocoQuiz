@@ -134,8 +134,8 @@
     height: 430px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
+    align-items: center; /* Center align items horizontally */
+    justify-content: center; /* Center align items vertically */
     padding: 24px;
     gap: 24px;
     min-width: 320px;

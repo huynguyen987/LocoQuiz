@@ -24,6 +24,8 @@ public class BlogPostDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return n > 0;
     }
@@ -48,6 +50,8 @@ public class BlogPostDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return blogPost;
     }
@@ -71,6 +75,8 @@ public class BlogPostDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return blogPosts;
     }
@@ -90,6 +96,8 @@ public class BlogPostDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return n > 0;
     }
@@ -105,6 +113,8 @@ public class BlogPostDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return n > 0;
     }
@@ -130,6 +140,8 @@ public class BlogPostDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return blogPosts;
     }
@@ -155,6 +167,8 @@ public class BlogPostDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return blogPosts;
     }
@@ -179,7 +193,7 @@ public class BlogPostDAO {
                     blogPosts.add(blogPost);
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return blogPosts;

@@ -26,6 +26,8 @@ public class LessonsDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return n > 0;
     }
@@ -51,6 +53,8 @@ public class LessonsDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return lesson;
     }
@@ -75,6 +79,8 @@ public class LessonsDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return lessons;
     }
@@ -95,6 +101,8 @@ public class LessonsDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return n > 0;
     }
@@ -110,6 +118,8 @@ public class LessonsDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return n > 0;
     }

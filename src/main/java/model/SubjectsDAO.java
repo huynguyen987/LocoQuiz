@@ -26,6 +26,8 @@ public class SubjectsDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return n > 0;
     }
@@ -54,6 +56,8 @@ public class SubjectsDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return subjects;
     }
@@ -81,7 +85,7 @@ public class SubjectsDAO {
                     subject.setAvatar(rs.getBytes("avatar"));
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return subject;
@@ -104,6 +108,8 @@ public class SubjectsDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return n > 0;
     }
@@ -119,6 +125,8 @@ public class SubjectsDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return n > 0;
     }

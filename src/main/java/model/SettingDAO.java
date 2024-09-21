@@ -35,6 +35,8 @@ public class SettingDAO {
             }
         } catch (SQLException ex) {
             System.err.println(ex);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         } finally {
             if (rs != null) try { rs.close(); } catch (SQLException ex) { System.err.println(ex); }
             if (ps != null) try { ps.close(); } catch (SQLException ex) { System.err.println(ex); }
@@ -57,6 +59,8 @@ public class SettingDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return n > 0;
     }
@@ -71,6 +75,8 @@ public class SettingDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return n > 0;
     }
@@ -89,6 +95,8 @@ public class SettingDAO {
             n = pre.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return n > 0;
     }

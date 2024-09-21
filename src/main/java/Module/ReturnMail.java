@@ -63,6 +63,6 @@ public class ReturnMail {
 
     // Test the sendMail method
     public static void main(String[] args) {
-        sendMail("anhddhe180559@fpt.edu.vn"); // Replace with the recipient's email
+        sendMail("huynphe186731@fpt.edu.vn"); // Replace with the recipient's email
     }
 }

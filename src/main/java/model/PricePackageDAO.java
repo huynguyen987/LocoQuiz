@@ -34,6 +34,8 @@ public class PricePackageDAO {
             }
         } catch (SQLException ex) {
             System.err.println(ex);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         } finally {
             if (rs != null) try { rs.close(); } catch (SQLException ex) { System.err.println(ex); }
             if (ps != null) try { ps.close(); } catch (SQLException ex) { System.err.println(ex); }
@@ -64,7 +66,7 @@ public class PricePackageDAO {
                 pricePackage.setDurationMonths(rs.getInt("duration_months"));
                 pricePackage.setStatus(rs.getString("status"));
             }
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
             System.err.println(ex);
         } finally {
             if (rs != null) try { rs.close(); } catch (SQLException ex) { System.err.println(ex); }
@@ -93,6 +95,8 @@ public class PricePackageDAO {
             result = ps.executeUpdate();
         } catch (SQLException ex) {
             System.err.println(ex);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         } finally {
             if (rs != null) try { rs.close(); } catch (SQLException ex) { System.err.println(ex); }
             if (ps != null) try { ps.close(); } catch (SQLException ex) { System.err.println(ex); }
@@ -121,6 +125,8 @@ public class PricePackageDAO {
             result = ps.executeUpdate();
         } catch (SQLException ex) {
             System.err.println(ex);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         } finally {
             if (rs != null) try { rs.close(); } catch (SQLException ex) { System.err.println(ex); }
             if (ps != null) try { ps.close(); } catch (SQLException ex) { System.err.println(ex); }
@@ -143,6 +149,8 @@ public class PricePackageDAO {
             result = ps.executeUpdate();
         } catch (SQLException ex) {
             System.err.println(ex);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         } finally {
             if (rs != null) try { rs.close(); } catch (SQLException ex) { System.err.println(ex); }
             if (ps != null) try { ps.close(); } catch (SQLException ex) { System.err.println(ex); }
@@ -175,6 +183,8 @@ public class PricePackageDAO {
             }
         } catch (SQLException ex) {
             System.err.println(ex);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         } finally {
             if (rs != null) try { rs.close(); } catch (SQLException ex) { System.err.println(ex); }
             if (ps != null) try { ps.close(); } catch (SQLException ex) { System.err.println(ex); }
