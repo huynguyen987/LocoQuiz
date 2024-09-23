@@ -20,6 +20,9 @@ public class registerController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession(true);
         String service = request.getParameter("service");
+        if (service == null) {
+            service = "register";
+        }
         if (service.equals("register")) {
             String username = request.getParameter("username");
             String email = request.getParameter("email");

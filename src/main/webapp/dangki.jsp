@@ -51,6 +51,17 @@
 					<div class="label">Nhập lại mật khẩu</div>
 					<input class="input" type="password" name="confirm_password" placeholder="Xin mời nhập lại mật khẩu" required>
 				</div>
+				<script>
+					function validateForm() {
+						var password = document.forms["registerForm"]["password"].value;
+						var confirmPassword = document.forms["registerForm"]["confirm_password"].value;
+						if (password !== confirmPassword) {
+							document.getElementById("passwordError").style.display = "block";
+							return false;
+						}
+						return true;
+					}
+				</script>
 				<div class="input-field1">
 					<div class="label">Nhập email</div>
 					<input class="input" type="text" name="email" placeholder="Xin mời nhập email" required>
@@ -65,8 +76,13 @@
 					</div>
 				</div>
 				<div class="button-group">
-					<button type="submit" class="button" style="color: white;">Đăng Kí</button>
+					<button type="submit" class="button" style="color: white; cursor: pointer; transition: transform 0.1s;">Đăng Kí</button>
 				</div>
+				<style>
+					.button:active {
+						transform: scale(0.95);
+					}
+				</style>
 			</form>
 		</div>
 
