@@ -3,6 +3,7 @@ package controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import entity.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +19,7 @@ public class verifyController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession(true);
         String service = request.getParameter("service");
-        if (service == null){
+        if (service == null) {
             service = "verify";
         }
         if (service.equals("verify")) {
@@ -28,13 +29,13 @@ public class verifyController extends HttpServlet {
             if (capcha.equals(capchaSession)) {
                 session.setAttribute("email", email);
                 session.setAttribute("capcha", capcha);
-                response.sendRedirect("resetPass.jsp");}
-             else {
+                session.setAttribute("service1", "resetPass");
+                response.sendRedirect("resetPass.jsp");
+            } else {
                 session.setAttribute("error", "Mã xác nhận không đúng");
                 response.sendRedirect("verify.jsp");
             }
         }
-
     }
 
     protected void doGet

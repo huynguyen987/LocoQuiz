@@ -2,6 +2,7 @@ package controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.ResultSet;
 
 import entity.User;
 import jakarta.servlet.ServletException;
@@ -32,32 +33,26 @@ public class resetPassController extends HttpServlet {
                 response.sendRedirect("resetPass.jsp");
                 return;  // Exit the method to prevent further processing
             }
-            UserDAO userDAO = new UserDAO();
-            int id = userDAO.getUserIdByEmail(email);
-            if (id <= 0) {
-                session.setAttribute("error", "1.Người dùng không tồn tại.");
-                response.sendRedirect("resetPass.jsp");
-                return;  // Exit the method to prevent further processing
-            }
-            User user = userDAO.getUserById(id);
+            System.out.println("Email: " + email);
+            User user = new UserDAO().getUserByEmail(email);
+            System.out.println("User: " + user.toString());
             if (user == null) {
-                session.setAttribute("error", "2.Người dùng không tồn tại.");
+                session.setAttribute("error", "Người dùng không tồn tại.");
                 response.sendRedirect("resetPass.jsp");
-                return;  // Exit the method to prevent further processing
+                return;
             }
             String hashedPassword = HashPassword.hashPassword(password);
             user.setPasswordHash(hashedPassword);
-            boolean success = userDAO.updateUser(user);
-            if (success) {
-                session.setAttribute("success", "Đổi mật khẩu thành công");
+            boolean updated = new UserDAO().updateUser(user);
+            if (updated) {
+                session.setAttribute("success", "Cập nhật mật khẩu thành công.");
                 response.sendRedirect("dangnhap.jsp");
             } else {
-                session.setAttribute("error", "Đổi mật khẩu thất bại");
+                session.setAttribute("error", "Cập nhật mật khẩu thất bại.");
                 response.sendRedirect("resetPass.jsp");
             }
         }
     }
-
 
     protected void doGet
             (HttpServletRequest request, HttpServletResponse response)

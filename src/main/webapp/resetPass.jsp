@@ -25,7 +25,7 @@
 <body>
 
 <div class="qun-mt-khu">
-	<form action="<%= request.getContextPath() %>/resetPass" method="post" class="form-log-in">
+	<form action="<%= request.getContextPath() %>/resetpass" method="post" class="form-log-in">
 		<%
 			String error = (String) session.getAttribute("error");
 			if (error != null) {

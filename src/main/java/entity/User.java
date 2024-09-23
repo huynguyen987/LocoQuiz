@@ -1,5 +1,8 @@
 package entity;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import Module.*;
 
 public class User {
     private int id;

@@ -38,6 +38,6 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>resetPassController</servlet-name>
-        <url-pattern>/resetPass</url-pattern>
+        <url-pattern>/resetpass</url-pattern>
     </servlet-mapping>
 </web-app>

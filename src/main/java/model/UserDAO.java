@@ -174,17 +174,24 @@ public class UserDAO {
         }
         return n > 0;
     }
-
-    public int getUserIdByEmail(String email) {
-        int id = 0;
-        String sql = "SELECT id FROM Users WHERE email = ?";
-
+    public User getUserByEmail(String email) {
+        User user = null;
+        String sql = "SELECT * FROM Users WHERE email = ?";
+        // code trả về một user có email là email
         try (Connection conn = (new DBConnect()).getConnection();
              PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setString(1, email);
             try (ResultSet rs = pre.executeQuery()) {
                 if (rs.next()) {
-                    id = rs.getInt("id");
+                    user = new User();
+                    user.setId(rs.getInt("id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setEmail(rs.getString("email"));
+                    user.setPasswordHash(rs.getString("password_hash"));
+                    user.setFullName(rs.getString("full_name"));
+                    user.setGender(rs.getString("gender"));
+                    user.setRoleId(rs.getInt("role_id"));
+                    user.setStatus(rs.getString("status"));
                 }
             }
         } catch (SQLException e) {
@@ -192,7 +199,6 @@ public class UserDAO {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
-        return id;
+        return user;
     }
 }
