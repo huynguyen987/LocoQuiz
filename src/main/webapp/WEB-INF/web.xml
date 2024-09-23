@@ -8,4 +8,36 @@
         <servlet-name>loginController</servlet-name>
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>registerController</servlet-name>
+        <servlet-class>controller.registerController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>registerController</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>forgetPass</servlet-name>
+        <servlet-class>controller.forgetPass</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>forgetPass</servlet-name>
+        <url-pattern>/forgetPass</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>verifyController</servlet-name>
+        <servlet-class>controller.verifyController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>verifyController</servlet-name>
+        <url-pattern>/verify</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>resetPassController</servlet-name>
+        <servlet-class>controller.resetPassController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>resetPassController</servlet-name>
+        <url-pattern>/resetPass</url-pattern>
+    </servlet-mapping>
 </web-app>

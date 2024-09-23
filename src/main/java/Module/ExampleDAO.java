@@ -1,9 +1,12 @@
 package Module;
 
+import entity.User;
+
 import java.sql.*;
 import java.util.Vector;
 
 public class ExampleDAO {
+
     // New method to return a single result from the query
     public String getSingleResult(String sql, String... parameters) {
         String result = null;

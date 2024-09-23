@@ -7,24 +7,34 @@
 
 	<link rel="stylesheet" href="<%= request.getContextPath() %>/dangnhap.css" />
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" />
+	<style>
+		.error-message {
+			color: red;
+			font-size: 14px;
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			background-color: #f8d7da;
+			border-color: #f5c6cb;
+			padding: 10px;
+			border-radius: 5px;
+		}
+	</style>
 </head>
 <body>
 <div class="ng-nhp">
 	<!-- Chỉ hiển thị khi có lỗi trong sessionScope -->
-	<c:if test="${not empty sessionScope.error}">
-		<div class="error-message" id="error-message">${sessionScope.error}</div>
-		<script>
-			// Tự động tắt sau 3 giây
-			setTimeout(function() {
-				document.getElementById('error-message').style.display = 'none';
-			}, 3000); // 3000 milliseconds = 3 seconds
-
-			// Tắt khi click vào màn hình
-			document.addEventListener('click', function() {
-				document.getElementById('error-message').style.display = 'none';
-			});
-		</script>
-	</c:if>
+	<%
+		String error = (String) session.getAttribute("error");
+		if (error != null) {
+	%>
+	<div class="error-message">
+		<%= error %>
+	</div>
+	<%
+			session.removeAttribute("error");  // Clear error after displaying it
+		}
+	%>
 
 	<!-- Form đăng nhập -->
 	<form action="<%= request.getContextPath() %>/login" method="post" class="form-log-in">
@@ -56,23 +66,5 @@
 		<a href="<%= request.getContextPath() %>/lostpass.jsp" class="forgot-password">Quên mật khẩu?</a>
 	</form>
 </div>
-
-<style>
-	/* Thiết kế cho thông báo lỗi với gradient vàng */
-	.error-message {
-		position: fixed;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		padding: 20px;
-		background: linear-gradient(45deg, #f5d547, #f5b947);
-		color: black;
-		font-size: 18px;
-		border-radius: 10px;
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-		text-align: center;
-		z-index: 1000;
-	}
-</style>
 </body>
 </html>

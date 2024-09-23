@@ -7,8 +7,9 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class ReturnMail {
-    public static void sendMail(String to) {
+    public static void sendMail(String to, String capcha) {
         // Gmail SMTP server configuration
+
         String host = "smtp.gmail.com";
         int port = 465;
         String username = "lamvthe180779@fpt.edu.vn"; // Your Gmail address
@@ -41,7 +42,7 @@ public class ReturnMail {
 
             // Set email subject and content
             message.setSubject("Verification Code");
-            message.setText("Your verification code is: " + generateVerificationCode());
+            message.setText("Your verification code is: " + capcha);
 
             // Send the email
             Transport.send(message);
@@ -61,8 +62,4 @@ public class ReturnMail {
         return code.toString();
     }
 
-    // Test the sendMail method
-    public static void main(String[] args) {
-        sendMail("huynphe186731@fpt.edu.vn"); // Replace with the recipient's email
-    }
 }

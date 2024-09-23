@@ -8,6 +8,7 @@ import Module.DBConnect;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import Module.*;
 
 public class UserDAO {
     public UserDAO() {
@@ -155,5 +156,43 @@ public class UserDAO {
         user.setRoleId(1);      // Added role ID
         user.setStatus("active"); // Added status
         dao.addUser(user);
+    }
+
+    public boolean updatePassword(User user) {
+        int n = 0;
+        String sql = "UPDATE Users SET password_hash = ? WHERE email = ?";
+
+        try (Connection conn = (new DBConnect()).getConnection();
+             PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setString(1, user.getPasswordHash());
+            pre.setString(2, user.getEmail());
+            n = pre.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return n > 0;
+    }
+
+    public int getUserIdByEmail(String email) {
+        int id = 0;
+        String sql = "SELECT id FROM Users WHERE email = ?";
+
+        try (Connection conn = (new DBConnect()).getConnection();
+             PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setString(1, email);
+            try (ResultSet rs = pre.executeQuery()) {
+                if (rs.next()) {
+                    id = rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        return id;
     }
 }

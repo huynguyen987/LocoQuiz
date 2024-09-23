@@ -21,6 +21,7 @@
     justify-content: flex-start;
     padding: 12px 16px;
     min-width: 240px;
+    text-align: left;
     color: #b3b3b3;
 }
 .input-field {
@@ -32,32 +33,18 @@
     justify-content: flex-start;
     gap: 8px;
 }
-.input-field1 {
-    align-self: stretch;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 8px;
-}
-.input-field3 {
-    width: 362px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 8px;
-}
 .button1 {
     position: relative;
     line-height: 100%;
 }
 .button {
-    flex: 1;
+    width: 112px;
     border-radius: 8px;
     background-color: #2c2c2c;
     border: 1px solid #2c2c2c;
+    box-sizing: border-box;
     overflow: hidden;
+    flex-shrink: 0;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -65,29 +52,29 @@
     padding: 12px;
 }
 .button-group {
-    align-self: stretch;
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
+    text-align: left;
     color: #f5f5f5;
 }
 .form-log-in {
-    width: 430px;
+    width: 410px;
     border-radius: 30px;
     background: linear-gradient(180deg, #efec98, rgba(137, 135, 87, 0.25));
     border: 1px solid #ede63c;
     box-sizing: border-box;
-    height: 600px; /* Increased height */
+    height: 230px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: center;
     padding: 24px;
     gap: 24px;
     min-width: 320px;
 }
-.ng-k {
+.qun-mt-khu {
     width: 100%;
     position: relative;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -102,7 +89,7 @@
     align-items: center;
     justify-content: center;
     padding: 10px;
-    text-align: left;
+    text-align: center;
     font-size: 16px;
     color: #1e1e1e;
     font-family: Inter;
