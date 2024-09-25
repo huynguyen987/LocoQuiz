@@ -42,7 +42,7 @@ public class loginController extends HttpServlet {
                 UserDAO userDAO = new UserDAO();
                 User user = userDAO.getUserById(user_id);
                 session.setAttribute("user", user);
-                response.sendRedirect("home.jsp");
+                response.sendRedirect("index.jsp");
             } else {
                 // nếu sai thì hiện một ô thông báo lỗi ở trang đăng nhập
                 session.setAttribute("error", "Sai tên đăng nhập hoặc mật khẩu");
