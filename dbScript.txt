@@ -20,6 +20,7 @@ CREATE TABLE Users (
     gender VARCHAR(10),
     role_id INT,
     status VARCHAR(20),
+    feature_face mediumblob null,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     avatar MEDIUMBLOB NULL,

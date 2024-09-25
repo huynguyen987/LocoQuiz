@@ -7,6 +7,17 @@ import java.util.Vector;
 
 public class ExampleDAO {
 
+    public static Connection getConnection() {
+        Connection con = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/learningmanagementsystem", "root", "12345678");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return con;
+    }
+
     // New method to return a single result from the query
     public String getSingleResult(String sql, String... parameters) {
         String result = null;
