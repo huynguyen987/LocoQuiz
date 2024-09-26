@@ -22,7 +22,7 @@ set count 0
 ## Define a widget that we peer from; it won't ever actually be shown though
 set first [text $w.text[incr count]]
 $first insert end "This is a coupled pair of text widgets; they are peers to "
-$first insert end "each other. They have the same underlying data model, but "
+$first insert end "each other. They have the same underlying data dao, but "
 $first insert end "can show different locations, have different current edit "
 $first insert end "locations, and have different selections. You can also "
 $first insert end "create additional peers of any of these text widgets using "

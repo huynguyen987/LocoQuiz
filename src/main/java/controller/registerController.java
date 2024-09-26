@@ -1,9 +1,8 @@
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
-import entity.User;
+import model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.annotation.WebServlet;
 import Module.*;
-import model.UserDAO;
+import dao.UserDAO;
 
 @WebServlet(name = "registerController", value = "/registerController")
 public class registerController extends HttpServlet {

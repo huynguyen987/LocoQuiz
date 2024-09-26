@@ -117,7 +117,7 @@ class HTMLParserTestCase(TestCaseBase):
     def test_simple_html(self):
         self._run_check("""
 <!DOCTYPE html PUBLIC 'foo'>
-<HTML>&entity;&#32;
+<HTML>&model;&#32;
 <!--comment1a
 -></foo><bar>&lt;<?pi?></foo<bar
 comment1b-->
@@ -131,7 +131,7 @@ text
     ("decl", "DOCTYPE html PUBLIC 'foo'"),
     ("data", "\n"),
     ("starttag", "html", []),
-    ("entityref", "entity"),
+    ("entityref", "model"),
     ("charref", "32"),
     ("data", "\n"),
     ("comment", "comment1a\n-></foo><bar>&lt;<?pi?></foo<bar\ncomment1b"),
@@ -266,7 +266,7 @@ text
 
     def test_cdata_content(self):
         contents = [
-            '<!-- not a comment --> &not-an-entity-ref;',
+            '<!-- not a comment --> &not-an-model-ref;',
             "<not a='start tag'>",
             '<a href="" /> <p> <span></span>',
             'foo = "</scr" + "ipt>";',
@@ -304,7 +304,7 @@ text
             def get_events(self):
                 return self.events
 
-        content = """<!-- not a comment --> &not-an-entity-ref;
+        content = """<!-- not a comment --> &not-an-model-ref;
                   <a href="" /> </p><p> <span></span></style>
                   '</script' + '>'"""
         for element in [' script', 'script ', ' script ',
@@ -667,12 +667,12 @@ class AttributesTestCase(TestCaseBase):
 
     def test_entities_in_attribute_value(self):
         # see #1200313
-        for entity in ['&', '&amp;', '&#38;', '&#x26;']:
-            self._run_check('<a href="%s">' % entity,
+        for model in ['&', '&amp;', '&#38;', '&#x26;']:
+            self._run_check('<a href="%s">' % model,
                             [("starttag", "a", [("href", "&")])])
-            self._run_check("<a href='%s'>" % entity,
+            self._run_check("<a href='%s'>" % model,
                             [("starttag", "a", [("href", "&")])])
-            self._run_check("<a href=%s>" % entity,
+            self._run_check("<a href=%s>" % model,
                             [("starttag", "a", [("href", "&")])])
 
     def test_malformed_attributes(self):

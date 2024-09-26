@@ -2089,11 +2089,11 @@ class Wm:
 
     deiconify = wm_deiconify
 
-    def wm_focusmodel(self, model=None):
-        """Set focus model to MODEL. "active" means that this widget will claim
+    def wm_focusmodel(self, dao=None):
+        """Set focus dao to MODEL. "active" means that this widget will claim
         the focus itself, "passive" means that the window manager shall give
-        the focus. Return current focus model if MODEL is None."""
-        return self.tk.call('wm', 'focusmodel', self._w, model)
+        the focus. Return current focus dao if MODEL is None."""
+        return self.tk.call('wm', 'focusmodel', self._w, dao)
 
     focusmodel = wm_focusmodel
 

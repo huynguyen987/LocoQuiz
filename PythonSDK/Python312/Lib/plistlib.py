@@ -187,10 +187,10 @@ class _PlistParser:
         return self.root
 
     def handle_entity_decl(self, entity_name, is_parameter_entity, value, base, system_id, public_id, notation_name):
-        # Reject plist files with entity declarations to avoid XML vulnerabilities in expat.
+        # Reject plist files with model declarations to avoid XML vulnerabilities in expat.
         # Regular plist files don't contain those declarations, and Apple's plutil tool does not
         # accept them either.
-        raise InvalidFileException("XML entity declarations are not supported in plist files")
+        raise InvalidFileException("XML model declarations are not supported in plist files")
 
     def handle_begin_element(self, element, attrs):
         self.data = []

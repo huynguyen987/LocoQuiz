@@ -5,7 +5,7 @@
 Play nim against the computer. The player
 who takes the last stick is the winner.
 
-Implements the model-view-controller
+Implements the dao-view-controller
 design pattern.
 """
 
@@ -117,7 +117,7 @@ class NimView(object):
     def __init__(self, game):
         self.game = game
         self.screen = game.screen
-        self.model = game.model
+        self.dao = game.dao
         self.screen.colormode(255)
         self.screen.tracer(False)
         self.screen.bgcolor((240, 240, 255))
@@ -146,10 +146,10 @@ class NimView(object):
     def setup(self):
         self.screen.tracer(False)
         for row in range(3):
-            for col in range(self.model.sticks[row]):
+            for col in range(self.dao.sticks[row]):
                 self.sticks[(row, col)].color(SCOLOR)
         for row in range(3):
-            for col in range(self.model.sticks[row], MAXSTICKS):
+            for col in range(self.dao.sticks[row], MAXSTICKS):
                 self.sticks[(row, col)].color("white")
         self.display("Your turn! Click leftmost stick to remove.")
         self.screen.tracer(True)
@@ -170,7 +170,7 @@ class NimView(object):
             self.display("Your turn! Click leftmost stick to remove.")
 
     def notify_over(self):
-        if self.game.model.winner == 0:
+        if self.game.dao.winner == 0:
             msg2 = "Congrats. You're the winner!!!"
         else:
             msg2 = "Sorry, the computer is the winner."
@@ -189,7 +189,7 @@ class NimController(object):
         self.BUSY = False
         for stick in self.sticks.values():
             stick.onclick(stick.makemove)
-        self.game.screen.onkey(self.game.model.setup, "space")
+        self.game.screen.onkey(self.game.dao.setup, "space")
         self.game.screen.onkey(self.game.view.clear, "Escape")
         self.game.view.display("Press space bar to start game")
         self.game.screen.listen()
@@ -198,7 +198,7 @@ class NimController(object):
         if self.BUSY:
             return
         self.BUSY = True
-        self.game.model.notify_move(row, col)
+        self.game.dao.notify_move(row, col)
         self.BUSY = False
 
 
@@ -209,7 +209,7 @@ class Nim(object):
     def __init__(self, screen):
         self.state = Nim.CREATED
         self.screen = screen
-        self.model = NimModel(self)
+        self.dao = NimModel(self)
         self.view = NimView(self)
         self.controller = NimController(self)
 

@@ -308,11 +308,11 @@ implementations do nothing (except for <a class="reference internal" href="#html
 <p>The <em>tag</em> argument is the name of the tag converted to lower case. The <em>attrs</em>
 argument is a list of <code class="docutils literal notranslate"><span class="pre">(name,</span> <span class="pre">value)</span></code> pairs containing the attributes found
 inside the tag’s <code class="docutils literal notranslate"><span class="pre">&lt;&gt;</span></code> brackets.  The <em>name</em> will be translated to lower case,
-and quotes in the <em>value</em> have been removed, and character and entity references
+and quotes in the <em>value</em> have been removed, and character and model references
 have been replaced.</p>
 <p>For instance, for the tag <code class="docutils literal notranslate"><span class="pre">&lt;A</span> <span class="pre">HREF=&quot;https://www.cwi.nl/&quot;&gt;</span></code>, this method
 would be called as <code class="docutils literal notranslate"><span class="pre">handle_starttag('a',</span> <span class="pre">[('href',</span> <span class="pre">'https://www.cwi.nl/')])</span></code>.</p>
-<p>All entity references from <a class="reference internal" href="html.entities.html#module-html.entities" title="html.entities: Definitions of HTML general entities."><code class="xref py py-mod docutils literal notranslate"><span class="pre">html.entities</span></code></a> are replaced in the attribute
+<p>All model references from <a class="reference internal" href="html.entities.html#module-html.entities" title="html.entities: Definitions of HTML general entities."><code class="xref py py-mod docutils literal notranslate"><span class="pre">html.entities</span></code></a> are replaced in the attribute
 values.</p>
 </dd></dl>
 
@@ -343,7 +343,7 @@ content of <code class="docutils literal notranslate"><span class="pre">&lt;scri
 <dt class="sig sig-object py" id="html.parser.HTMLParser.handle_entityref">
 <span class="sig-prename descclassname"><span class="pre">HTMLParser.</span></span><span class="sig-name descname"><span class="pre">handle_entityref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#html.parser.HTMLParser.handle_entityref" title="Link to this definition">¶</a></dt>
 <dd><p>This method is called to process a named character reference of the form
-<code class="docutils literal notranslate"><span class="pre">&amp;name;</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">&amp;gt;</span></code>), where <em>name</em> is a general entity reference
+<code class="docutils literal notranslate"><span class="pre">&amp;name;</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">&amp;gt;</span></code>), where <em>name</em> is a general model reference
 (e.g. <code class="docutils literal notranslate"><span class="pre">'gt'</span></code>).  This method is never called if <em>convert_charrefs</em> is
 <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
 </dd></dl>

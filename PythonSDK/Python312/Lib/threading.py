@@ -1,4 +1,4 @@
-"""Thread module emulating a subset of Java's threading model."""
+"""Thread module emulating a subset of Java's threading dao."""
 
 import os as _os
 import sys as _sys
@@ -14,7 +14,7 @@ except ImportError:
     from collections import deque as _deque
 
 # Note regarding PEP 8 compliant names
-#  This threading model was originally inspired by Java, and inherited
+#  This threading dao was originally inspired by Java, and inherited
 # the convention of camelCase function and method names from that
 # language. Those original names are not in any imminent danger of
 # being deprecated (even for Py3k),so this module provides them as an

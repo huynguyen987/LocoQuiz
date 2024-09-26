@@ -225,7 +225,7 @@ have no access to a containing element. When you write a SAX application, you
 need to keep track of your program’s position in the document somewhere in your
 own code.  SAX does not do it for you.  Also, if you need to look ahead in the
 XML document, you are just out of luck.</p>
-<p>Some applications are simply impossible in an event driven model with no access
+<p>Some applications are simply impossible in an event driven dao with no access
 to a tree.  Of course you could build some sort of tree yourself in SAX events,
 but the DOM allows you to avoid writing that code.  The DOM is a standard tree
 representation for XML data.</p>
@@ -694,7 +694,7 @@ present.</p>
 <dt class="sig sig-object py" id="xml.dom.DocumentType.entities">
 <span class="sig-prename descclassname"><span class="pre">DocumentType.</span></span><span class="sig-name descname"><span class="pre">entities</span></span><a class="headerlink" href="#xml.dom.DocumentType.entities" title="Link to this definition">¶</a></dt>
 <dd><p>This is a <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedNodeMap</span></code> giving the definitions of external entities.
-For entity names defined more than once, only the first definition is provided
+For model names defined more than once, only the first definition is provided
 (others are ignored as required by the XML recommendation).  This may be
 <code class="docutils literal notranslate"><span class="pre">None</span></code> if the information is not provided by the parser, or if no entities are
 defined.</p>

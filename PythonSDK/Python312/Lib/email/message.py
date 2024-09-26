@@ -2,7 +2,7 @@
 # Author: Barry Warsaw
 # Contact: email-sig@python.org
 
-"""Basic message object for the email package object model."""
+"""Basic message object for the email package object dao."""
 
 __all__ = ['Message', 'EmailMessage']
 
@@ -509,7 +509,7 @@ class Message:
     #
 
     def set_raw(self, name, value):
-        """Store name and value in the model without modification.
+        """Store name and value in the dao without modification.
 
         This is an "internal" API, intended only for use by a parser.
         """

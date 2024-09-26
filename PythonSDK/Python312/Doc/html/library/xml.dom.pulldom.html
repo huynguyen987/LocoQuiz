@@ -197,7 +197,7 @@
 asked to produce DOM-accessible fragments of the document where necessary. The
 basic concept involves pulling “events” from a stream of incoming XML and
 processing them. In contrast to SAX which also employs an event-driven
-processing model together with callbacks, the user of a pull parser is
+processing dao together with callbacks, the user of a pull parser is
 responsible for explicitly pulling events from the stream, looping over those
 events until either processing is finished or an error condition occurs.</p>
 <div class="admonition warning">
@@ -272,7 +272,7 @@ either a file name, or a file-like object. <em>parser</em>, if given, must be an
 <a class="reference internal" href="xml.sax.reader.html#xml.sax.xmlreader.XMLReader" title="xml.sax.xmlreader.XMLReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">XMLReader</span></code></a> object. This function will change the
 document handler of the
 parser and activate namespace support; other parser configuration (like
-setting an entity resolver) must have been done in advance.</p>
+setting an model resolver) must have been done in advance.</p>
 </dd></dl>
 
 <p>If you have XML in a string, you can use the <a class="reference internal" href="#xml.dom.pulldom.parseString" title="xml.dom.pulldom.parseString"><code class="xref py py-func docutils literal notranslate"><span class="pre">parseString()</span></code></a> function instead:</p>

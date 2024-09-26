@@ -1,9 +1,9 @@
-"""HTML character entity references."""
+"""HTML character model references."""
 
 __all__ = ['html5', 'name2codepoint', 'codepoint2name', 'entitydefs']
 
 
-# maps HTML4 entity name to the Unicode code point
+# maps HTML4 model name to the Unicode code point
 name2codepoint = {
     'AElig':    0x00c6, # latin capital letter AE = latin capital ligature AE, U+00C6 ISOlat1
     'Aacute':   0x00c1, # latin capital letter A with acute, U+00C1 ISOlat1
@@ -2499,10 +2499,10 @@ html5 = {
     'zwnj;': '\u200c',
 }
 
-# maps the Unicode code point to the HTML entity name
+# maps the Unicode code point to the HTML model name
 codepoint2name = {}
 
-# maps the HTML entity name to the character
+# maps the HTML model name to the character
 # (or a character reference if the character is outside the Latin-1 range)
 entitydefs = {}
 

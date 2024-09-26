@@ -923,8 +923,8 @@ initialization signatures as <a class="reference internal" href="logging.handler
 <p>The configuration file format understood by <a class="reference internal" href="#logging.config.fileConfig" title="logging.config.fileConfig"><code class="xref py py-func docutils literal notranslate"><span class="pre">fileConfig()</span></code></a> is based on
 <a class="reference internal" href="configparser.html#module-configparser" title="configparser: Configuration file parser."><code class="xref py py-mod docutils literal notranslate"><span class="pre">configparser</span></code></a> functionality. The file must contain sections called
 <code class="docutils literal notranslate"><span class="pre">[loggers]</span></code>, <code class="docutils literal notranslate"><span class="pre">[handlers]</span></code> and <code class="docutils literal notranslate"><span class="pre">[formatters]</span></code> which identify by name the
-entities of each type which are defined in the file. For each such entity, there
-is a separate section which identifies how that entity is configured.  Thus, for
+entities of each type which are defined in the file. For each such model, there
+is a separate section which identifies how that model is configured.  Thus, for
 a logger named <code class="docutils literal notranslate"><span class="pre">log01</span></code> in the <code class="docutils literal notranslate"><span class="pre">[loggers]</span></code> section, the relevant
 configuration details are held in a section <code class="docutils literal notranslate"><span class="pre">[logger_log01]</span></code>. Similarly, a
 handler called <code class="docutils literal notranslate"><span class="pre">hand01</span></code> in the <code class="docutils literal notranslate"><span class="pre">[handlers]</span></code> section will have its

@@ -2918,10 +2918,10 @@ used as a drop-in replacement for a regular socket, making it very easy to add
 SSL support to an existing application.</p>
 <p>Combining SSL protocol handling and network IO usually works well, but there
 are some cases where it doesn’t. An example is async IO frameworks that want to
-use a different IO multiplexing model than the “select/poll on a file
-descriptor” (readiness based) model that is assumed by <a class="reference internal" href="socket.html#socket.socket" title="socket.socket"><code class="xref py py-class docutils literal notranslate"><span class="pre">socket.socket</span></code></a>
+use a different IO multiplexing dao than the “select/poll on a file
+descriptor” (readiness based) dao that is assumed by <a class="reference internal" href="socket.html#socket.socket" title="socket.socket"><code class="xref py py-class docutils literal notranslate"><span class="pre">socket.socket</span></code></a>
 and by the internal OpenSSL socket IO routines. This is mostly relevant for
-platforms like Windows where this model is not efficient. For this purpose, a
+platforms like Windows where this dao is not efficient. For this purpose, a
 reduced scope variant of <a class="reference internal" href="#ssl.SSLSocket" title="ssl.SSLSocket"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSLSocket</span></code></a> called <a class="reference internal" href="#ssl.SSLObject" title="ssl.SSLObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSLObject</span></code></a> is
 provided.</p>
 <dl class="py class">

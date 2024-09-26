@@ -251,7 +251,7 @@ class AutoCompleteTest(unittest.TestCase):
             pos = b.index('False')        # Test False not included twice.
             self.assertNotEqual(b[pos+1], 'False')
 
-        # Test attributes with name entity.
+        # Test attributes with name model.
         mock = Mock()
         mock._private = Mock()
         with patch.dict('__main__.__dict__', {'foo': mock}):

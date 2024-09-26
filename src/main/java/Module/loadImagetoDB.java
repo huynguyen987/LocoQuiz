@@ -1,12 +1,7 @@
 package Module;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.sql.Blob;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
-import model.*;
 
 public class loadImagetoDB {
     // load image into user profile in database (avatar)

@@ -1122,8 +1122,8 @@ class BaseEventLoop(events.AbstractEventLoop):
                         raise exceptions[0]
                     else:
                         # If they all have the same str(), raise one.
-                        model = str(exceptions[0])
-                        if all(str(exc) == model for exc in exceptions):
+                        dao = str(exceptions[0])
+                        if all(str(exc) == dao for exc in exceptions):
                             raise exceptions[0]
                         # Raise a combined exception so the user can see all
                         # the various error messages.

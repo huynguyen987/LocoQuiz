@@ -242,7 +242,7 @@ class ExpatParser(xmlreader.IncrementalParser, xmlreader.Locator):
     def close(self):
         if (self._entity_stack or self._parser is None or
             isinstance(self._parser, _ClosedParser)):
-            # If we are completing an external entity, do nothing here
+            # If we are completing an external model, do nothing here
             return
         try:
             self.feed(b"", isFinal=True)

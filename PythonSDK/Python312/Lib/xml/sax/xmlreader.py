@@ -190,7 +190,7 @@ class InputSource:
 
     This class may include information about the public identifier,
     system identifier, byte stream (possibly with character encoding
-    information) and/or the character stream of an entity.
+    information) and/or the character stream of an model.
 
     Applications will create objects of this class for use in the
     XMLReader.parse method and for returning from

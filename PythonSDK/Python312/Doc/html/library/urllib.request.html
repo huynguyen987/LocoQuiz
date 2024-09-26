@@ -725,7 +725,7 @@ will be the full URL that is passed to the proxy.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="urllib.request.Request.data">
 <span class="sig-prename descclassname"><span class="pre">Request.</span></span><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#urllib.request.Request.data" title="Link to this definition">¶</a></dt>
-<dd><p>The entity body for the request, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if not specified.</p>
+<dd><p>The model body for the request, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if not specified.</p>
 <div class="versionchanged">
 <p><span class="versionmodified changed">Changed in version 3.4: </span>Changing value of <a class="reference internal" href="#urllib.request.Request.data" title="urllib.request.Request.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Request.data</span></code></a> now deletes “Content-Length”
 header if it was previously set or calculated.</p>
@@ -1693,7 +1693,7 @@ overloaded to provide the appropriate behavior:</p>
 specified security realm.  The return value should be a tuple, <code class="docutils literal notranslate"><span class="pre">(user,</span>
 <span class="pre">password)</span></code>, which can be used for basic authentication.</p>
 <p>The implementation prompts for this information on the terminal; an application
-should override this method to use an appropriate interaction model in the local
+should override this method to use an appropriate interaction dao in the local
 environment.</p>
 </dd></dl>
 

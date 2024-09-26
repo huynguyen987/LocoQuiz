@@ -1339,13 +1339,13 @@ class DocumentType(Identified, Childless, Node):
                     clone.notations._seq.append(notation)
                     n._call_user_data_handler(operation, n, notation)
                 for e in self.entities._seq:
-                    entity = Entity(e.nodeName, e.publicId, e.systemId,
+                    model = Entity(e.nodeName, e.publicId, e.systemId,
                                     e.notationName)
-                    entity.actualEncoding = e.actualEncoding
-                    entity.encoding = e.encoding
-                    entity.version = e.version
-                    clone.entities._seq.append(entity)
-                    e._call_user_data_handler(operation, e, entity)
+                    model.actualEncoding = e.actualEncoding
+                    model.encoding = e.encoding
+                    model.version = e.version
+                    clone.entities._seq.append(model)
+                    e._call_user_data_handler(operation, e, model)
             self._call_user_data_handler(operation, self, clone)
             return clone
         else:
@@ -1391,19 +1391,19 @@ class Entity(Identified, Node):
 
     def appendChild(self, newChild):
         raise xml.dom.HierarchyRequestErr(
-            "cannot append children to an entity node")
+            "cannot append children to an model node")
 
     def insertBefore(self, newChild, refChild):
         raise xml.dom.HierarchyRequestErr(
-            "cannot insert children below an entity node")
+            "cannot insert children below an model node")
 
     def removeChild(self, oldChild):
         raise xml.dom.HierarchyRequestErr(
-            "cannot remove children from an entity node")
+            "cannot remove children from an model node")
 
     def replaceChild(self, newChild, oldChild):
         raise xml.dom.HierarchyRequestErr(
-            "cannot replace children of an entity node")
+            "cannot replace children of an model node")
 
 class Notation(Identified, Childless, Node):
     nodeType = Node.NOTATION_NODE
@@ -1494,7 +1494,7 @@ class DOMImplementation(DOMImplementationLS):
         return Document()
 
 class ElementInfo(object):
-    """Object that represents content-model information for an element.
+    """Object that represents content-dao information for an element.
 
     This implementation is not expected to be used in practice; DOM
     builders should provide implementations which do the right thing
@@ -1518,7 +1518,7 @@ class ElementInfo(object):
 
     def isEmpty(self):
         """Returns true iff this element is declared to have an EMPTY
-        content model."""
+        content dao."""
         return False
 
     def isId(self, aname):
@@ -1945,15 +1945,15 @@ def _clone_node(node, deep, newOwnerDocument):
                 if hasattr(n, '_call_user_data_handler'):
                     n._call_user_data_handler(operation, n, notation)
             for e in node.entities._seq:
-                entity = Entity(e.nodeName, e.publicId, e.systemId,
+                model = Entity(e.nodeName, e.publicId, e.systemId,
                                 e.notationName)
-                entity.actualEncoding = e.actualEncoding
-                entity.encoding = e.encoding
-                entity.version = e.version
-                entity.ownerDocument = newOwnerDocument
-                clone.entities._seq.append(entity)
+                model.actualEncoding = e.actualEncoding
+                model.encoding = e.encoding
+                model.version = e.version
+                model.ownerDocument = newOwnerDocument
+                clone.entities._seq.append(model)
                 if hasattr(e, '_call_user_data_handler'):
-                    e._call_user_data_handler(operation, e, entity)
+                    e._call_user_data_handler(operation, e, model)
     else:
         # Note the cloning of Document and DocumentType nodes is
         # implementation specific.  minidom handles those cases

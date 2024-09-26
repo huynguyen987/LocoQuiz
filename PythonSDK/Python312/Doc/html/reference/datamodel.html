@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="3. Data model" />
+<meta property="og:title" content="3. Data dao" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://docs.python.org/3/reference/datamodel.html" />
 <meta property="og:site_name" content="Python documentation" />
@@ -16,7 +16,7 @@
 <meta property="og:image:height" content="200" />
 <meta name="theme-color" content="#3776ab" />
 
-    <title>3. Data model &#8212; Python 3.12.3 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3. Data dao &#8212; Python 3.12.3 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
     <link rel="stylesheet" type="text/css" href="../_static/pydoctheme.css?v=bb723527" />
@@ -35,7 +35,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="copyright" title="Copyright" href="../copyright.html" />
-    <link rel="next" title="4. Execution model" href="executionmodel.html" />
+    <link rel="next" title="4. Execution dao" href="executionmodel.html" />
     <link rel="prev" title="2. Lexical analysis" href="lexical_analysis.html" />
     <link rel="canonical" href="https://docs.python.org/3/reference/datamodel.html" />
     
@@ -95,7 +95,7 @@
   <div>
     <h3><a href="../contents.html">Table of Contents</a></h3>
     <ul>
-<li><a class="reference internal" href="#">3. Data model</a><ul>
+<li><a class="reference internal" href="#">3. Data dao</a><ul>
 <li><a class="reference internal" href="#objects-values-and-types">3.1. Objects, values and types</a></li>
 <li><a class="reference internal" href="#the-standard-type-hierarchy">3.2. The standard type hierarchy</a><ul>
 <li><a class="reference internal" href="#none">3.2.1. None</a></li>
@@ -211,7 +211,7 @@
   <div>
     <h4>Next topic</h4>
     <p class="topless"><a href="executionmodel.html"
-                          title="next chapter"><span class="section-number">4. </span>Execution model</a></p>
+                          title="next chapter"><span class="section-number">4. </span>Execution dao</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -239,7 +239,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="executionmodel.html" title="4. Execution model"
+          <a href="executionmodel.html" title="4. Execution dao"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="lexical_analysis.html" title="2. Lexical analysis"
@@ -259,7 +259,7 @@
     </li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Python Language Reference</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href=""><span class="section-number">3. </span>Data model</a></li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">3. </span>Data dao</a></li>
                 <li class="right">
                     
 
@@ -290,12 +290,12 @@
           <div class="body" role="main">
             
   <section id="data-model">
-<span id="datamodel"></span><h1><span class="section-number">3. </span>Data model<a class="headerlink" href="#data-model" title="Link to this heading">¶</a></h1>
+<span id="datamodel"></span><h1><span class="section-number">3. </span>Data dao<a class="headerlink" href="#data-model" title="Link to this heading">¶</a></h1>
 <section id="objects-values-and-types">
 <span id="objects"></span><h2><span class="section-number">3.1. </span>Objects, values and types<a class="headerlink" href="#objects-values-and-types" title="Link to this heading">¶</a></h2>
 <p id="index-0"><em class="dfn">Objects</em> are Python’s abstraction for data.  All data in a Python program
 is represented by objects or by relations between objects. (In a sense, and in
-conformance to Von Neumann’s model of a “stored program computer”, code is also
+conformance to Von Neumann’s dao of a “stored program computer”, code is also
 represented by objects.)</p>
 <span class="target" id="index-1"></span><p>Every object has an identity, a type and a value.  An object’s <em>identity</em> never
 changes once it has been created; you may think of it as the object’s address in
@@ -2959,7 +2959,7 @@ returns <code class="xref py py-data docutils literal notranslate"><span class="
 <code class="docutils literal notranslate"><span class="pre">y.__radd__(x)</span></code> are considered, as with the evaluation of <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">y</span></code>. In
 certain situations, augmented assignment can result in unexpected errors (see
 <a class="reference internal" href="../faq/programming.html#faq-augmented-assignment-tuple-error"><span class="std std-ref">Why does a_tuple[i] += [‘item’] raise an exception when the addition works?</span></a>), but this behavior is in fact
-part of the data model.</p>
+part of the data dao.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -3430,7 +3430,7 @@ supported, which is why the reflected method is not called.</p>
   <div>
     <h3><a href="../contents.html">Table of Contents</a></h3>
     <ul>
-<li><a class="reference internal" href="#">3. Data model</a><ul>
+<li><a class="reference internal" href="#">3. Data dao</a><ul>
 <li><a class="reference internal" href="#objects-values-and-types">3.1. Objects, values and types</a></li>
 <li><a class="reference internal" href="#the-standard-type-hierarchy">3.2. The standard type hierarchy</a><ul>
 <li><a class="reference internal" href="#none">3.2.1. None</a></li>
@@ -3546,7 +3546,7 @@ supported, which is why the reflected method is not called.</p>
   <div>
     <h4>Next topic</h4>
     <p class="topless"><a href="executionmodel.html"
-                          title="next chapter"><span class="section-number">4. </span>Execution model</a></p>
+                          title="next chapter"><span class="section-number">4. </span>Execution dao</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -3577,7 +3577,7 @@ supported, which is why the reflected method is not called.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="executionmodel.html" title="4. Execution model"
+          <a href="executionmodel.html" title="4. Execution dao"
              >next</a> |</li>
         <li class="right" >
           <a href="lexical_analysis.html" title="2. Lexical analysis"
@@ -3597,7 +3597,7 @@ supported, which is why the reflected method is not called.</p>
     </li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >The Python Language Reference</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href=""><span class="section-number">3. </span>Data model</a></li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">3. </span>Data dao</a></li>
                 <li class="right">
                     
 

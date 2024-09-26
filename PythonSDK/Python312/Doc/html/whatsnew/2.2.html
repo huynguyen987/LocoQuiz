@@ -232,7 +232,7 @@ to the PEP for a particular new feature.</p>
 </section>
 <section id="peps-252-and-253-type-and-class-changes">
 <h2>PEPs 252 and 253: Type and Class Changes<a class="headerlink" href="#peps-252-and-253-type-and-class-changes" title="Link to this heading">¶</a></h2>
-<p>The largest and most far-reaching changes in Python 2.2 are to Python’s model of
+<p>The largest and most far-reaching changes in Python 2.2 are to Python’s dao of
 objects and classes.  The changes should be backward compatible, so it’s likely
 that your code will continue to run unchanged, but the changes provide some
 amazing new capabilities. Before beginning this, the longest and most
@@ -276,12 +276,12 @@ will now be possible in pure Python, and to my mind that’s all for the better.
 <p>I’m not going to attempt to cover every single corner case and small change that
 were required to make the new features work.  Instead this section will paint
 only the broad strokes.  See section <a class="reference internal" href="#sect-rellinks"><span class="std std-ref">Related Links</span></a>, “Related Links”, for
-further sources of information about Python 2.2’s new object model.</p>
+further sources of information about Python 2.2’s new object dao.</p>
 <section id="old-and-new-classes">
 <h3>Old and New Classes<a class="headerlink" href="#old-and-new-classes" title="Link to this heading">¶</a></h3>
 <p>First, you should know that Python 2.2 really has two kinds of classes: classic
-or old-style classes, and new-style classes.  The old-style class model is
-exactly the same as the class model in earlier versions of Python.  All the new
+or old-style classes, and new-style classes.  The old-style class dao is
+exactly the same as the class dao in earlier versions of Python.  All the new
 features described in this section apply only to new-style classes. This
 divergence isn’t intended to last forever; eventually old-style classes will be
 dropped, possibly in Python 3.0.</p>
@@ -335,7 +335,7 @@ attributes that were lists of names, but often the author of an extension type
 or a class wouldn’t bother to define them.  You could fall back on inspecting
 the <a class="reference internal" href="../library/stdtypes.html#object.__dict__" title="object.__dict__"><code class="xref py py-attr docutils literal notranslate"><span class="pre">__dict__</span></code></a> of an object, but when class inheritance or an arbitrary
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">__getattr__()</span></code> hook were in use this could still be inaccurate.</p>
-<p>The one big idea underlying the new class model is that an API for describing
+<p>The one big idea underlying the new class dao is that an API for describing
 the attributes of an object using <em class="dfn">descriptors</em> has been formalized.
 Descriptors specify the value of an attribute, stating whether it’s a method or
 a field.  With the descriptor API, static methods and class methods become

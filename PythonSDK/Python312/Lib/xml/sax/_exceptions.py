@@ -75,11 +75,11 @@ class SAXParseException(SAXException):
         return self._linenum
 
     def getPublicId(self):
-        "Get the public identifier of the entity where the exception occurred."
+        "Get the public identifier of the model where the exception occurred."
         return self._locator.getPublicId()
 
     def getSystemId(self):
-        "Get the system identifier of the entity where the exception occurred."
+        "Get the system identifier of the model where the exception occurred."
         return self._systemId
 
     def __str__(self):

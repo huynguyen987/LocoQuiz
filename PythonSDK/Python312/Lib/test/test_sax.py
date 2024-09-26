@@ -1019,7 +1019,7 @@ class ExpatReaderTest(XmlTestBase):
 
         def resolveEntity(self, publicId, systemId):
             inpsrc = InputSource()
-            inpsrc.setByteStream(BytesIO(b"<entity/>"))
+            inpsrc.setByteStream(BytesIO(b"<model/>"))
             return inpsrc
 
     def test_expat_entityresolver_enabled(self):
@@ -1036,7 +1036,7 @@ class ExpatReaderTest(XmlTestBase):
         parser.close()
 
         self.assertEqual(result.getvalue(), start +
-                         b"<doc><entity></entity></doc>")
+                         b"<doc><model></model></doc>")
 
     def test_expat_entityresolver_default(self):
         parser = create_parser()

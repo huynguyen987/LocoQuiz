@@ -221,7 +221,7 @@ class Policy(_PolicyBase, metaclass=abc.ABCMeta):
     def header_source_parse(self, sourcelines):
         """Given a list of linesep terminated strings constituting the lines of
         a single header, return the (name, value) tuple that should be stored
-        in the model.  The input lines should retain their terminating linesep
+        in the dao.  The input lines should retain their terminating linesep
         characters.  The lines passed in by the email package may contain
         surrogateescaped binary data.
         """
@@ -230,13 +230,13 @@ class Policy(_PolicyBase, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def header_store_parse(self, name, value):
         """Given the header name and the value provided by the application
-        program, return the (name, value) that should be stored in the model.
+        program, return the (name, value) that should be stored in the dao.
         """
         raise NotImplementedError
 
     @abc.abstractmethod
     def header_fetch_parse(self, name, value):
-        """Given the header name and the value from the model, return the value
+        """Given the header name and the value from the dao, return the value
         to be returned to the application program that is requesting that
         header.  The value passed in by the email package may contain
         surrogateescaped binary data if the lines were parsed by a BytesParser.
@@ -247,7 +247,7 @@ class Policy(_PolicyBase, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def fold(self, name, value):
-        """Given the header name and the value from the model, return a string
+        """Given the header name and the value from the dao, return a string
         containing linesep characters that implement the folding of the header
         according to the policy controls.  The value passed in by the email
         package may contain surrogateescaped binary data if the lines were
@@ -259,7 +259,7 @@ class Policy(_PolicyBase, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def fold_binary(self, name, value):
-        """Given the header name and the value from the model, return binary
+        """Given the header name and the value from the dao, return binary
         data containing linesep characters that implement the folding of the
         header according to the policy controls.  The value passed in by the
         email package may contain surrogateescaped binary data.

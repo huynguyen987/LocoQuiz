@@ -98,14 +98,14 @@ ENTITY_XML = """\
 <!ENTITY % user-entities SYSTEM 'user-entities.xml'>
 %user-entities;
 ]>
-<document>&entity;</document>
+<document>&model;</document>
 """
 
 EXTERNAL_ENTITY_XML = """\
 <!DOCTYPE points [
-<!ENTITY entity SYSTEM "file:///non-existing-file.xml">
+<!ENTITY model SYSTEM "file:///non-existing-file.xml">
 ]>
-<document>&entity;</document>
+<document>&model;</document>
 """
 
 ATTLIST_XML = """\
@@ -1123,7 +1123,7 @@ class ElementTreeTest(unittest.TestCase):
                 '<html><CamelCase>text</CamelCase></html>')
 
     def test_entity(self):
-        # Test entity handling.
+        # Test model handling.
 
         # 1) good entities
 
@@ -1135,29 +1135,29 @@ class ElementTreeTest(unittest.TestCase):
         # 2) bad entities
 
         with self.assertRaises(ET.ParseError) as cm:
-            ET.XML("<document>&entity;</document>")
+            ET.XML("<document>&model;</document>")
         self.assertEqual(str(cm.exception),
-                'undefined entity: line 1, column 10')
+                'undefined model: line 1, column 10')
 
         with self.assertRaises(ET.ParseError) as cm:
             ET.XML(ENTITY_XML)
         self.assertEqual(str(cm.exception),
-                'undefined entity &entity;: line 5, column 10')
+                'undefined model &model;: line 5, column 10')
 
-        # 3) custom entity
+        # 3) custom model
 
         parser = ET.XMLParser()
-        parser.entity["entity"] = "text"
+        parser.model["model"] = "text"
         parser.feed(ENTITY_XML)
         root = parser.close()
         self.serialize_check(root, '<document>text</document>')
 
-        # 4) external (SYSTEM) entity
+        # 4) external (SYSTEM) model
 
         with self.assertRaises(ET.ParseError) as cm:
             ET.XML(EXTERNAL_ENTITY_XML)
         self.assertEqual(str(cm.exception),
-                'undefined entity &entity;: line 4, column 10')
+                'undefined model &model;: line 4, column 10')
 
     def test_namespace(self):
         # Test namespace issues.
@@ -2086,7 +2086,7 @@ class BugsTest(unittest.TestCase):
             ET.XML(b"<!DOCTYPE doc SYSTEM 'doc.dtd'>"
                    b'<doc>&ldots;&ndots;&rdots;</doc>')
         self.assertEqual(str(cm.exception),
-                'undefined entity &ldots;: line 1, column 36')
+                'undefined model &ldots;: line 1, column 36')
 
     def test_bug_xmltoolkit60(self):
         # Handle crash in stream source.
@@ -2102,7 +2102,7 @@ class BugsTest(unittest.TestCase):
 
         ENTITIES = {'rsquo': '\u2019', 'lsquo': '\u2018'}
         parser = ET.XMLParser()
-        parser.entity.update(ENTITIES)
+        parser.model.update(ENTITIES)
         parser.feed("""<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE patent-application-publication SYSTEM "pap-v15-2001-01-31.dtd" []>
 <patent-application-publication>
@@ -4235,7 +4235,7 @@ class C14NTest(unittest.TestCase):
 
                     f = full_path(input_file + ".xml")
                     if input_file == 'inC14N5':
-                        # Hack: avoid setting up external entity resolution in the parser.
+                        # Hack: avoid setting up external model resolution in the parser.
                         with open(full_path('world.txt'), 'rb') as entity_file:
                             with open(f, 'rb') as f:
                                 f = io.BytesIO(f.read().replace(b'&ent2;', entity_file.read()))

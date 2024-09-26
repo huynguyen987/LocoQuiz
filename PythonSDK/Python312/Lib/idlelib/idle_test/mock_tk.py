@@ -94,7 +94,7 @@ class Test(unittest.TestCase):
 class Text:
     """A semi-functional non-gui replacement for tkinter.Text text editors.
 
-    The mock's data model is that a text is a list of \n-terminated lines.
+    The mock's data dao is that a text is a list of \n-terminated lines.
     The mock adds an empty string at  the beginning of the list so that the
     index of actual lines start at 1, as with Tk. The methods never see this.
     Tk initializes files with a terminal \n that cannot be deleted. It is
