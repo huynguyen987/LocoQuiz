@@ -7,29 +7,29 @@ public class Users {
     private String email;
     private int roleId;
     private String createdAt;
-    private String avatarUrl;
-    private String featureFaceUrl;
+    private byte[] avatar;
+    private byte[] featureFace;
 
     //constructor for all fields
-    public Users(int id, String username, String passwordHash, String email, int roleId, String createdAt, String avatarUrl, String featureFaceUrl) {
+    public Users(int id, String username, String passwordHash, String email, int roleId, String createdAt, byte[] avatar, byte[] featureFace) {
         this.id = id;
         this.username = username;
         this.passwordHash = passwordHash;
         this.email = email;
         this.roleId = roleId;
         this.createdAt = createdAt;
-        this.avatarUrl = avatarUrl;
-        this.featureFaceUrl = featureFaceUrl;
+        this.avatar = avatar;
+        this.featureFace = featureFace;
     }
 
     //constructor for all fields except id and created_at
-    public Users(String username, String passwordHash, String email, int roleId, String avatarUrl, String featureFaceUrl) {
+    public Users(String username, String passwordHash, String email, int roleId, byte[] avatarUrl, byte[] featureFaceUrl) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.email = email;
         this.roleId = roleId;
-        this.avatarUrl = avatarUrl;
-        this.featureFaceUrl = featureFaceUrl;
+        this.avatar = avatar;
+        this.featureFace = featureFace;
     }
 
     public Users() {
@@ -59,12 +59,12 @@ public class Users {
         return createdAt;
     }
 
-    public String getAvatarUrl() {
-        return avatarUrl;
+    public byte[] getAvatar() {
+        return avatar;
     }
 
-    public String getFeatureFaceUrl() {
-        return featureFaceUrl;
+    public byte[] getFeatureFace() {
+        return featureFace;
     }
 
     public void setId(int id) {
@@ -91,14 +91,13 @@ public class Users {
         this.createdAt = createdAt;
     }
 
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
+    public void setAvatar(byte[] avatar) {
+        this.avatar = avatar;
     }
 
-    public void setFeatureFaceUrl(String featureFaceUrl) {
-        this.featureFaceUrl = featureFaceUrl;
+    public void setFeatureFace(byte[] featureFace) {
+        this.featureFace = featureFace;
     }
-
     @Override
     public String toString() {
         return "Users{" +
@@ -108,8 +107,6 @@ public class Users {
                 ", email='" + email + '\'' +
                 ", roleId=" + roleId +
                 ", createdAt='" + createdAt + '\'' +
-                ", avatarUrl='" + avatarUrl + '\'' +
-                ", featureFaceUrl='" + featureFaceUrl + '\'' +
                 '}';
     }
 

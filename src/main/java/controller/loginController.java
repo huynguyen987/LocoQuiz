@@ -1,7 +1,9 @@
 package controller;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
+import dao.UsersDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,8 +12,9 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.annotation.WebServlet;
 import Module.*;
 
-import model.User;
-import dao.UserDAO;
+import model.Users;
+import dao.UsersDAO;
+import model.Users;
 
 @WebServlet(name = "loginController", urlPatterns = {"/login"})
 public class loginController extends HttpServlet {
@@ -30,16 +33,23 @@ public class loginController extends HttpServlet {
             ExampleDAO ex = new ExampleDAO();
 
             // Get password hash from DB
-            String user_password_hash = ex.getSingleResult("SELECT password_hash FROM users WHERE username = ?", username);
+            String user_password_hash = ex.getSingleResult("SELECT password FROM users WHERE username = ?", username);
 
             // Get user ID by username and hashed password
-            String user_id_str = ex.getSingleResult("SELECT id FROM users WHERE username = ? AND password_hash = ?", username, hashedPassword);
+            String user_id_str = ex.getSingleResult("SELECT id FROM users WHERE username = ? AND password = ?", username, hashedPassword);
 
             if (user_password_hash != null && user_password_hash.equals(hashedPassword)) {
                 // User authentication successful
                 int user_id = Integer.parseInt(user_id_str);
-                UserDAO userDAO = new UserDAO();
-                User user = userDAO.getUserById(user_id);
+                UsersDAO userDAO = new UsersDAO();
+                Users user = null;
+                try {
+                    user = userDAO.getUsersById(user_id);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
                 session.setAttribute("user", user);
                 response.sendRedirect("index.jsp");
             } else {

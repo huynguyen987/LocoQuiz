@@ -1,22 +1,23 @@
 package controller;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
-import model.User;
+import model.Users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.annotation.WebServlet;
-import dao.UserDAO;
+import dao.UsersDAO;
 import Module.*;
 
 
 @WebServlet(name = "resetPassController", value = "/resetpass")
 public class resetPassController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException, ClassNotFoundException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession(true);
         String service = request.getParameter("service");
@@ -32,7 +33,14 @@ public class resetPassController extends HttpServlet {
                 return;  // Exit the method to prevent further processing
             }
             System.out.println("Email: " + email);
-            User user = new UserDAO().getUserByEmail(email);
+            Users user = null;
+            try {
+                user = new UsersDAO().getUserByEmail(email);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             System.out.println("User: " + user.toString());
             if (user == null) {
                 session.setAttribute("error", "Người dùng không tồn tại.");
@@ -41,7 +49,7 @@ public class resetPassController extends HttpServlet {
             }
             String hashedPassword = HashPassword.hashPassword(password);
             user.setPasswordHash(hashedPassword);
-            boolean updated = new UserDAO().updateUser(user);
+            boolean updated = new UsersDAO().updateUser(user);
             if (updated) {
                 session.setAttribute("success", "Cập nhật mật khẩu thành công.");
                 response.sendRedirect("dangnhap.jsp");
@@ -55,14 +63,26 @@ public class resetPassController extends HttpServlet {
     protected void doGet
             (HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     protected void doPost
             (HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
