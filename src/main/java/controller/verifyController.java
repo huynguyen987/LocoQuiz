@@ -1,9 +1,8 @@
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
-import entity.User;
+import model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

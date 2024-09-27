@@ -4,7 +4,7 @@
 
 # XXX There should be a way to distinguish between PCDATA (parsed
 # character data -- the normal case), RCDATA (replaceable character
-# data -- only char and entity references and end tags are special)
+# data -- only char and model references and end tags are special)
 # and CDATA (character data -- only end tags are special).
 
 
@@ -432,7 +432,7 @@ class HTMLParser(_markupbase.ParserBase):
     def handle_charref(self, name):
         pass
 
-    # Overridable -- handle entity reference
+    # Overridable -- handle model reference
     def handle_entityref(self, name):
         pass
 

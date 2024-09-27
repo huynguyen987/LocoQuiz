@@ -11,17 +11,17 @@ The email package consists of three major components:
         API for creating, querying, and modifying a message.
 
     Parser
-        Takes a sequence of characters or bytes and produces a model of the
+        Takes a sequence of characters or bytes and produces a dao of the
         email message represented by those characters or bytes.
 
     Generator
-        Takes a model and turns it into a sequence of characters or bytes.  The
+        Takes a dao and turns it into a sequence of characters or bytes.  The
         sequence can either be intended for human consumption (a printable
         unicode string) or bytes suitable for transmission over the wire.  In
         the latter case all data is properly encoded using the content transfer
         encodings specified by the relevant RFCs.
 
-Conceptually the package is organized around the model.  The model provides both
+Conceptually the package is organized around the dao.  The dao provides both
 "external" APIs intended for use by application programs using the library,
 and "internal" APIs intended for use by the Parser and Generator components.
 This division is intentionally a bit fuzzy; the API described by this
@@ -48,8 +48,8 @@ be controlled individually to meet specialized application requirements.
 The Model
 ---------
 
-The message model is implemented by the :class:`~email.message.Message` class.
-The model divides a message into the two fundamental parts discussed by the
+The message dao is implemented by the :class:`~email.message.Message` class.
+The dao divides a message into the two fundamental parts discussed by the
 RFC: the header section and the body.  The `Message` object acts as a
 pseudo-dictionary of named headers.  Its dictionary interface provides
 convenient access to individual headers by name.  However, all headers are kept
@@ -80,7 +80,7 @@ The general lifecycle of a message is:
 
     Finalization
         The Model is converted into a unicode or binary stream,
-        or the model is discarded.
+        or the dao is discarded.
 
 
 
@@ -91,22 +91,22 @@ One of the major controls exerted by the Policy is the management of headers
 during the `Message` lifecycle.  Most applications don't need to be aware of
 this.
 
-A header enters the model in one of two ways: via a Parser, or by being set to
+A header enters the dao in one of two ways: via a Parser, or by being set to
 a specific value by an application program after the Model already exists.
-Similarly, a header exits the model in one of two ways: by being serialized by
+Similarly, a header exits the dao in one of two ways: by being serialized by
 a Generator, or by being retrieved from a Model by an application program.  The
 Policy object provides hooks for all four of these pathways.
 
-The model storage for headers is a list of (name, value) tuples.
+The dao storage for headers is a list of (name, value) tuples.
 
 The Parser identifies headers during parsing, and passes them to the
 :meth:`~email.policy.Policy.header_source_parse` method of the Policy.  The
-result of that method is the (name, value) tuple to be stored in the model.
+result of that method is the (name, value) tuple to be stored in the dao.
 
 When an application program supplies a header value (for example, through the
 `Message` object `__setitem__` interface), the name and the value are passed to
 the :meth:`~email.policy.Policy.header_store_parse` method of the Policy, which
-returns the (name, value) tuple to be stored in the model.
+returns the (name, value) tuple to be stored in the dao.
 
 When an application program retrieves a header (through any of the dict or list
 interfaces of `Message`), the name and value are passed to the
@@ -134,7 +134,7 @@ non-ASCII characters that either have no indicated character set or are not
 valid characters in the indicated character set.
 
 Since email messages are *primarily* text data, and operations on message data
-are primarily text operations (except for binary payloads of course), the model
+are primarily text operations (except for binary payloads of course), the dao
 stores all text data as unicode strings.  Un-decodable binary inside text
 data is handled by using the `surrogateescape` error handler of the ASCII
 codec.  As with the binary filenames the error handler was introduced to

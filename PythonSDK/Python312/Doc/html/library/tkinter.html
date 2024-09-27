@@ -106,7 +106,7 @@
 <li><a class="reference internal" href="#navigating-the-tcl-tk-reference-manual">Navigating the Tcl/Tk Reference Manual</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#threading-model">Threading model</a></li>
+<li><a class="reference internal" href="#threading-model">Threading dao</a></li>
 <li><a class="reference internal" href="#handy-reference">Handy Reference</a><ul>
 <li><a class="reference internal" href="#setting-options">Setting Options</a></li>
 <li><a class="reference internal" href="#the-packer">The Packer</a></li>
@@ -305,9 +305,9 @@ create and manage one or more instances of a Tcl interpreter, run Tcl
 commands and scripts in those instances, and add custom commands
 implemented in either Tcl or C. Each interpreter has an event queue,
 and there are facilities to send events to it and process them.
-Unlike Python, Tcl’s execution model is designed around cooperative
+Unlike Python, Tcl’s execution dao is designed around cooperative
 multitasking, and Tkinter bridges this difference
-(see <a class="reference internal" href="#threading-model">Threading model</a> for details).</p>
+(see <a class="reference internal" href="#threading-model">Threading dao</a> for details).</p>
 </dd>
 <dt>Tk</dt><dd><p>Tk is a <a class="reference external" href="https://wiki.tcl-lang.org/37432">Tcl package</a> implemented in C
 that adds custom commands to create and manipulate GUI widgets. Each
@@ -661,7 +661,7 @@ inherit from).</p>
 </section>
 </section>
 <section id="threading-model">
-<h2>Threading model<a class="headerlink" href="#threading-model" title="Link to this heading">¶</a></h2>
+<h2>Threading dao<a class="headerlink" href="#threading-model" title="Link to this heading">¶</a></h2>
 <p>Python and Tcl/Tk have very different threading models, which <a class="reference internal" href="#module-tkinter" title="tkinter: Interface to Tcl/Tk for graphical user interfaces"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tkinter</span></code></a>
 tries to bridge. If you use threads, you may need to be aware of this.</p>
 <p>A Python interpreter may have many threads associated with it. In Tcl, multiple
@@ -1198,7 +1198,7 @@ The callback is called as follows:</p>
 <li><a class="reference internal" href="#navigating-the-tcl-tk-reference-manual">Navigating the Tcl/Tk Reference Manual</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#threading-model">Threading model</a></li>
+<li><a class="reference internal" href="#threading-model">Threading dao</a></li>
 <li><a class="reference internal" href="#handy-reference">Handy Reference</a><ul>
 <li><a class="reference internal" href="#setting-options">Setting Options</a></li>
 <li><a class="reference internal" href="#the-packer">The Packer</a></li>

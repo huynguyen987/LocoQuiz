@@ -78,7 +78,7 @@ class RPCServer(socketserver.TCPServer):
         socketserver.TCPServer.__init__(self, addr, handlerclass)
 
     def server_bind(self):
-        "Override TCPServer method, no bind() phase for connecting entity"
+        "Override TCPServer method, no bind() phase for connecting model"
         pass
 
     def server_activate(self):

@@ -66,8 +66,8 @@ data = b'''\
 <!ATTLIST root attr1 CDATA #REQUIRED attr2 CDATA #IMPLIED>
 <!NOTATION notation SYSTEM "notation.jpeg">
 <!ENTITY acirc "&#226;">
-<!ENTITY external_entity SYSTEM "entity.file">
-<!ENTITY unparsed_entity SYSTEM "entity.file" NDATA notation>
+<!ENTITY external_entity SYSTEM "model.file">
+<!ENTITY unparsed_entity SYSTEM "model.file" NDATA notation>
 %unparsed_entity;
 ]>
 
@@ -125,7 +125,7 @@ class ParseTest(unittest.TestCase):
 
         def UnparsedEntityDeclHandler(self, *args):
             entityName, base, systemId, publicId, notationName = args
-            self.out.append('Unparsed entity decl: %s' %(args,))
+            self.out.append('Unparsed model decl: %s' %(args,))
 
         def NotStandaloneHandler(self):
             self.out.append('Not standalone')
@@ -133,7 +133,7 @@ class ParseTest(unittest.TestCase):
 
         def ExternalEntityRefHandler(self, *args):
             context, base, sysId, pubId = args
-            self.out.append('External entity ref: %s' %(args[1:],))
+            self.out.append('External model ref: %s' %(args[1:],))
             return 1
 
         def StartDoctypeDeclHandler(self, *args):
@@ -161,7 +161,7 @@ class ParseTest(unittest.TestCase):
             return 1
 
         def SkippedEntityHandler(self, *args):
-            self.out.append(("Skipped entity", args))
+            self.out.append(("Skipped model", args))
             return 1
 
         def DefaultHandler(self, userData):
@@ -205,8 +205,8 @@ class ParseTest(unittest.TestCase):
             "Notation declared: ('notation', None, 'notation.jpeg', None)",
             ('Entity declaration', ('acirc', 0, '\xe2', None, None, None, None)),
             ('Entity declaration', ('external_entity', 0, None, None,
-                'entity.file', None, None)),
-            "Unparsed entity decl: ('unparsed_entity', None, 'entity.file', None, 'notation')",
+                'model.file', None, None)),
+            "Unparsed model decl: ('unparsed_entity', None, 'model.file', None, 'notation')",
             "Not standalone",
             "End doctype",
             "Start element: 'root' {'attr1': 'value1', 'attr2': 'value2\u1f40'}",
@@ -220,8 +220,8 @@ class ParseTest(unittest.TestCase):
             "Character data: 'contents of CDATA section'",
             'End of CDATA section',
             "End element: 'sub2'",
-            "External entity ref: (None, 'entity.file', None)",
-            ('Skipped entity', ('skipped_entity', 0)),
+            "External model ref: (None, 'model.file', None)",
+            ('Skipped model', ('skipped_entity', 0)),
             "Character data: '\xb5'",
             "End element: 'root'",
         ]
@@ -713,7 +713,7 @@ class ForeignDTDTests(unittest.TestCase):
     def test_use_foreign_dtd(self):
         """
         If UseForeignDTD is passed True and a document without an external
-        entity reference is parsed, ExternalEntityRefHandler is first called
+        model reference is parsed, ExternalEntityRefHandler is first called
         with None for the public and system ids.
         """
         handler_call_args = []
@@ -741,7 +741,7 @@ class ForeignDTDTests(unittest.TestCase):
     def test_ignore_use_foreign_dtd(self):
         """
         If UseForeignDTD is passed True and a document with an external
-        entity reference is parsed, ExternalEntityRefHandler is called with
+        model reference is parsed, ExternalEntityRefHandler is called with
         the public and system ids from the document.
         """
         handler_call_args = []

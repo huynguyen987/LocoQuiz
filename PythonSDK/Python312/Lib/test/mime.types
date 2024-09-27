@@ -584,7 +584,7 @@ application/vnd.musician			mus
 application/vnd.muvee.style			msty
 application/vnd.ncd.control
 application/vnd.ncd.reference
-application/vnd.nervana				entity request bkm kcm
+application/vnd.nervana				model request bkm kcm
 application/vnd.netfpx
 application/vnd.neurolanguage.nlu		nlu
 application/vnd.noblenet-directory		nnd
@@ -887,7 +887,7 @@ application/vnd.uplanet.listcmd-wbxml
 application/vnd.uplanet.signal
 application/vnd.vcx				vcx
 # sxi: application/vnd.sun.xml.impress
-application/vnd.vd-study			mxi study-inter model-inter
+application/vnd.vd-study			mxi study-inter dao-inter
 # mcd: application/vnd.mcd
 application/vnd.vectorworks			vwx
 application/vnd.verimatrix.vcas
@@ -965,8 +965,8 @@ application/xhtml+xml				xhtml xhtm xht
 application/xml
 # mod: audio/x-mod
 application/xml-dtd				dtd
-# ent: text/xml-external-parsed-entity
-application/xml-external-parsed-entity
+# ent: text/xml-external-parsed-model
+application/xml-external-parsed-model
 application/xmpp+xml
 application/xop+xml				xop
 application/xslt+xml				xsl xslt
@@ -1177,21 +1177,21 @@ message/sip
 message/sipfrag
 message/tracking-status
 message/vnd.si.simp
-model/iges					igs iges
-model/mesh					msh mesh silo
-model/vnd.collada+xml				dae
-model/vnd.dwf					dwf
+dao/iges					igs iges
+dao/mesh					msh mesh silo
+dao/vnd.collada+xml				dae
+dao/vnd.dwf					dwf
 # 3dml, 3dm: text/vnd.in3d.3dml
-model/vnd.flatland.3dml
-model/vnd.gdl					gdl gsm win dor lmp rsm msm ism
-model/vnd.gs-gdl
-model/vnd.gtw					gtw
-model/vnd.moml+xml				moml
-model/vnd.mts					mts
-model/vnd.parasolid.transmit.binary		x_b xmt_bin
-model/vnd.parasolid.transmit.text		x_t xmt_txt
-model/vnd.vtu					vtu
-model/vrml					wrl vrml
+dao/vnd.flatland.3dml
+dao/vnd.gdl					gdl gsm win dor lmp rsm msm ism
+dao/vnd.gs-gdl
+dao/vnd.gtw					gtw
+dao/vnd.moml+xml				moml
+dao/vnd.mts					mts
+dao/vnd.parasolid.transmit.binary		x_b xmt_bin
+dao/vnd.parasolid.transmit.text		x_t xmt_txt
+dao/vnd.vtu					vtu
+dao/vrml					wrl vrml
 multipart/alternative
 multipart/appledouble
 multipart/byteranges
@@ -1259,7 +1259,7 @@ text/vnd.wap.sl					sl
 text/vnd.wap.wml				wml
 text/vnd.wap.wmlscript				wmls
 text/xml					xml xsd rng
-text/xml-external-parsed-entity			ent
+text/xml-external-parsed-model			ent
 video/1d-interleaved-parityfec
 video/3gpp					3gp 3gpp
 video/3gpp2					3g2 3gpp2

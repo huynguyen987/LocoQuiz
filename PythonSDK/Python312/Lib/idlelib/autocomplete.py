@@ -191,11 +191,11 @@ class AutoComplete:
                         smalll = [s for s in bigl if s[:1] != '_']
                 else:
                     try:
-                        entity = self.get_entity(what)
-                        bigl = dir(entity)
+                        model = self.get_entity(what)
+                        bigl = dir(model)
                         bigl.sort()
                         if "__all__" in bigl:
-                            smalll = sorted(entity.__all__)
+                            smalll = sorted(model.__all__)
                         else:
                             smalll = [s for s in bigl if s[:1] != '_']
                     except:

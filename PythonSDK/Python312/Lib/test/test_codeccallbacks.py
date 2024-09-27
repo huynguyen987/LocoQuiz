@@ -94,7 +94,7 @@ class CodecCallbackTest(unittest.TestCase):
         )
 
     def test_xmlcharnamereplace(self):
-        # This time use a named character entity for unencodable
+        # This time use a named character model for unencodable
         # characters, if one is available.
 
         def xmlcharnamereplace(exc):

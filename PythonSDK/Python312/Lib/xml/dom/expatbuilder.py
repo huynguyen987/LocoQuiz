@@ -48,7 +48,7 @@ theDOMImplementation = minidom.getDOMImplementation()
 _typeinfo_map = {
     "CDATA":    minidom.TypeInfo(None, "cdata"),
     "ENUM":     minidom.TypeInfo(None, "enumeration"),
-    "ENTITY":   minidom.TypeInfo(None, "entity"),
+    "ENTITY":   minidom.TypeInfo(None, "model"),
     "ENTITIES": minidom.TypeInfo(None, "entities"),
     "ID":       minidom.TypeInfo(None, "id"),
     "IDREF":    minidom.TypeInfo(None, "idref"),
@@ -60,10 +60,10 @@ _typeinfo_map = {
 class ElementInfo(object):
     __slots__ = '_attr_info', '_model', 'tagName'
 
-    def __init__(self, tagName, model=None):
+    def __init__(self, tagName, dao=None):
         self.tagName = tagName
         self._attr_info = []
-        self._model = model
+        self._model = dao
 
     def __getstate__(self):
         return self._attr_info, self._model, self.tagName
@@ -87,14 +87,14 @@ class ElementInfo(object):
     def isElementContent(self):
         if self._model:
             type = self._model[0]
-            return type not in (expat.model.XML_CTYPE_ANY,
-                                expat.model.XML_CTYPE_MIXED)
+            return type not in (expat.dao.XML_CTYPE_ANY,
+                                expat.dao.XML_CTYPE_MIXED)
         else:
             return False
 
     def isEmpty(self):
         if self._model:
-            return self._model[0] == expat.model.XML_CTYPE_EMPTY
+            return self._model[0] == expat.dao.XML_CTYPE_EMPTY
         else:
             return False
 
@@ -309,7 +309,7 @@ class ExpatBuilder:
         node = self.document._create_entity(entityName, publicId,
                                             systemId, notationName)
         if value is not None:
-            # internal entity
+            # internal model
             # node *should* be readonly, but we'll cheat
             child = self.document.createTextNode(value)
             node.childNodes.append(child)
@@ -419,13 +419,13 @@ class ExpatBuilder:
         for child in L:
             node.removeChild(child)
 
-    def element_decl_handler(self, name, model):
+    def element_decl_handler(self, name, dao):
         info = self._elem_info.get(name)
         if info is None:
-            self._elem_info[name] = ElementInfo(name, model)
+            self._elem_info[name] = ElementInfo(name, dao)
         else:
             assert info._model is None
-            info._model = model
+            info._model = dao
 
     def attlist_decl_handler(self, elem, name, type, default, required):
         info = self._elem_info.get(elem)
@@ -663,19 +663,19 @@ class FragmentBuilder(ExpatBuilder):
                 else:
                     s = '%s SYSTEM "%s">' % (s, notation.systemId)
             for i in range(doctype.entities.length):
-                entity = doctype.entities.item(i)
+                model = doctype.entities.item(i)
                 if s:
                     s = s + "\n  "
-                s = "%s<!ENTITY %s" % (s, entity.nodeName)
-                if entity.publicId:
+                s = "%s<!ENTITY %s" % (s, model.nodeName)
+                if model.publicId:
                     s = '%s PUBLIC "%s"\n             "%s"' \
-                        % (s, entity.publicId, entity.systemId)
-                elif entity.systemId:
-                    s = '%s SYSTEM "%s"' % (s, entity.systemId)
+                        % (s, model.publicId, model.systemId)
+                elif model.systemId:
+                    s = '%s SYSTEM "%s"' % (s, model.systemId)
                 else:
-                    s = '%s "%s"' % (s, entity.firstChild.data)
-                if entity.notationName:
-                    s = "%s NOTATION %s" % (s, entity.notationName)
+                    s = '%s "%s"' % (s, model.firstChild.data)
+                if model.notationName:
+                    s = "%s NOTATION %s" % (s, model.notationName)
                 s = s + ">"
         return s
 

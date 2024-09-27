@@ -255,7 +255,7 @@ the various modules are vulnerable to them.</p>
 <td><p><strong>Vulnerable</strong> (1)</p></td>
 <td><p><strong>Vulnerable</strong> (1)</p></td>
 </tr>
-<tr class="row-even"><td><p>external entity expansion</p></td>
+<tr class="row-even"><td><p>external model expansion</p></td>
 <td><p>Safe (5)</p></td>
 <td><p>Safe (2)</p></td>
 <td><p>Safe (3)</p></td>
@@ -291,9 +291,9 @@ the various modules are vulnerable to them.</p>
 potential reliance on system-provided libraries. Check
 <code class="xref py py-const docutils literal notranslate"><span class="pre">pyexpat.EXPAT_VERSION</span></code>.</p></li>
 <li><p><a class="reference internal" href="xml.etree.elementtree.html#module-xml.etree.ElementTree" title="xml.etree.ElementTree: Implementation of the ElementTree API."><code class="xref py py-mod docutils literal notranslate"><span class="pre">xml.etree.ElementTree</span></code></a> doesn’t expand external entities and raises a
-<a class="reference internal" href="xml.etree.elementtree.html#xml.etree.ElementTree.ParseError" title="xml.etree.ElementTree.ParseError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ParseError</span></code></a> when an entity occurs.</p></li>
+<a class="reference internal" href="xml.etree.elementtree.html#xml.etree.ElementTree.ParseError" title="xml.etree.ElementTree.ParseError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ParseError</span></code></a> when an model occurs.</p></li>
 <li><p><a class="reference internal" href="xml.dom.minidom.html#module-xml.dom.minidom" title="xml.dom.minidom: Minimal Document Object Model (DOM) implementation."><code class="xref py py-mod docutils literal notranslate"><span class="pre">xml.dom.minidom</span></code></a> doesn’t expand external entities and simply returns
-the unexpanded entity verbatim.</p></li>
+the unexpanded model verbatim.</p></li>
 <li><p><a class="reference internal" href="xmlrpc.client.html#module-xmlrpc.client" title="xmlrpc.client: XML-RPC client access."><code class="xref py py-mod docutils literal notranslate"><span class="pre">xmlrpc.client</span></code></a> doesn’t expand external entities and omits them.</p></li>
 <li><p>Since Python 3.7.1, external general entities are no longer processed by
 default.</p></li>
@@ -304,25 +304,25 @@ potential reliance on system-provided libraries. Check
 <code class="xref py py-const docutils literal notranslate"><span class="pre">pyexpat.EXPAT_VERSION</span></code>.</p></li>
 </ol>
 <dl class="simple">
-<dt>billion laughs / exponential entity expansion</dt><dd><p>The <a class="reference external" href="https://en.wikipedia.org/wiki/Billion_laughs">Billion Laughs</a> attack – also known as exponential entity expansion –
-uses multiple levels of nested entities. Each entity refers to another entity
-several times, and the final entity definition contains a small string.
+<dt>billion laughs / exponential model expansion</dt><dd><p>The <a class="reference external" href="https://en.wikipedia.org/wiki/Billion_laughs">Billion Laughs</a> attack – also known as exponential model expansion –
+uses multiple levels of nested entities. Each model refers to another model
+several times, and the final model definition contains a small string.
 The exponential expansion results in several gigabytes of text and
 consumes lots of memory and CPU time.</p>
 </dd>
-<dt>quadratic blowup entity expansion</dt><dd><p>A quadratic blowup attack is similar to a <a class="reference external" href="https://en.wikipedia.org/wiki/Billion_laughs">Billion Laughs</a> attack; it abuses
-entity expansion, too. Instead of nested entities it repeats one large entity
+<dt>quadratic blowup model expansion</dt><dd><p>A quadratic blowup attack is similar to a <a class="reference external" href="https://en.wikipedia.org/wiki/Billion_laughs">Billion Laughs</a> attack; it abuses
+model expansion, too. Instead of nested entities it repeats one large model
 with a couple of thousand chars over and over again. The attack isn’t as
 efficient as the exponential case but it avoids triggering parser countermeasures
 that forbid deeply nested entities.</p>
 </dd>
-<dt>external entity expansion</dt><dd><p>Entity declarations can contain more than just text for replacement. They can
+<dt>external model expansion</dt><dd><p>Entity declarations can contain more than just text for replacement. They can
 also point to external resources or local files. The XML
 parser accesses the resource and embeds the content into the XML document.</p>
 </dd>
 <dt><a class="reference external" href="https://en.wikipedia.org/wiki/Document_type_definition">DTD</a> retrieval</dt><dd><p>Some XML libraries like Python’s <a class="reference internal" href="xml.dom.pulldom.html#module-xml.dom.pulldom" title="xml.dom.pulldom: Support for building partial DOM trees from SAX events."><code class="xref py py-mod docutils literal notranslate"><span class="pre">xml.dom.pulldom</span></code></a> retrieve document type
 definitions from remote or local locations. The feature has similar
-implications as the external entity expansion issue.</p>
+implications as the external model expansion issue.</p>
 </dd>
 <dt>decompression bomb</dt><dd><p>Decompression bombs (aka <a class="reference external" href="https://en.wikipedia.org/wiki/Zip_bomb">ZIP bomb</a>) apply to all XML libraries
 that can parse compressed XML streams such as gzipped HTTP streams or

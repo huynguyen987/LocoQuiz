@@ -113,12 +113,12 @@ TESTDATA={
 XML_PLIST_WITH_ENTITY=b'''\
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd" [
-   <!ENTITY entity "replacement text">
+   <!ENTITY model "replacement text">
   ]>
 <plist version="1.0">
   <dict>
     <key>A</key>
-    <string>&entity;</string>
+    <string>&model;</string>
   </dict>
 </plist>
 '''
@@ -835,7 +835,7 @@ class TestPlistlib(unittest.TestCase):
 
     def test_xml_plist_with_entity_decl(self):
         with self.assertRaisesRegex(plistlib.InvalidFileException,
-                                    "XML entity declarations are not supported"):
+                                    "XML model declarations are not supported"):
             plistlib.loads(XML_PLIST_WITH_ENTITY, fmt=plistlib.FMT_XML)
 
 

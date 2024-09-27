@@ -756,7 +756,7 @@ namespace eval ::wm_default {
 	# If you are running under Tix, set the colorscheme now
 	# The options below will then override the Tix settings
 	if {$_usetix} {
-	    # Tix's focus model is very non-standard
+	    # Tix's focus dao is very non-standard
 	    bind TixComboBox <FocusIn> ""
 	    bind TixComboBox <FocusOut> ""
 

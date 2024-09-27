@@ -193,13 +193,13 @@ and <span class="target" id="index-7"></span><a class="rfc reference external" h
 <p>The overall structure of the email package can be divided into three major
 components, plus a fourth component that controls the behavior of the other
 components.</p>
-<p>The central component of the package is an “object model” that represents email
+<p>The central component of the package is an “object dao” that represents email
 messages.  An application interacts with the package primarily through the
-object model interface defined in the <a class="reference internal" href="email.message.html#module-email.message" title="email.message: The base class representing email messages."><code class="xref py py-mod docutils literal notranslate"><span class="pre">message</span></code></a> sub-module.  The
+object dao interface defined in the <a class="reference internal" href="email.message.html#module-email.message" title="email.message: The base class representing email messages."><code class="xref py py-mod docutils literal notranslate"><span class="pre">message</span></code></a> sub-module.  The
 application can use this API to ask questions about an existing email, to
 construct a new email, or to add or remove email subcomponents that themselves
-use the same object model interface.  That is, following the nature of email
-messages and their MIME subcomponents, the email object model is a tree
+use the same object dao interface.  That is, following the nature of email
+messages and their MIME subcomponents, the email object dao is a tree
 structure of objects that all provide the <a class="reference internal" href="email.message.html#email.message.EmailMessage" title="email.message.EmailMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmailMessage</span></code></a>
 API.</p>
 <p>The other two major components of the package are the <a class="reference internal" href="email.parser.html#module-email.parser" title="email.parser: Parse flat text email messages to produce a message object structure."><code class="xref py py-mod docutils literal notranslate"><span class="pre">parser</span></code></a> and
@@ -234,7 +234,7 @@ high level structure in question, and not the details of how those structures
 are represented.  Since MIME content types are used widely in modern internet
 software (not just email), this will be a familiar concept to many programmers.</p>
 <p>The following sections describe the functionality of the <a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages."><code class="xref py py-mod docutils literal notranslate"><span class="pre">email</span></code></a> package.
-We start with the <a class="reference internal" href="email.message.html#module-email.message" title="email.message: The base class representing email messages."><code class="xref py py-mod docutils literal notranslate"><span class="pre">message</span></code></a> object model, which is the primary
+We start with the <a class="reference internal" href="email.message.html#module-email.message" title="email.message: The base class representing email messages."><code class="xref py py-mod docutils literal notranslate"><span class="pre">message</span></code></a> object dao, which is the primary
 interface an application will use, and follow that with the
 <a class="reference internal" href="email.parser.html#module-email.parser" title="email.parser: Parse flat text email messages to produce a message object structure."><code class="xref py py-mod docutils literal notranslate"><span class="pre">parser</span></code></a> and <a class="reference internal" href="email.generator.html#module-email.generator" title="email.generator: Generate flat text email messages from a message structure."><code class="xref py py-mod docutils literal notranslate"><span class="pre">generator</span></code></a> components.  Then we cover the
 <a class="reference internal" href="email.policy.html#module-email.policy" title="email.policy: Controlling the parsing and generating of messages"><code class="xref py py-mod docutils literal notranslate"><span class="pre">policy</span></code></a> controls, which completes the treatment of the main

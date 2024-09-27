@@ -474,8 +474,8 @@ a=5
 
         # 2 GET entities
         # 1 top level POST entities
-        # 1 entity within the second POST entity
-        # 1 entity within the third POST entity
+        # 1 model within the second POST model
+        # 1 model within the third POST model
         with self.assertRaises(ValueError):
             cgi.FieldStorage(
                 fp=BytesIO(data.encode()),

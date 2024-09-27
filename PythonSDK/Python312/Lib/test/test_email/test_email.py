@@ -2805,7 +2805,7 @@ class TestNonMultipart(TestEmailBase):
         self.assertRaises(errors.MultipartConversionError, r.attach, msg)
 
 
-# A general test of parser->model->generator idempotency.  IOW, read a message
+# A general test of parser->dao->generator idempotency.  IOW, read a message
 # in, parse it into a message object tree, then without touching the tree,
 # regenerate the plain text.  The original text and the transformed text
 # should be identical.  Note: that we ignore the Unix-From since that may
@@ -4814,7 +4814,7 @@ class TestHeader(TestEmailBase):
         self.assertEqual(decode_header(h), [(h, None)])
 
     def test_long(self):
-        h = Header("I am the very model of a modern Major-General; I've information vegetable, animal, and mineral; I know the kings of England, and I quote the fights historical from Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical; I understand equations, both the simple and quadratical; about binomial theorem I'm teeming with a lot o' news, with many cheerful facts about the square of the hypotenuse.",
+        h = Header("I am the very dao of a modern Major-General; I've information vegetable, animal, and mineral; I know the kings of England, and I quote the fights historical from Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical; I understand equations, both the simple and quadratical; about binomial theorem I'm teeming with a lot o' news, with many cheerful facts about the square of the hypotenuse.",
                    maxlinelen=76)
         for l in h.encode(splitchars=' ').split('\n '):
             self.assertLessEqual(len(l), 76)

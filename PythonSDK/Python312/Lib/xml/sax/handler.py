@@ -162,7 +162,7 @@ class ContentHandler:
         character data. SAX parsers may return all contiguous
         character data in a single chunk, or they may split it into
         several chunks; however, all of the characters in any single
-        event must come from the same external entity so that the
+        event must come from the same external model so that the
         Locator provides useful information."""
 
     def ignorableWhitespace(self, whitespace):
@@ -176,7 +176,7 @@ class ContentHandler:
         SAX parsers may return all contiguous whitespace in a single
         chunk, or they may split it into several chunks; however, all
         of the characters in any single event must come from the same
-        external entity, so that the Locator provides useful
+        external model, so that the Locator provides useful
         information."""
 
     def processingInstruction(self, target, data):
@@ -191,12 +191,12 @@ class ContentHandler:
         using this method."""
 
     def skippedEntity(self, name):
-        """Receive notification of a skipped entity.
+        """Receive notification of a skipped model.
 
-        The Parser will invoke this method once for each entity
+        The Parser will invoke this method once for each model
         skipped. Non-validating processors may skip entities if they
         have not seen the declarations (because, for example, the
-        entity was declared in an external DTD subset). All processors
+        model was declared in an external DTD subset). All processors
         may skip external entities, depending on the values of the
         http://xml.org/sax/features/external-general-entities and the
         http://xml.org/sax/features/external-parameter-entities
@@ -215,7 +215,7 @@ class DTDHandler:
         "Handle a notation declaration event."
 
     def unparsedEntityDecl(self, name, publicId, systemId, ndata):
-        "Handle an unparsed entity declaration event."
+        "Handle an unparsed model declaration event."
 
 
 # ===== ENTITYRESOLVER =====
@@ -228,7 +228,7 @@ class EntityResolver:
     this interface with the default behaviour."""
 
     def resolveEntity(self, publicId, systemId):
-        """Resolve the system identifier of an entity and return either
+        """Resolve the system identifier of an model and return either
         the system identifier to read from as a string, or an InputSource
         to read from."""
         return systemId

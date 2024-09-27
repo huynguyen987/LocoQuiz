@@ -231,7 +231,7 @@
 on July 29, 2003.</p>
 <p>The main themes for Python 2.3 are polishing some of the features added in 2.2,
 adding various small but useful enhancements to the core language, and expanding
-the standard library.  The new object model introduced in the previous version
+the standard library.  The new object dao introduced in the previous version
 has benefited from 18 months of bugfixes and from optimization efforts that have
 improved the performance of new-style classes.  A few new built-in functions
 have been added such as <a class="reference internal" href="../library/functions.html#sum" title="sum"><code class="xref py py-func docutils literal notranslate"><span class="pre">sum()</span></code></a> and <a class="reference internal" href="../library/functions.html#enumerate" title="enumerate"><code class="xref py py-func docutils literal notranslate"><span class="pre">enumerate()</span></code></a>.  The <a class="reference internal" href="../reference/expressions.html#in"><code class="xref std std-keyword docutils literal notranslate"><span class="pre">in</span></code></a>
@@ -771,7 +771,7 @@ either “strict” (raising <a class="reference internal" href="../library/exce
 character), or “replace” (using a question mark in the output string), with
 “strict” being the default behavior. It may be desirable to specify alternative
 processing of such errors, such as inserting an XML character reference or HTML
-entity reference into the converted string.</p>
+model reference into the converted string.</p>
 <p>Python now has a flexible framework to add different processing strategies.  New
 error handlers can be added with <a class="reference internal" href="../library/codecs.html#codecs.register_error" title="codecs.register_error"><code class="xref py py-func docutils literal notranslate"><span class="pre">codecs.register_error()</span></code></a>, and codecs then
 can access the error handler with <a class="reference internal" href="../library/codecs.html#codecs.lookup_error" title="codecs.lookup_error"><code class="xref py py-func docutils literal notranslate"><span class="pre">codecs.lookup_error()</span></code></a>. An equivalent C
@@ -1598,7 +1598,7 @@ by using the <code class="xref py py-func docutils literal notranslate"><span cl
 <li><p>The <code class="xref py py-mod docutils literal notranslate"><span class="pre">Tix</span></code> module has received various bug fixes and updates for the
 current version of the Tix package.</p></li>
 <li><p>The <code class="xref py py-mod docutils literal notranslate"><span class="pre">Tkinter</span></code> module now works with a thread-enabled  version of Tcl.
-Tcl’s threading model requires that widgets only be accessed from the thread in
+Tcl’s threading dao requires that widgets only be accessed from the thread in
 which they’re created; accesses from another thread can cause Tcl to panic.  For
 certain Tcl interfaces, <code class="xref py py-mod docutils literal notranslate"><span class="pre">Tkinter</span></code> will now automatically avoid this  when a
 widget is accessed from a different thread by marshalling a command, passing it

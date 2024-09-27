@@ -330,14 +330,14 @@ or <code class="docutils literal notranslate"><span class="pre">None</span></cod
 <dt class="sig sig-object py" id="xml.parsers.expat.xmlparser.GetInputContext">
 <span class="sig-prename descclassname"><span class="pre">xmlparser.</span></span><span class="sig-name descname"><span class="pre">GetInputContext</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xml.parsers.expat.xmlparser.GetInputContext" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the input data that generated the current event as a string. The data is
-in the encoding of the entity which contains the text. When called while an
+in the encoding of the model which contains the text. When called while an
 event handler is not active, the return value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="xml.parsers.expat.xmlparser.ExternalEntityParserCreate">
 <span class="sig-prename descclassname"><span class="pre">xmlparser.</span></span><span class="sig-name descname"><span class="pre">ExternalEntityParserCreate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="optional">[</span>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span></em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#xml.parsers.expat.xmlparser.ExternalEntityParserCreate" title="Link to this definition">¶</a></dt>
-<dd><p>Create a “child” parser which can be used to parse an external parsed entity
+<dd><p>Create a “child” parser which can be used to parse an external parsed model
 referred to by content parsed by the parent parser.  The <em>context</em> parameter
 should be the string passed to the <a class="reference internal" href="#xml.parsers.expat.xmlparser.ExternalEntityRefHandler" title="xml.parsers.expat.xmlparser.ExternalEntityRefHandler"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ExternalEntityRefHandler()</span></code></a> handler
 function, described below. The child parser is created with the
@@ -555,9 +555,9 @@ Expat version 1.2 or newer.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="xml.parsers.expat.xmlparser.ElementDeclHandler">
-<span class="sig-prename descclassname"><span class="pre">xmlparser.</span></span><span class="sig-name descname"><span class="pre">ElementDeclHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xml.parsers.expat.xmlparser.ElementDeclHandler" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">xmlparser.</span></span><span class="sig-name descname"><span class="pre">ElementDeclHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dao</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xml.parsers.expat.xmlparser.ElementDeclHandler" title="Link to this definition">¶</a></dt>
 <dd><p>Called once for each element type declaration.  <em>name</em> is the name of the
-element type, and <em>model</em> is a representation of the content model.</p>
+element type, and <em>dao</em> is a representation of the content dao.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -613,7 +613,7 @@ to <code class="docutils literal notranslate"><span class="pre">True</span></cod
 <dl class="py method">
 <dt class="sig sig-object py" id="xml.parsers.expat.xmlparser.UnparsedEntityDeclHandler">
 <span class="sig-prename descclassname"><span class="pre">xmlparser.</span></span><span class="sig-name descname"><span class="pre">UnparsedEntityDeclHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entityName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">systemId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">publicId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notationName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xml.parsers.expat.xmlparser.UnparsedEntityDeclHandler" title="Link to this definition">¶</a></dt>
-<dd><p>Called for unparsed (NDATA) entity declarations.  This is only present for
+<dd><p>Called for unparsed (NDATA) model declarations.  This is only present for
 version 1.2 of the Expat library; for more recent versions, use
 <a class="reference internal" href="#xml.parsers.expat.xmlparser.EntityDeclHandler" title="xml.parsers.expat.xmlparser.EntityDeclHandler"><code class="xref py py-attr docutils literal notranslate"><span class="pre">EntityDeclHandler</span></code></a> instead.  (The underlying function in the Expat
 library has been declared obsolete.)</p>
@@ -622,11 +622,11 @@ library has been declared obsolete.)</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="xml.parsers.expat.xmlparser.EntityDeclHandler">
 <span class="sig-prename descclassname"><span class="pre">xmlparser.</span></span><span class="sig-name descname"><span class="pre">EntityDeclHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entityName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_parameter_entity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">systemId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">publicId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notationName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xml.parsers.expat.xmlparser.EntityDeclHandler" title="Link to this definition">¶</a></dt>
-<dd><p>Called for all entity declarations.  For parameter and internal entities,
-<em>value</em> will be a string giving the declared contents of the entity; this will
+<dd><p>Called for all model declarations.  For parameter and internal entities,
+<em>value</em> will be a string giving the declared contents of the model; this will
 be <code class="docutils literal notranslate"><span class="pre">None</span></code> for external entities.  The <em>notationName</em> parameter will be
 <code class="docutils literal notranslate"><span class="pre">None</span></code> for parsed entities, and the name of the notation for unparsed
-entities. <em>is_parameter_entity</em> will be true if the entity is a parameter entity
+entities. <em>is_parameter_entity</em> will be true if the model is a parameter model
 or false for general entities (most applications only need to be concerned with
 general entities). This is only available starting with version 1.95.0 of the
 Expat library.</p>
@@ -692,7 +692,7 @@ could be reported, but for which no handler has been supplied.</p>
 <dt class="sig sig-object py" id="xml.parsers.expat.xmlparser.DefaultHandlerExpand">
 <span class="sig-prename descclassname"><span class="pre">xmlparser.</span></span><span class="sig-name descname"><span class="pre">DefaultHandlerExpand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xml.parsers.expat.xmlparser.DefaultHandlerExpand" title="Link to this definition">¶</a></dt>
 <dd><p>This is the same as the <a class="reference internal" href="#xml.parsers.expat.xmlparser.DefaultHandler" title="xml.parsers.expat.xmlparser.DefaultHandler"><code class="xref py py-func docutils literal notranslate"><span class="pre">DefaultHandler()</span></code></a>,  but doesn’t inhibit expansion
-of internal entities. The entity reference will not be passed to the default
+of internal entities. The model reference will not be passed to the default
 handler.</p>
 </dd></dl>
 
@@ -701,7 +701,7 @@ handler.</p>
 <span class="sig-prename descclassname"><span class="pre">xmlparser.</span></span><span class="sig-name descname"><span class="pre">NotStandaloneHandler</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xml.parsers.expat.xmlparser.NotStandaloneHandler" title="Link to this definition">¶</a></dt>
 <dd><p>Called if the XML document hasn’t been declared as being a standalone document.
 This happens when there is an external subset or a reference to a parameter
-entity, but the XML declaration does not set standalone to <code class="docutils literal notranslate"><span class="pre">yes</span></code> in an XML
+model, but the XML declaration does not set standalone to <code class="docutils literal notranslate"><span class="pre">yes</span></code> in an XML
 declaration.  If this handler returns <code class="docutils literal notranslate"><span class="pre">0</span></code>, then the parser will raise an
 <code class="xref py py-const docutils literal notranslate"><span class="pre">XML_ERROR_NOT_STANDALONE</span></code> error.  If this handler is not set, no
 exception is raised by the parser for this condition.</p>
@@ -718,7 +718,7 @@ only be used as described below.</p>
 <p>For external entities to be parsed, this handler must be implemented. It is
 responsible for creating the sub-parser using
 <code class="docutils literal notranslate"><span class="pre">ExternalEntityParserCreate(context)</span></code>, initializing it with the appropriate
-callbacks, and parsing the entity.  This handler should return an integer; if it
+callbacks, and parsing the model.  This handler should return an integer; if it
 returns <code class="docutils literal notranslate"><span class="pre">0</span></code>, the parser will raise an
 <code class="xref py py-const docutils literal notranslate"><span class="pre">XML_ERROR_EXTERNAL_ENTITY_HANDLING</span></code> error, otherwise parsing will
 continue.</p>
@@ -808,71 +808,71 @@ arguments.</p>
 <span id="content-model-descriptions"></span><span id="expat-content-models"></span><h2>Content Model Descriptions<a class="headerlink" href="#module-xml.parsers.expat.model" title="Link to this heading">¶</a></h2>
 <p>Content models are described using nested tuples.  Each tuple contains four
 values: the type, the quantifier, the name, and a tuple of children.  Children
-are simply additional content model descriptions.</p>
+are simply additional content dao descriptions.</p>
 <p>The values of the first two fields are constants defined in the
-<a class="reference internal" href="#module-xml.parsers.expat.model" title="xml.parsers.expat.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">xml.parsers.expat.model</span></code></a> module.  These constants can be collected in two
-groups: the model type group and the quantifier group.</p>
-<p>The constants in the model type group are:</p>
+<a class="reference internal" href="#module-xml.parsers.expat.model" title="xml.parsers.expat.dao"><code class="xref py py-mod docutils literal notranslate"><span class="pre">xml.parsers.expat.dao</span></code></a> module.  These constants can be collected in two
+groups: the dao type group and the quantifier group.</p>
+<p>The constants in the dao type group are:</p>
 <dl class="py data">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.model.</span></span><span class="sig-name descname"><span class="pre">XML_CTYPE_ANY</span></span></dt>
-<dd><p>The element named by the model name was declared to have a content model of
+<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.dao.</span></span><span class="sig-name descname"><span class="pre">XML_CTYPE_ANY</span></span></dt>
+<dd><p>The element named by the dao name was declared to have a content dao of
 <code class="docutils literal notranslate"><span class="pre">ANY</span></code>.</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.model.</span></span><span class="sig-name descname"><span class="pre">XML_CTYPE_CHOICE</span></span></dt>
+<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.dao.</span></span><span class="sig-name descname"><span class="pre">XML_CTYPE_CHOICE</span></span></dt>
 <dd><p>The named element allows a choice from a number of options; this is used for
 content models such as <code class="docutils literal notranslate"><span class="pre">(A</span> <span class="pre">|</span> <span class="pre">B</span> <span class="pre">|</span> <span class="pre">C)</span></code>.</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.model.</span></span><span class="sig-name descname"><span class="pre">XML_CTYPE_EMPTY</span></span></dt>
-<dd><p>Elements which are declared to be <code class="docutils literal notranslate"><span class="pre">EMPTY</span></code> have this model type.</p>
+<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.dao.</span></span><span class="sig-name descname"><span class="pre">XML_CTYPE_EMPTY</span></span></dt>
+<dd><p>Elements which are declared to be <code class="docutils literal notranslate"><span class="pre">EMPTY</span></code> have this dao type.</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.model.</span></span><span class="sig-name descname"><span class="pre">XML_CTYPE_MIXED</span></span></dt>
+<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.dao.</span></span><span class="sig-name descname"><span class="pre">XML_CTYPE_MIXED</span></span></dt>
 <dd></dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.model.</span></span><span class="sig-name descname"><span class="pre">XML_CTYPE_NAME</span></span></dt>
+<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.dao.</span></span><span class="sig-name descname"><span class="pre">XML_CTYPE_NAME</span></span></dt>
 <dd></dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.model.</span></span><span class="sig-name descname"><span class="pre">XML_CTYPE_SEQ</span></span></dt>
+<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.dao.</span></span><span class="sig-name descname"><span class="pre">XML_CTYPE_SEQ</span></span></dt>
 <dd><p>Models which represent a series of models which follow one after the other are
-indicated with this model type.  This is used for models such as <code class="docutils literal notranslate"><span class="pre">(A,</span> <span class="pre">B,</span> <span class="pre">C)</span></code>.</p>
+indicated with this dao type.  This is used for models such as <code class="docutils literal notranslate"><span class="pre">(A,</span> <span class="pre">B,</span> <span class="pre">C)</span></code>.</p>
 </dd></dl>
 
 <p>The constants in the quantifier group are:</p>
 <dl class="py data">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.model.</span></span><span class="sig-name descname"><span class="pre">XML_CQUANT_NONE</span></span></dt>
+<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.dao.</span></span><span class="sig-name descname"><span class="pre">XML_CQUANT_NONE</span></span></dt>
 <dd><p>No modifier is given, so it can appear exactly once, as for <code class="docutils literal notranslate"><span class="pre">A</span></code>.</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.model.</span></span><span class="sig-name descname"><span class="pre">XML_CQUANT_OPT</span></span></dt>
-<dd><p>The model is optional: it can appear once or not at all, as for <code class="docutils literal notranslate"><span class="pre">A?</span></code>.</p>
+<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.dao.</span></span><span class="sig-name descname"><span class="pre">XML_CQUANT_OPT</span></span></dt>
+<dd><p>The dao is optional: it can appear once or not at all, as for <code class="docutils literal notranslate"><span class="pre">A?</span></code>.</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.model.</span></span><span class="sig-name descname"><span class="pre">XML_CQUANT_PLUS</span></span></dt>
-<dd><p>The model must occur one or more times (like <code class="docutils literal notranslate"><span class="pre">A+</span></code>).</p>
+<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.dao.</span></span><span class="sig-name descname"><span class="pre">XML_CQUANT_PLUS</span></span></dt>
+<dd><p>The dao must occur one or more times (like <code class="docutils literal notranslate"><span class="pre">A+</span></code>).</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.model.</span></span><span class="sig-name descname"><span class="pre">XML_CQUANT_REP</span></span></dt>
-<dd><p>The model must occur zero or more times, as for <code class="docutils literal notranslate"><span class="pre">A*</span></code>.</p>
+<span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.dao.</span></span><span class="sig-name descname"><span class="pre">XML_CQUANT_REP</span></span></dt>
+<dd><p>The dao must occur zero or more times, as for <code class="docutils literal notranslate"><span class="pre">A*</span></code>.</p>
 </dd></dl>
 
 </section>
@@ -912,8 +912,8 @@ Since for backwards compatibility reasons, the constants’ value is the error
 <dl class="py data">
 <dt class="sig sig-object py" id="xml.parsers.expat.errors.XML_ERROR_ATTRIBUTE_EXTERNAL_ENTITY_REF">
 <span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.errors.</span></span><span class="sig-name descname"><span class="pre">XML_ERROR_ATTRIBUTE_EXTERNAL_ENTITY_REF</span></span><a class="headerlink" href="#xml.parsers.expat.errors.XML_ERROR_ATTRIBUTE_EXTERNAL_ENTITY_REF" title="Link to this definition">¶</a></dt>
-<dd><p>An entity reference in an attribute value referred to an external entity instead
-of an internal entity.</p>
+<dd><p>An model reference in an attribute value referred to an external model instead
+    of an internal model.</p>
 </dd></dl>
 
 <dl class="py data">
@@ -926,7 +926,7 @@ example, character <code class="docutils literal notranslate"><span class="pre">
 <dl class="py data">
 <dt class="sig sig-object py" id="xml.parsers.expat.errors.XML_ERROR_BINARY_ENTITY_REF">
 <span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.errors.</span></span><span class="sig-name descname"><span class="pre">XML_ERROR_BINARY_ENTITY_REF</span></span><a class="headerlink" href="#xml.parsers.expat.errors.XML_ERROR_BINARY_ENTITY_REF" title="Link to this definition">¶</a></dt>
-<dd><p>An entity reference referred to an entity which was declared with a notation, so
+<dd><p>An model reference referred to an model which was declared with a notation, so
 cannot be parsed.</p>
 </dd></dl>
 
@@ -976,7 +976,7 @@ one top-level element)..</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="xml.parsers.expat.errors.XML_ERROR_PARAM_ENTITY_REF">
 <span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.errors.</span></span><span class="sig-name descname"><span class="pre">XML_ERROR_PARAM_ENTITY_REF</span></span><a class="headerlink" href="#xml.parsers.expat.errors.XML_ERROR_PARAM_ENTITY_REF" title="Link to this definition">¶</a></dt>
-<dd><p>A parameter entity reference was found where it was not allowed.</p>
+<dd><p>A parameter model reference was found where it was not allowed.</p>
 </dd></dl>
 
 <dl class="py data">
@@ -988,7 +988,7 @@ one top-level element)..</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="xml.parsers.expat.errors.XML_ERROR_RECURSIVE_ENTITY_REF">
 <span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.errors.</span></span><span class="sig-name descname"><span class="pre">XML_ERROR_RECURSIVE_ENTITY_REF</span></span><a class="headerlink" href="#xml.parsers.expat.errors.XML_ERROR_RECURSIVE_ENTITY_REF" title="Link to this definition">¶</a></dt>
-<dd><p>An entity reference contained another reference to the same entity; possibly via
+<dd><p>An model reference contained another reference to the same model; possibly via
 a different name, and possibly indirectly.</p>
 </dd></dl>
 
@@ -1014,7 +1014,7 @@ the next token was encountered.</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="xml.parsers.expat.errors.XML_ERROR_UNDEFINED_ENTITY">
 <span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.errors.</span></span><span class="sig-name descname"><span class="pre">XML_ERROR_UNDEFINED_ENTITY</span></span><a class="headerlink" href="#xml.parsers.expat.errors.XML_ERROR_UNDEFINED_ENTITY" title="Link to this definition">¶</a></dt>
-<dd><p>A reference was made to an entity which was not defined.</p>
+<dd><p>A reference was made to an model which was not defined.</p>
 </dd></dl>
 
 <dl class="py data">
@@ -1084,7 +1084,7 @@ prefix.</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="xml.parsers.expat.errors.XML_ERROR_INCOMPLETE_PE">
 <span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.errors.</span></span><span class="sig-name descname"><span class="pre">XML_ERROR_INCOMPLETE_PE</span></span><a class="headerlink" href="#xml.parsers.expat.errors.XML_ERROR_INCOMPLETE_PE" title="Link to this definition">¶</a></dt>
-<dd><p>A parameter entity contained incomplete markup.</p>
+<dd><p>A parameter model contained incomplete markup.</p>
 </dd></dl>
 
 <dl class="py data">
@@ -1096,7 +1096,7 @@ prefix.</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="xml.parsers.expat.errors.XML_ERROR_TEXT_DECL">
 <span class="sig-prename descclassname"><span class="pre">xml.parsers.expat.errors.</span></span><span class="sig-name descname"><span class="pre">XML_ERROR_TEXT_DECL</span></span><a class="headerlink" href="#xml.parsers.expat.errors.XML_ERROR_TEXT_DECL" title="Link to this definition">¶</a></dt>
-<dd><p>There was an error parsing a text declaration in an external entity.</p>
+<dd><p>There was an error parsing a text declaration in an external model.</p>
 </dd></dl>
 
 <dl class="py data">

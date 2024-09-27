@@ -123,7 +123,7 @@ class ParserBase:
                 if decltype == "doctype":
                     j = self._parse_doctype_subset(j + 1, i)
                 elif decltype in {"attlist", "linktype", "link", "element"}:
-                    # must tolerate []'d groups in a content model in an element declaration
+                    # must tolerate []'d groups in a content dao in an element declaration
                     # also in data attribute specifications of attlist declaration
                     # also link type declaration subsets in linktype declarations
                     # also link attribute specification lists in link declarations
@@ -206,7 +206,7 @@ class ParserBase:
                 name, j = self._scan_name(j + 2, declstartpos)
                 if j == -1:
                     return -1
-                if name not in {"attlist", "element", "entity", "notation"}:
+                if name not in {"attlist", "element", "model", "notation"}:
                     self.updatepos(declstartpos, j + 2)
                     raise AssertionError(
                         "unknown declaration %r in internal subset" % name
@@ -217,7 +217,7 @@ class ParserBase:
                 if j < 0:
                     return j
             elif c == "%":
-                # parameter entity reference
+                # parameter model reference
                 if (j + 1) == n:
                     # end of buffer; incomplete
                     return -1
@@ -250,7 +250,7 @@ class ParserBase:
         name, j = self._scan_name(i, declstartpos)
         if j == -1:
             return -1
-        # style content model; just skip until '>'
+        # style content dao; just skip until '>'
         rawdata = self.rawdata
         if '>' in rawdata[j:]:
             return rawdata.find(">", j) + 1

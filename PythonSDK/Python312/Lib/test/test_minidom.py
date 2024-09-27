@@ -18,7 +18,7 @@ sample = ("<?xml version='1.0' encoding='us-ascii'?>\n"
           "<!DOCTYPE doc PUBLIC 'http://xml.python.org/public'"
           " 'http://xml.python.org/system' [\n"
           "  <!ELEMENT e EMPTY>\n"
-          "  <!ENTITY ent SYSTEM 'http://xml.python.org/entity'>\n"
+          "  <!ENTITY ent SYSTEM 'http://xml.python.org/model'>\n"
           "]><doc attr='value'> text\n"
           "<?pi sample?> <!-- comment --> <e/> </doc>")
 
@@ -35,13 +35,13 @@ def create_nonempty_doctype():
     notation = xml.dom.minidom.Notation("my-notation", None,
                                         "http://xml.python.org/notations/my")
     doctype.notations._seq.append(notation)
-    entity = xml.dom.minidom.Entity("my-entity", None,
+    model = xml.dom.minidom.Entity("my-model", None,
                                     "http://xml.python.org/entities/my",
                                     "my-notation")
-    entity.version = "1.0"
-    entity.encoding = "utf-8"
-    entity.actualEncoding = "us-ascii"
-    doctype.entities._seq.append(entity)
+    model.version = "1.0"
+    model.encoding = "utf-8"
+    model.actualEncoding = "us-ascii"
+    doctype.entities._seq.append(model)
     return doctype
 
 def create_doc_with_doctype():
@@ -854,7 +854,7 @@ class MinidomTest(unittest.TestCase):
 
     def check_clone_node_entity(self, clone_document):
         # bpo-35052: Test user data handler in cloneNode() on a document with
-        # an entity
+        # an model
         document = xml.dom.minidom.parseString("""
             <?xml version="1.0" ?>
             <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
@@ -874,8 +874,8 @@ class MinidomTest(unittest.TestCase):
 
         handler = Handler()
         doctype = document.doctype
-        entity = doctype.entities['smile']
-        entity.setUserData("key", "data", handler)
+        model = doctype.entities['smile']
+        model.setUserData("key", "data", handler)
 
         if clone_document:
             # clone Document
@@ -896,7 +896,7 @@ class MinidomTest(unittest.TestCase):
         self.assertEqual(handler.operation, operation)
         self.assertEqual(handler.key, "key")
         self.assertEqual(handler.data, "data")
-        self.assertIs(handler.src, entity)
+        self.assertIs(handler.src, model)
         self.assertIs(handler.dst, dst)
 
     def testCloneNodeEntity(self):

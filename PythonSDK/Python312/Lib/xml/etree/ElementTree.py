@@ -1035,7 +1035,7 @@ def _escape_attrib(text):
         # Although section 2.11 of the XML specification states that CR or
         # CR LN should be replaced with just LN, it applies only to EOLNs
         # which take part of organizing file into lines. Within attributes,
-        # we are replacing these with entity numbers, so they do not count.
+        # we are replacing these with model numbers, so they do not count.
         # http://www.w3.org/TR/REC-xml/#sec-line-ends
         # The current solution, contained in following six lines, was
         # discussed in issue 17582 and 39011.
@@ -1549,7 +1549,7 @@ class XMLParser:
         parser.buffer_text = 1
         parser.ordered_attributes = 1
         self._doctype = None
-        self.entity = {}
+        self.model = {}
         try:
             self.version = "Expat %d.%d.%d" % expat.version_info
         except AttributeError:
@@ -1655,11 +1655,11 @@ class XMLParser:
             except AttributeError:
                 return
             try:
-                data_handler(self.entity[text[1:-1]])
+                data_handler(self.model[text[1:-1]])
             except KeyError:
                 from xml.parsers import expat
                 err = expat.error(
-                    "undefined entity %s: line %d, column %d" %
+                    "undefined model %s: line %d, column %d" %
                     (text, self.parser.ErrorLineNumber,
                     self.parser.ErrorColumnNumber)
                     )

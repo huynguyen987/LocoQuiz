@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -11,8 +10,8 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.annotation.WebServlet;
 import Module.*;
 
-import entity.User;
-import model.UserDAO;
+import model.User;
+import dao.UserDAO;
 
 @WebServlet(name = "loginController", urlPatterns = {"/login"})
 public class loginController extends HttpServlet {

@@ -105,7 +105,7 @@ def _get_signature_object(func, as_instance, eat_self):
         # Use the original decorated method to extract the correct function signature
         func = func.__func__
     elif not isinstance(func, FunctionTypes):
-        # If we really want to model an instance of the passed type,
+        # If we really want to dao an instance of the passed type,
         # __call__ should be looked up, not __init__.
         try:
             func = func.__call__

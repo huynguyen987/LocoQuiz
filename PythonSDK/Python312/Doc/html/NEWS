@@ -10845,7 +10845,7 @@ Documentation
   ``make -C Doc check``, mark it as deprecated.
 
 - bpo-45840: Improve cross-references in the documentation for the data
-  model.
+  dao.
 
 - bpo-45640: Properly marked-up grammar tokens in the documentation are now
   clickable and take you to the definition of a given piece of grammar.
@@ -12973,7 +12973,7 @@ Documentation
   <https://wiki.python.org/moin/GuiProgramming>`_.
 
 - bpo-33479: Tkinter documentation has been greatly expanded with new
-  "Architecture" and "Threading model" sections.
+  "Architecture" and "Threading dao" sections.
 
 - bpo-36700: :mod:`base64` RFC references were updated to point to
   :rfc:`4648`; a section was added to point users to the new "security
@@ -16059,9 +16059,9 @@ Security
 - bpo-42103: Prevented potential DoS attack via CPU and RAM exhaustion when
   processing malformed Apple Property List files in binary format.
 
-- bpo-42051: The :mod:`plistlib` module no longer accepts entity
+- bpo-42051: The :mod:`plistlib` module no longer accepts model
   declarations in XML plist files to avoid XML vulnerabilities. This should
-  not affect users as entity declarations are not used in regular plist
+  not affect users as model declarations are not used in regular plist
   files.
 
 Core and Builtins
@@ -18218,7 +18218,7 @@ Library
   :class:`collections.ChainMap`.
 
 - bpo-39011: Normalization of line endings in ElementTree attributes was
-  removed, as line endings which were replaced by entity numbers should be
+  removed, as line endings which were replaced by model numbers should be
   preserved in original form.
 
 - bpo-38410: Properly handle :func:`sys.audit` failures in
@@ -23615,7 +23615,7 @@ Library
 - bpo-36018: Add statistics.NormalDist, a tool for creating and manipulating
   normal distributions of random variable.  Features a composite class that
   treats the mean and standard deviation of measurement data as single
-  entity.
+  model.
 
 - bpo-35904: Added statistics.fmean() as a faster, floating point variant of
   the existing mean() function.
@@ -24505,8 +24505,8 @@ Library
 - bpo-23057: Unblock Proactor event loop when keyboard interrupt is received
   on Windows
 
-- bpo-35052: Fix xml.dom.minidom cloneNode() on a document with an entity:
-  pass the correct arguments to the user data handler of an entity.
+- bpo-35052: Fix xml.dom.minidom cloneNode() on a document with an model:
+  pass the correct arguments to the user data handler of an model.
 
 - bpo-20239: Allow repeated assignment deletion of
   :class:`unittest.mock.Mock` attributes. Patch by Pablo Galindo.
@@ -29247,7 +29247,7 @@ Security
   arguments.
 
 - bpo-30694: Upgrade expat copy from 2.2.0 to 2.2.1 to get fixes of multiple
-  security vulnerabilities including: CVE-2017-9233 (External entity
+  security vulnerabilities including: CVE-2017-9233 (External model
   infinite loop DoS), CVE-2016-9063 (Integer overflow, re-fix),
   CVE-2016-0718 (Fix regression bugs from 2.2.0's fix to CVE-2016-0718) and
   CVE-2012-0876 (Counter hash flooding with SipHash). Note: the
@@ -30803,7 +30803,7 @@ Documentation
 
 - bpo-29349: Fix Python 2 syntax in code for building the documentation.
 
-- bpo-23722: The data model reference and the porting section in the 3.6
+- bpo-23722: The data dao reference and the porting section in the 3.6
   What's New guide now cover the additional ``__classcell__`` handling
   needed for custom metaclasses to fully support :pep:`487` and
   zero-argument ``super()``.
@@ -32922,7 +32922,7 @@ Security
   arguments.
 
 - bpo-30694: Upgrade expat copy from 2.2.0 to 2.2.1 to get fixes of multiple
-  security vulnerabilities including: CVE-2017-9233 (External entity
+  security vulnerabilities including: CVE-2017-9233 (External model
   infinite loop DoS), CVE-2016-9063 (Integer overflow, re-fix),
   CVE-2016-0718 (Fix regression bugs from 2.2.0's fix to CVE-2016-0718) and
   CVE-2012-0876 (Counter hash flooding with SipHash). Note: the
@@ -33716,7 +33716,7 @@ C API
 Documentation
 -------------
 
-- bpo-23722: The data model reference and the porting section in the What's
+- bpo-23722: The data dao reference and the porting section in the What's
   New guide now cover the additional ``__classcell__`` handling needed for
   custom metaclasses to fully support :pep:`487` and zero-argument
   ``super()``.
@@ -36850,7 +36850,7 @@ Security
   arguments.
 
 - bpo-30694: Upgrade expat copy from 2.2.0 to 2.2.1 to get fixes of multiple
-  security vulnerabilities including: CVE-2017-9233 (External entity
+  security vulnerabilities including: CVE-2017-9233 (External model
   infinite loop DoS), CVE-2016-9063 (Integer overflow, re-fix),
   CVE-2016-0718 (Fix regression bugs from 2.2.0's fix to CVE-2016-0718) and
   CVE-2012-0876 (Counter hash flooding with SipHash). Note: the
@@ -39275,7 +39275,7 @@ Core and Builtins
   disabled.  Patch by Petr Viktorin.
 
 - bpo-21167: NAN operations are now handled correctly when python is
-  compiled with ICC even if -fp-model strict is not specified.
+  compiled with ICC even if -fp-dao strict is not specified.
 
 - bpo-24492: A "package" lacking a __name__ attribute when trying to perform
   a ``from .. import ...`` statement will trigger an ImportError instead of

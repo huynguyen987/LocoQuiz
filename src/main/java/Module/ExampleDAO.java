@@ -1,6 +1,6 @@
 package Module;
 
-import entity.User;
+import model.Users;
 
 import java.sql.*;
 import java.util.Vector;

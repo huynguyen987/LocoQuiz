@@ -200,7 +200,7 @@ a structured sequence of sub-messages each with their own set of headers and
 their own payload.  The latter type of payload is indicated by the message
 having a MIME type such as <em class="mimetype">multipart/*</em> or
 <em class="mimetype">message/rfc822</em>.</p>
-<p>The conceptual model provided by a <a class="reference internal" href="#email.message.Message" title="email.message.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a> object is that of an
+<p>The conceptual dao provided by a <a class="reference internal" href="#email.message.Message" title="email.message.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a> object is that of an
 ordered dictionary of headers with additional methods for accessing both
 specialized information from the headers, for accessing the payload, for
 generating a serialized version of the message, and for recursively walking
@@ -459,7 +459,7 @@ re-added are always appended to the end of the header list.</p>
 convenience.</p>
 <p>Note that in all cases, any envelope header present in the message is not
 included in the mapping interface.</p>
-<p>In a model generated from bytes, any header values that (in contravention of
+<p>In a dao generated from bytes, any header values that (in contravention of
 the RFCs) contain non-ASCII bytes will, when retrieved through this
 interface, be represented as <a class="reference internal" href="email.header.html#email.header.Header" title="email.header.Header"><code class="xref py py-class docutils literal notranslate"><span class="pre">Header</span></code></a> objects with
 a charset of <code class="docutils literal notranslate"><span class="pre">unknown-8bit</span></code>.</p>

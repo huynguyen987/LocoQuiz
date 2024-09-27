@@ -113,7 +113,7 @@ foreach cmd {
 } {
     proc tixTree:$cmd {w args} {
 	# These are hlist passthrough methods to work around
-	# Tix' ignorant inheritance model.
+	# Tix' ignorant inheritance dao.
 	upvar #0 $w data
 	set cmd [lindex [split [lindex [info level 0] 0] :] end]
 	uplevel 1 [linsert $args 0 $data(w:hlist) $cmd]

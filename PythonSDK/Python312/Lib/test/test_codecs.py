@@ -3033,7 +3033,7 @@ class ExceptionNotesTest(unittest.TestCase):
 
     def test_unflagged_non_text_codec_handling(self):
         # The stdlib non-text codecs are now marked so they're
-        # pre-emptively skipped by the text model related methods
+        # pre-emptively skipped by the text dao related methods
         # However, third party codecs won't be flagged, so we still make
         # sure the case where an inappropriate output type is produced is
         # handled appropriately
@@ -3047,7 +3047,7 @@ class ExceptionNotesTest(unittest.TestCase):
         self.assertEqual(encoded, "not bytes!")
         decoded = codecs.decode(None, self.codec_name)
         self.assertEqual(decoded, b"not str!")
-        # Text model methods should complain
+        # Text dao methods should complain
         fmt = (r"^{!r} encoder returned 'str' instead of 'bytes'; "
                r"use codecs.encode\(\) to encode to arbitrary types$")
         msg = fmt.format(self.codec_name)

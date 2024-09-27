@@ -1,7 +1,7 @@
 package Module;
 
 import java.sql.*;
-import entity.User;
+import model.Users;
 
 public class DBConnect {
 
@@ -61,8 +61,8 @@ public class DBConnect {
     }
 
     // Function to fetch a User object based on the username
-    public User getUser(String username) {
-        User user = null;
+    public Users getUser(String username) {
+        Users user = null;
         try {
             // Use PreparedStatement to prevent SQL injection
             String query = "SELECT * FROM users WHERE username = ?";
@@ -74,7 +74,7 @@ public class DBConnect {
 
             if (rs.next()) {
                 // Create a new user object and set its attributes
-                user = new User();
+                user = new Users();
                 user.setUsername(rs.getString("username"));
                 user.setPasswordHash(rs.getString("passwordHash"));
                 user.setRoleId(rs.getInt("roleId"));
@@ -92,7 +92,7 @@ public class DBConnect {
 //        // Example query to fetch data from the users table
 //        String query = "SELECT * FROM users";
 //        Connection conn = db.getConnection();
-//        // Call getData and retrieve the results
+//        // Call getData and retrieve the Results
 //        ResultSet rs = db.getData(query);
 //        System.out.println(conn);
 //        try {

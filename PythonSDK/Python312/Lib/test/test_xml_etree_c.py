@@ -130,7 +130,7 @@ class MiscTests(unittest.TestCase):
                 return ''
         self.assertRaises(ValueError, parser._parse_whole, MockFile())
         self.assertRaises(ValueError, parser._setevents, None)
-        self.assertIsNone(parser.entity)
+        self.assertIsNone(parser.model)
         self.assertIsNone(parser.target)
 
     def test_setstate_leaks(self):
