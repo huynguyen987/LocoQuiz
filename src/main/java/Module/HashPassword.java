@@ -2,8 +2,6 @@ package Module;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
-import model.User;
-import dao.UserDAO;
 
 public class HashPassword {
     //hash password

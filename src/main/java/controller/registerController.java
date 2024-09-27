@@ -24,7 +24,7 @@ public class registerController extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String role = request.getParameter("role");
-        String confirmPassword = request.getParameter("confirmPassword");
+        String confirmPassword = request.getParameter("confirm_password");
         if (service == null) {
             service = "register";
         }
@@ -39,6 +39,7 @@ public class registerController extends HttpServlet {
             // Check if username is already taken
             ExampleDAO ex = new ExampleDAO();
             String user_id_str = ex.getSingleResult("SELECT id FROM users WHERE username = ?", username);
+            System.out.println(user_id_str);
             // kiem tra neu 2 mat khau khong trung nhau
             if (!password.equals(confirmPassword)) {
                 session.setAttribute("error", "Mật khẩu không trùng khớp");
@@ -56,21 +57,14 @@ public class registerController extends HttpServlet {
                 user.setEmail(email);
                 user.setPasswordHash(hashedPassword);
                 user.setRoleId(roleId);
-
                 UsersDAO userDAO = new UsersDAO();
-                boolean success = false;
                 try {
-                    success = userDAO.addUser(user);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-                if (success) {
-                    session.setAttribute("success", "Đăng ký thành công");
+                    userDAO.addUser(user);
+                    session.setAttribute("success", "Đăng kí thành công");
                     response.sendRedirect("dangnhap.jsp");
-                } else {
-                    session.setAttribute("error", "Đăng ký thất bại");
+                } catch (SQLException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                    session.setAttribute("error", "Đăng kí thất bại");
                     response.sendRedirect("dangki.jsp");
                 }
             }

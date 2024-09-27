@@ -11,7 +11,7 @@ public class ExampleDAO {
         Connection con = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/learningmanagementsystem", "root", "12345678");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "12345678");
         } catch (Exception e) {
             System.out.println(e);
         }

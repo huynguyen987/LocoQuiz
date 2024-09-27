@@ -66,7 +66,7 @@ public class UsersDAO {
     //add new user
     public boolean addUser(Users user) throws SQLException, ClassNotFoundException {
         Connection connection = new DBConnect().getConnection();
-        String sql = "INSERT INTO users(username, password, email, role_id, created_at, avatar_url, feature_face_url) VALUES(?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO users(username, password, email, role_id, created_at, avatar, feature_face) VALUES(?,?,?,?,?,?,?)";
         try {
             PreparedStatement ps = connection.prepareCall(sql);
             ps.setString(1, user.getUsername());
@@ -86,7 +86,7 @@ public class UsersDAO {
     //update user
     public boolean updateUser(Users user) throws SQLException, ClassNotFoundException {
         Connection connection = new DBConnect().getConnection();
-        String sql = "UPDATE users SET username = ?, password = ?, email = ?, role_id = ?, created_at = ?, avatar_url = ?, feature_face_url = ? WHERE id = ?";
+        String sql = "UPDATE users SET username = ?, password = ?, email = ?, role_id = ?, created_at = ?, avatar= ?, feature_face = ? WHERE id = ?";
         try {
             PreparedStatement ps = connection.prepareCall(sql);
             ps.setString(1, user.getUsername());
