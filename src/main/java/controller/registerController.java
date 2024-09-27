@@ -1,8 +1,9 @@
 package controller;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
-import model.User;
+import model.Users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.annotation.WebServlet;
 import Module.*;
-import dao.UserDAO;
+import dao.UsersDAO;
 
 @WebServlet(name = "registerController", value = "/register")
 public class registerController extends HttpServlet {
@@ -50,15 +51,21 @@ public class registerController extends HttpServlet {
             } else {
                 // Username is available
                 String hashedPassword = HashPassword.hashPassword(password);
-                User user = new User();
+                Users user = new Users();
                 user.setUsername(username);
                 user.setEmail(email);
                 user.setPasswordHash(hashedPassword);
                 user.setRoleId(roleId);
-                user.setStatus("active");
 
-                UserDAO userDAO = new UserDAO();
-                boolean success = userDAO.addUser(user);
+                UsersDAO userDAO = new UsersDAO();
+                boolean success = false;
+                try {
+                    success = userDAO.addUser(user);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
                 if (success) {
                     session.setAttribute("success", "Đăng ký thành công");
                     response.sendRedirect("dangnhap.jsp");

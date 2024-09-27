@@ -64,7 +64,7 @@ public class UsersDAO {
     }
 
     //add new user
-    public void addUser(Users user) throws SQLException, ClassNotFoundException {
+    public boolean addUser(Users user) throws SQLException, ClassNotFoundException {
         Connection connection = new DBConnect().getConnection();
         String sql = "INSERT INTO users(username, password, email, role_id, created_at, avatar_url, feature_face_url) VALUES(?,?,?,?,?,?,?)";
         try {
@@ -80,6 +80,7 @@ public class UsersDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     //update user
