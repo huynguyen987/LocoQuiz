@@ -13,21 +13,22 @@ import jakarta.servlet.annotation.WebServlet;
 import Module.*;
 import model.UserDAO;
 
-@WebServlet(name = "registerController", value = "/registerController")
+@WebServlet(name = "registerController", value = "/register")
 public class registerController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession(true);
         String service = request.getParameter("service");
+        String username = request.getParameter("username");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        String role = request.getParameter("role");
+        String confirmPassword = request.getParameter("confirmPassword");
         if (service == null) {
             service = "register";
         }
         if (service.equals("register")) {
-            String username = request.getParameter("username");
-            String email = request.getParameter("email");
-            String password = request.getParameter("password");
-            String role = request.getParameter("role");
             int roleId = 0;
             if (role.equals("teacher")) {
                 roleId = 1;
@@ -38,10 +39,15 @@ public class registerController extends HttpServlet {
             // Check if username is already taken
             ExampleDAO ex = new ExampleDAO();
             String user_id_str = ex.getSingleResult("SELECT id FROM users WHERE username = ?", username);
+            // kiem tra neu 2 mat khau khong trung nhau
+            if (!password.equals(confirmPassword)) {
+                session.setAttribute("error", "Mật khẩu không trùng khớp");
+                response.sendRedirect("dangki.jsp");
+            } else
             if (user_id_str != null) {
                 // Username is already taken
                 session.setAttribute("error", "Tên đăng nhập đã tồn tại");
-                response.sendRedirect("dangky.jsp");
+                response.sendRedirect("dangki.jsp");
             } else {
                 // Username is available
                 String hashedPassword = HashPassword.hashPassword(password);
@@ -59,7 +65,7 @@ public class registerController extends HttpServlet {
                     response.sendRedirect("dangnhap.jsp");
                 } else {
                     session.setAttribute("error", "Đăng ký thất bại");
-                    response.sendRedirect("dangky.jsp");
+                    response.sendRedirect("dangki.jsp");
                 }
             }
         }

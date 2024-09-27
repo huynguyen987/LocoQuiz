@@ -1,43 +1,40 @@
 package entity;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import Module.*;
 
 public class User {
+//    CREATE TABLE user(
+//            id INT PRIMARY KEY AUTO_INCREMENT,
+//            username VARCHAR(255) NOT NULL,
+//    password VARCHAR(255) NOT NULL,
+//    mail VARCHAR(255) NOT NULL,
+//    role_id INT NOT NULL,
+//    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+//    avatar MEDIUMBLOB NULL,
+//    feature_face MEDIUMBLOB NULL,
+//    FOREIGN KEY(role_id) REFERENCES role(id)
+//            );
     private int id;
     private String username;
-    private String email;
-    private String passwordHash;
-    private String fullName;
-    private String gender;
-    private int roleId;
-    private String status;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
+    private String password;
+    private String mail;
+    private int role_id;
+    private String created_at;
     private byte[] avatar;
+    private byte[] feature_face;
 
-    // Default constructor
-    public User() {}
-
-    // Parameterized constructor
-    public User(int id, String username, String email, String passwordHash, String fullName,
-                String gender, int roleId, String status, Timestamp createdAt,
-                Timestamp updatedAt, byte[] avatar) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.passwordHash = passwordHash;
-        this.fullName = fullName;
-        this.gender = gender;
-        this.roleId = roleId;
-        this.status = status;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.avatar = avatar;
+    public User() {
     }
 
-    // Getters and setters
+    public User(int id, String username, String password, String mail, int role_id, String created_at, byte[] avatar, byte[] feature_face) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.mail = mail;
+        this.role_id = role_id;
+        this.created_at = created_at;
+        this.avatar = avatar;
+        this.feature_face = feature_face;
+    }
+
     public int getId() {
         return id;
     }
@@ -54,68 +51,36 @@ public class User {
         this.username = username;
     }
 
-    public String getEmail() {
-        return email;
+    public String getPassword() {
+        return password;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
+    public String getMail() {
+        return mail;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 
-    public String getFullName() {
-        return fullName;
+    public int getRole_id() {
+        return role_id;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setRole_id(int role_id) {
+        this.role_id = role_id;
     }
 
-    public String getGender() {
-        return gender;
+    public String getCreated_at() {
+        return created_at;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public int getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
     }
 
     public byte[] getAvatar() {
@@ -126,19 +91,23 @@ public class User {
         this.avatar = avatar;
     }
 
-    // toString method for debugging
+    public byte[] getFeature_face() {
+        return feature_face;
+    }
+
+    public void setFeature_face(byte[] feature_face) {
+        this.feature_face = feature_face;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", gender='" + gender + '\'' +
-                ", roleId=" + roleId +
-                ", status='" + status + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
+                ", password='" + password + '\'' +
+                ", mail='" + mail + '\'' +
+                ", role_id=" + role_id +
+                ", created_at='" + created_at + '\'' +
                 '}';
     }
 }
