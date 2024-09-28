@@ -8,12 +8,11 @@
 <div class="login-container">
     <h2>Login</h2>
     <form action="<%= request.getContextPath() %>/login" method="post">
-
         <input type="text" name="username" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
         <input type="submit" value="Login">
         <div class="forgot-password">
-            <a href="lostpass.jsp">Forgot Password?</a>
+            <a href=<%= request.getContextPath() %>/jsp/lostpass.jsp>Forgot Password?</a>
         </div>
     </form>
 

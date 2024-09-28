@@ -13,9 +13,9 @@
     <nav>
       <ul>
         <li><a href="index.jsp">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#services">Services</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="index.jsp#about">About</a></li>
+        <li><a href="index.jsp#services">Services</a></li>
+        <li><a href="index.jsp#contact">Contact</a></li>
       </ul>
     </nav>
 
@@ -27,15 +27,14 @@
       %>
       <!-- Display username and logout button when user is logged in -->
       <div class="user-info">
-        <p>Hello, <%= username %>!</p>
+        <p>Hello, <a href="${pageContext.request.contextPath}/jsp/user-profile.jsp"><%= username %></a>!</p>
         <a href="LogoutServlet" class="btn-logout">Logout</a>
       </div>
       <%
       } else {
       %>
-      <!-- Display login and register buttons if user is not logged in -->
-      <a href="dangnhap.jsp" class="btn-login">Login</a>
-
+      <!-- Display login button if user is not logged in -->
+      <a href="jsp/login.jsp" class="btn-login">Login</a>
       <%
         }
       %>
@@ -50,51 +49,66 @@
 </header>
 
 <main>
-  <section class="hero">
-    <div class="container">
-      <h2>Welcome to QuizLoco</h2>
-      <p>Your ultimate quiz platform</p>
-      <%
-        if (username != null) {
-      %>
-      <p>Welcome back, <%= username %>! Enjoy your personalized quiz experience.</p>
-      <%
-      } else {
-      %>
-      <a href="dangki.jsp" class="btn btn-register">Register</a>
-      <%
-        }
-      %>
-    </div>
-  </section>
+  <div class="content-with-sidebar">
+    <aside class="sidebar">
+      <h2>Quick Links</h2>
+      <ul>
+        <li><a href="${pageContext.request.contextPath}/jsp/blog-lists.jsp">Blog Lists</a></li>
+        <li><a href="${pageContext.request.contextPath}/jsp/quiz-lists.jsp">Quiz Lists</a></li>
+        <li><a href="${pageContext.request.contextPath}/jsp/view-lessons.jsp">View Quizzes</a></li>
+      </ul>
+    </aside>
+    <div class="main-content">
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-content">
+          <h2>Welcome to QuizLoco</h2>
+          <p>Your ultimate quiz platform</p>
+          <%
+            if (username != null) {
+          %>
+          <p>Welcome back, <%= username %>! Enjoy your personalized quiz experience.</p>
+          <%
+          } else {
+          %>
+          <a href="jsp/register.jsp" class="btn btn-register">Register</a>
+          <%
+            }
+          %>
+        </div>
+      </section>
 
-  <section class="features" id="about">
-    <div class="container">
-      <h2>Our Features</h2>
-      <div class="features-grid">
-        <div class="feature">
-          <h3>Blog Posts</h3>
-          <p>List of blogs for all subjects.</p>
+      <!-- Features Section -->
+      <section class="features" id="about">
+        <div class="container">
+          <h2>Our Features</h2>
+          <div class="features-grid">
+            <div class="feature">
+              <h3>Blog Posts</h3>
+              <p>Explore insightful blogs on various subjects.</p>
+            </div>
+            <div class="feature">
+              <h3>Quiz Lists</h3>
+              <p>Browse all available quizzes.</p>
+            </div>
+            <div class="feature">
+              <h3>View Quizzes</h3>
+              <p>Test your knowledge with our quizzes.</p>
+            </div>
+          </div>
         </div>
-        <div class="feature">
-          <h3>Subject Lists</h3>
-          <p>All the subjects available.</p>
-        </div>
-        <div class="feature">
-          <h3>View Quiz</h3>
-          <p>Work in progress...</p>
-        </div>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <section class="cta" id="services">
-    <div class="container">
-      <h2>Join Us Today</h2>
-      <p>Become a part of QuizLoco and test your knowledge with thousands of quizzes!</p>
-      <a href="dangki.jsp" class="btn btn-cta">Sign Up Now</a>
-    </div>
-  </section>
+      <!-- Call to Action Section -->
+      <section class="cta" id="services">
+        <div class="container">
+          <h2>Join Us Today</h2>
+          <p>Become a part of QuizLoco and challenge yourself!</p>
+          <a href="jsp/register.jsp" class="btn btn-cta">Sign Up Now</a>
+        </div>
+      </section>
+    </div> <!-- End of main-content -->
+  </div> <!-- End of content-with-sidebar -->
 </main>
 
 <footer id="contact">

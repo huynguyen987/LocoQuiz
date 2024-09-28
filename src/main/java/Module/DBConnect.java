@@ -1,7 +1,8 @@
 package Module;
 
+import entity.User;
+
 import java.sql.*;
-import model.Users;
 
 public class DBConnect {
 
@@ -57,12 +58,12 @@ public class DBConnect {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             // Establish the connection
-            return DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "12345678");
+            return DriverManager.getConnection("jdbc:mysql://localhost:3306/learningmanagementsystem", "root", "12345678");
     }
 
     // Function to fetch a User object based on the username
-    public Users getUser(String username) {
-        Users user = null;
+    public User getUser(String username) {
+        User user = null;
         try {
             // Use PreparedStatement to prevent SQL injection
             String query = "SELECT * FROM users WHERE username = ?";
@@ -74,7 +75,7 @@ public class DBConnect {
 
             if (rs.next()) {
                 // Create a new user object and set its attributes
-                user = new Users();
+                user = new User();
                 user.setUsername(rs.getString("username"));
                 user.setPasswordHash(rs.getString("passwordHash"));
                 user.setRoleId(rs.getInt("roleId"));
@@ -92,7 +93,7 @@ public class DBConnect {
 //        // Example query to fetch data from the users table
 //        String query = "SELECT * FROM users";
 //        Connection conn = db.getConnection();
-//        // Call getData and retrieve the Results
+//        // Call getData and retrieve the results
 //        ResultSet rs = db.getData(query);
 //        System.out.println(conn);
 //        try {

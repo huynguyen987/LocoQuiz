@@ -1,7 +1,9 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" session="true" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" session="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <html>
 <head>
-    <title>Subject Lists - QuizLoco</title>
+    <title>Quiz Lists - QuizLoco</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="${pageContext.request.contextPath}/css/fonts.css" rel="stylesheet">
@@ -20,25 +22,19 @@
             </ul>
         </nav>
 
-        <!-- Display login/register or user details based on session -->
+        <!-- Display user details based on session -->
         <div class="auth-links">
-            <%
-                String username = (String) session.getAttribute("username");
-                if (username != null) {
-            %>
-            <!-- Display username and logout button when user is logged in -->
-            <div class="user-info">
-                <p>Hello, <%= username %>!</p>
-                <a href="${pageContext.request.contextPath}/LogoutServlet" class="btn-logout">Logout</a>
-            </div>
-            <%
-            } else {
-            %>
-            <!-- Display login button if user is not logged in -->
-            <a href="${pageContext.request.contextPath}/jsp/login.jsp" class="btn-login">Login</a>
-            <%
-                }
-            %>
+            <c:choose>
+                <c:when test="${not empty sessionScope.username}">
+                    <div class="user-info">
+                        <p>Hello, ${sessionScope.username}!</p>
+                        <a href="${pageContext.request.contextPath}/LogoutServlet" class="btn-logout">Logout</a>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <a href="${pageContext.request.contextPath}/jsp/login.jsp" class="btn-login">Login</a>
+                </c:otherwise>
+            </c:choose>
         </div>
 
         <div class="mobile-menu-toggle">
@@ -57,21 +53,26 @@
             <!-- Sidebar Links -->
             <ul>
                 <li><a href="${pageContext.request.contextPath}/jsp/blog-lists.jsp">Blog Lists</a></li>
-                <li><a href="${pageContext.request.contextPath}/jsp/quiz-lists.jsp">Quiz Lists</a></li>
+                <li><a href="${pageContext.request.contextPath}/QuizListsServlet">Quiz Lists</a></li>
                 <li><a href="${pageContext.request.contextPath}/jsp/view-lessons.jsp">View Quizzes</a></li>
             </ul>
-
         </aside>
         <div class="main-content">
             <div class="container">
                 <h2>Quiz Lists</h2>
                 <p>Browse through the list of available quizzes:</p>
                 <ul class="subject-list">
-                    <li>Mathematics</li>
-                    <li>Science</li>
-                    <li>History</li>
-                    <li>Geography</li>
-                    <li>Language Arts</li>
+                    <c:forEach var="subject" items="${subjectList}">
+                        <li>
+                            <a href="${pageContext.request.contextPath}/SubjectDetailServlet?subjectId=${subject.id}">
+                                <img src="${pageContext.request.contextPath}/ImageServlet?subjectId=${subject.id}" alt="${subject.title}" class="subject-thumbnail" />
+                                <h3>${subject.title}</h3>
+                            </a>
+                            <p>${subject.description}</p>
+                            <p><strong>Category:</strong> ${subject.category}</p>
+                            <p><strong>Status:</strong> ${subject.status}</p>
+                        </li>
+                    </c:forEach>
                 </ul>
             </div>
         </div> <!-- End of main-content -->

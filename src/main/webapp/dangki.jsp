@@ -61,7 +61,8 @@
 						</script>
 						<div class="input-field1">
 							<div class="label">Nhập email</div>
-							<input class="input" type="text" name="email" placeholder="Xin mời nhập email" required>
+							<input class="input" type="te
+							xt" name="email" placeholder="Xin mời nhập email" required>
 						</div>
 						<div class="input-field1">
 							<div class="label">Role</div>
@@ -83,6 +84,13 @@
 						</style>
 			</form>
 		</div>
+<%--	neu dang ki thanh cong --%>
+		<% String success=(String) session.getAttribute("success"); if (success !=null) { %>
+			<script>
+				alert("Đăng kí thành công");
+			</script>
+			<% session.removeAttribute("success"); } %>
+
 
 	</body>
 	</html>
