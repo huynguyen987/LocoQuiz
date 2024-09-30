@@ -113,7 +113,7 @@ public class SubjectDAO {
             if (subject.getAvatar() != null) {
                 preparedStatement.setBytes(7, subject.getAvatar());
             } else {
-                preparedStatement.setNull(7, Types.BLOB);
+                preparedStatement.setNull(7, java.sql.Types.BLOB);
             }
 
             rowInserted = preparedStatement.executeUpdate() > 0;
@@ -141,7 +141,7 @@ public class SubjectDAO {
             if (subject.getAvatar() != null) {
                 preparedStatement.setBytes(7, subject.getAvatar());
             } else {
-                preparedStatement.setNull(7, Types.BLOB);
+                preparedStatement.setNull(7, java.sql.Types.BLOB);
             }
 
             preparedStatement.setInt(8, subject.getId());

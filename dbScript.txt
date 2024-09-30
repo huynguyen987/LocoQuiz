@@ -22,8 +22,8 @@ CREATE TABLE type(
                      description VARCHAR(255) NOT NULL
 );
 
--- 3. Tạo bảng user (tham chiếu role)
-CREATE TABLE user(
+-- 3. Tạo bảng users (tham chiếu role)
+CREATE TABLE users(
                      id INT PRIMARY KEY AUTO_INCREMENT,
                      username VARCHAR(255) NOT NULL,
                      password VARCHAR(255) NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE quiz(
                      user_id INT NOT NULL,
                      type_id INT NOT NULL,
                      answer JSON NOT NULL,
-                     FOREIGN KEY (user_id) REFERENCES user(id),
+                     FOREIGN KEY (user_id) REFERENCES users(id),
                      FOREIGN KEY (type_id) REFERENCES type(id)
 );
 
@@ -54,7 +54,7 @@ CREATE TABLE user_quiz(
                           user_id INT NOT NULL,
                           quiz_id INT NOT NULL,
                           tag_id INT NOT NULL,
-                          FOREIGN KEY (user_id) REFERENCES user(id),
+                          FOREIGN KEY (user_id) REFERENCES users(id),
                           FOREIGN KEY (quiz_id) REFERENCES quiz(id),
                           FOREIGN KEY (tag_id) REFERENCES tag(id)
 );
@@ -68,7 +68,7 @@ CREATE TABLE class(
                       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                       teacher_id INT NOT NULL,
-                      FOREIGN KEY (teacher_id) REFERENCES user(id)
+                      FOREIGN KEY (teacher_id) REFERENCES users(id)
 );
 
 -- 7. Tạo bảng class_user (tham chiếu class và user)
@@ -76,7 +76,7 @@ CREATE TABLE class_user(
                            class_id INT NOT NULL,
                            user_id INT NOT NULL,
                            FOREIGN KEY (class_id) REFERENCES class(id),
-                           FOREIGN KEY (user_id) REFERENCES user(id)
+                           FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 -- 8. Tạo bảng class_quiz (tham chiếu class và quiz)
@@ -95,7 +95,7 @@ CREATE TABLE result(
                        class_id INT NOT NULL,
                        score FLOAT NOT NULL,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                       FOREIGN KEY (user_id) REFERENCES user(id),
+                       FOREIGN KEY (user_id) REFERENCES users(id),
                        FOREIGN KEY (quiz_id) REFERENCES quiz(id),
                        FOREIGN KEY (class_id) REFERENCES class(id)
 );
