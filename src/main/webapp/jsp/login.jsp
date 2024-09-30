@@ -5,9 +5,27 @@
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/login.css">
 </head>
 <body>
+<style>
+    .error-message {
+        color: #2fff00;
+        font-size: 14px;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        padding: 10px;
+        border-radius: 5px;
+    }
+</style>
 <div class="login-container">
     <h2>Login</h2>
     <form action="<%= request.getContextPath() %>/login" method="post">
+        <% String success=(String) session.getAttribute("success"); if (success !=null) { %>
+        <div class="error-message">
+            <%= success %>
+        </div>
+        <% session.removeAttribute("success"); } %>
         <input type="text" name="username" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
         <input type="submit" value="Login">
