@@ -62,17 +62,11 @@
                 <h2>Quiz Lists</h2>
                 <p>Browse through the list of available quizzes:</p>
                 <ul class="subject-list">
-                    <c:forEach var="subject" items="${subjectList}">
-                        <li>
-                            <a href="${pageContext.request.contextPath}/SubjectDetailServlet?subjectId=${subject.id}">
-                                <img src="${pageContext.request.contextPath}/ImageServlet?subjectId=${subject.id}" alt="${subject.title}" class="subject-thumbnail" />
-                                <h3>${subject.title}</h3>
-                            </a>
-                            <p>${subject.description}</p>
-                            <p><strong>Category:</strong> ${subject.category}</p>
-                            <p><strong>Status:</strong> ${subject.status}</p>
-                        </li>
-                    </c:forEach>
+                    <li>Mathematics</li>
+                    <li>Science</li>
+                    <li>History</li>
+                    <li>Geography</li>
+                    <li>Language Arts</li>
                 </ul>
             </div>
         </div> <!-- End of main-content -->

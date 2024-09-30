@@ -1,81 +1,266 @@
-/* profile.css */
-
-/* Import existing styles */
-@import url('styles.css');
-
 /* Profile Page Styles */
-.profile-container {
-    max-width: 800px;
-    margin: 2em auto;
-    background-color: #fff;
-    padding: 2em;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+/* Apply Google Font */
+body, html {
+    font-family: 'Roboto', sans-serif;
 }
 
-.profile-container h1 {
-    margin-top: 0;
-    color: #3498db;
+
+.profile-container {
+    max-width: 1000px;
+    margin: 4em auto; /* Add more margin at the top */
+    background-color: #fff;
+    padding: 3em;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header h1 {
     text-align: center;
+    color: #3498db;
+    margin-bottom: 2em;
+}
+
+.profile-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 2rem; /* Add gap for better spacing */
+}
+
+.profile-avatar {
+    text-align: center;
+    flex-basis: 25%; /* Adjust the width for better alignment */
+}
+
+.profile-avatar img.avatar {
+    display: block;
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin: 1em auto;
+    border: 5px solid #3498db;
+}
+
+/* Avatar Update Button */
+.btn-avatar {
+    background-color: #3498db;
+    color: white;
+    padding: 0.6em 1.5em;
+    border-radius: 25px;
+    text-decoration: none;
+    font-size: 1em;
+    display: inline-block;
+    margin-top: 1em;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-avatar:hover {
+    background-color: #2980b9;
+    transform: translateY(-3px); /* Adds slight hover effect */
 }
 
 .profile-details {
-    margin-top: 2em;
+    flex-basis: 70%;
 }
 
 .profile-details p {
     font-size: 1.1em;
-    margin-bottom: 1em;
+    margin-bottom: 1.5em;
     color: #555;
 }
 
 .profile-details p strong {
     color: #333;
     display: inline-block;
-    width: 150px;
+    width: 180px;
 }
 
-.profile-details img {
-    display: block;
-    max-width: 200px;
-    height: auto;
-    margin: 2em auto;
-    border-radius: 50%;
-    border: 5px solid #3498db;
-}
-
+/* Profile Action Buttons */
 .profile-actions {
     text-align: center;
     margin-top: 2em;
 }
 
-.btn-edit {
+/* Edit Profile and Change Password Buttons */
+.btn-edit, .btn-password {
     background-color: #3498db;
-    color: #fff;
+    color: white;
     padding: 0.8em 2em;
     border: none;
+    border-radius: 30px;
     text-decoration: none;
     font-size: 1em;
-    border-radius: 30px;
-    transition: background 0.3s ease;
-    cursor: pointer;
+    margin: 1em;
+    display: inline-block;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.btn-edit:hover {
+.btn-edit:hover, .btn-password:hover {
     background-color: #2980b9;
+    transform: translateY(-3px); /* Adds slight hover effect */
 }
+
+/* Recent Activity Section */
+.profile-activity {
+    margin-top: 3em;
+}
+
+.profile-activity h2 {
+    text-align: center;
+    color: #3498db;
+    margin-bottom: 1.5em;
+}
+
+.profile-activity ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.profile-activity ul li {
+    background-color: #f9f9f9;
+    padding: 1em;
+    margin-bottom: 1em;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    color: #555;
+}
+
+.profile-activity ul li strong {
+    color: #3498db;
+}
+
+/* Header Styles */
+header {
+    background-color: #3498db;
+    padding: 1rem 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    margin-left: 1.5rem;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #f1c40f;
+}
+
+.auth-links {
+    display: flex;
+    align-items: center;
+}
+
+.btn-logout {
+    background-color: #e74c3c;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-logout:hover {
+    background-color: #c0392b;
+}
+
+/* Footer Styles */
+footer {
+    background-color: #333;
+    color: white;
+    padding: 2rem 0;
+    text-align: center;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.footer-links {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.footer-links a {
+    color: #f1f1f1;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #3498db;
+}
+
+/* Container for responsive design */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Responsive Styles for Header and Footer */
+@media (max-width: 768px) {
+    header .container {
+        flex-direction: column;
+    }
+
+    .auth-links {
+        margin-top: 1rem;
+    }
+
+    .footer-content {
+        flex-direction: column;
+    }
+}
+
 
 /* Responsive Styles */
 @media (max-width: 768px) {
-    .profile-container {
-        padding: 1.5em;
+    .profile-content {
+        flex-direction: column;
+        align-items: center;
     }
 
-    .profile-details p {
-        font-size: 1em;
+    .profile-avatar, .profile-details {
+        flex-basis: 100%;
+        padding: 0;
     }
 
     .profile-details p strong {
-        width: 120px;
+        width: 100px;
     }
 }

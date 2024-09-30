@@ -1,11 +1,10 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page session="true" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" session="true" %>
 <html>
 <head>
   <title>Blog Lists - QuizLoco</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="${pageContext.request.contextPath}/css/fonts.css" rel="stylesheet">
 </head>
 <body>
 <%-- Include header --%>
@@ -61,26 +60,37 @@
         <li><a href="${pageContext.request.contextPath}/jsp/quiz-lists.jsp">Quiz Lists</a></li>
         <li><a href="${pageContext.request.contextPath}/jsp/view-lessons.jsp">View Quizzes</a></li>
       </ul>
-
     </aside>
     <div class="main-content">
       <div class="container">
-        <h2>Blog Lists</h2>
-        <p>Welcome to the Blog Lists section. Here are some sample blog posts:</p>
-        <ul class="blog-list">
-          <li>
-            <h3>Understanding Java Basics</h3>
-            <p>An introductory guide to Java programming language.</p>
-          </li>
-          <li>
-            <h3>Mastering CSS Flexbox</h3>
-            <p>A comprehensive tutorial on CSS Flexbox layout.</p>
-          </li>
-          <li>
-            <h3>Exploring JSP and Servlets</h3>
-            <p>Learn how to build dynamic web applications using JSP and Servlets.</p>
-          </li>
-        </ul>
+        <h2>Blog Posts</h2>
+        <div class="blog-list">
+          <div class="blog-item">
+            <h3>Blog Title 1</h3>
+            <p>Author: John Doe</p>
+            <p>Date: 2024-01-01</p>
+            <p>Category: Science</p>
+            <p>Summary: A brief summary of the blog post...</p>
+            <a href="blog-details.jsp" class="btn btn-read-more">Read More</a>
+          </div>
+          <div class="blog-item">
+            <h3>Blog Title 2</h3>
+            <p>Author: Jane Smith</p>
+            <p>Date: 2024-02-15</p>
+            <p>Category: History</p>
+            <p>Summary: Another brief summary of the blog post...</p>
+            <a href="blog-details.jsp" class="btn btn-read-more">Read More</a>
+          </div>
+          <div class="blog-item">
+            <h3>Blog Title 3</h3>
+            <p>Author: Alice Johnson</p>
+            <p>Date: 2024-03-10</p>
+            <p>Category: Technology</p>
+            <p>Summary: Yet another brief summary of the blog post...</p>
+            <a href="blog-details.jsp" class="btn btn-read-more">Read More</a>
+          </div>
+          <!-- Repeat for other blog posts -->
+        </div>
       </div>
     </div> <!-- End of main-content -->
   </div> <!-- End of content-with-sidebar -->
