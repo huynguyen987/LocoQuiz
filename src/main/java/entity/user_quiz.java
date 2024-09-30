@@ -8,7 +8,6 @@ public class user_quiz {
 //                          FOREIGN KEY (quiz_id) REFERENCES quiz(id),
 //                          FOREIGN KEY (tag_id) REFERENCES tag(id)
 //);
-    private int id;
     private int user_id;
     private int quiz_id;
     private int tag_id;
@@ -17,7 +16,6 @@ public class user_quiz {
     }
 
     public user_quiz(int id, int user_id, int quiz_id, int tag_id) {
-        this.id = id;
         this.user_id = user_id;
         this.quiz_id = quiz_id;
         this.tag_id = tag_id;
@@ -27,14 +25,6 @@ public class user_quiz {
         this.user_id = user_id;
         this.quiz_id = quiz_id;
         this.tag_id = tag_id;
-    }
-
-    public int getId() {
-        return id;
-   }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public int getUser_id() {
