@@ -11,7 +11,6 @@
     <input type="text" name="username" placeholder="Username" required>
     <input type="password" name="password_hash" placeholder="Password" required>
     <input type="email" name="email" placeholder="Email" required>
-    <input type="text" name="full_name" placeholder="Full Name">
     <select name="gender" required>
       <option value="" disabled selected>Gender</option>
       <option value="Male">Male</option>

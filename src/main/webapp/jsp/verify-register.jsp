@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page session="true" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -61,7 +62,7 @@
                 }
             %>
 
-            <form action="${pageContext.request.contextPath}/verifyRegister" method="post" class="reset-form">
+            <form action="${pageContext.request.contextPath}/verify-register" method="post" class="reset-form">
                 <div class="input-group">
                     <label for="email">Captcha</label>
                     <input type="text" id="email" name="capcha" placeholder="Nhập captcha của bạn" required>

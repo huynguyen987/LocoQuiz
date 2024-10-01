@@ -21,13 +21,13 @@ import static Module.HashPassword.hashPassword;
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession(true);
+
         String username = request.getParameter("username");
-        String password = request.getParameter("password_hash"); // Raw password
+        String password = request.getParameter("password_hash");
+        String hashedPassword = hashPassword(password);
         String email = request.getParameter("email");
-        String fullName = request.getParameter("full_name");
         String gender = request.getParameter("gender");
         int roleId = Integer.parseInt(request.getParameter("role_id"));
 
@@ -36,12 +36,9 @@ public class RegisterServlet extends HttpServlet {
         ResultSet rs = null;
 
         try {
-            // Hash the password before storing it
-            String hashedPassword = hashPassword(password);
-
             connection = DatabaseConnection.getConnection();
 
-            // Check if username or email already exists
+            // Kiểm tra xem username hoặc email đã tồn tại chưa
             String checkUserSql = "SELECT * FROM users WHERE username = ? OR email = ?";
             stmt = connection.prepareStatement(checkUserSql);
             stmt.setString(1, username);
@@ -49,33 +46,31 @@ public class RegisterServlet extends HttpServlet {
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                // Username or email already exists
-                request.setAttribute("error", "Username or email already exists.");
+                // Username hoặc email đã tồn tại
+                request.setAttribute("error", "Username hoặc email đã tồn tại.");
                 request.getRequestDispatcher("/jsp/register.jsp").forward(request, response);
                 return;
             }
 
-            // Insert the new user into the database
-            String insertSql = "INSERT INTO users (username, email, password_hash, full_name, gender, role_id) VALUES (?, ?, ?, ?, ?, ?)";
-            stmt = connection.prepareStatement(insertSql);
-            stmt.setString(1, username);
-            stmt.setString(2, email);
-            stmt.setString(3, hashedPassword); // Store the hashed password
-            stmt.setString(4, fullName);
-            stmt.setString(5, gender);
-            stmt.setInt(6, roleId);
-
-            stmt.executeUpdate();
-
-            // Redirect to login page after successful registration
-
+            // Gửi mã xác thực qua email
             ReturnMail returnMail = new ReturnMail();
-            String capcha = returnMail.generateVerificationCode();
-            returnMail.sendMail(email, capcha);
+            String captcha = returnMail.generateVerificationCode();
+            returnMail.sendMail(email, captcha);
+
+            // Lưu dữ liệu vào session để chuyển sang servlet verify-register
+            session.setAttribute("username", username);
+            session.setAttribute("password", hashedPassword);
+            session.setAttribute("email", email);
+            session.setAttribute("gender", gender);
+            session.setAttribute("role_id", roleId);
+            session.setAttribute("captcha", captcha);
+
+            // Chuyển hướng đến trang verify-register.jsp
             response.sendRedirect(request.getContextPath() + "/jsp/verify-register.jsp");
+
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            request.setAttribute("error", "Registration failed due to server error.");
+            request.setAttribute("error", "Đăng ký thất bại do lỗi server.");
             request.getRequestDispatcher("/jsp/register.jsp").forward(request, response);
         } finally {
             try {
