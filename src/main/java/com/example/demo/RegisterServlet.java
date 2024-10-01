@@ -12,13 +12,18 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.DatabaseConnection;
+import Module.*;
 
 import static Module.HashPassword.hashPassword;
 
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession(true);
         String username = request.getParameter("username");
         String password = request.getParameter("password_hash"); // Raw password
         String email = request.getParameter("email");
@@ -63,7 +68,11 @@ public class RegisterServlet extends HttpServlet {
             stmt.executeUpdate();
 
             // Redirect to login page after successful registration
-            response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");
+
+            ReturnMail returnMail = new ReturnMail();
+            String capcha = returnMail.generateVerificationCode();
+            returnMail.sendMail(email, capcha);
+            response.sendRedirect(request.getContextPath() + "/jsp/verify-register.jsp");
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             request.setAttribute("error", "Registration failed due to server error.");
