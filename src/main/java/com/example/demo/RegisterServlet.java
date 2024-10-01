@@ -14,6 +14,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.DatabaseConnection;
 
+import static Module.HashPassword.hashPassword;
+
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -23,7 +25,6 @@ public class RegisterServlet extends HttpServlet {
         String fullName = request.getParameter("full_name");
         String gender = request.getParameter("gender");
         int roleId = Integer.parseInt(request.getParameter("role_id"));
-        String status = "active";
 
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -50,7 +51,7 @@ public class RegisterServlet extends HttpServlet {
             }
 
             // Insert the new user into the database
-            String insertSql = "INSERT INTO users (username, email, password_hash, full_name, gender, role_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "INSERT INTO users (username, email, password_hash, full_name, gender, role_id) VALUES (?, ?, ?, ?, ?, ?)";
             stmt = connection.prepareStatement(insertSql);
             stmt.setString(1, username);
             stmt.setString(2, email);
@@ -58,7 +59,6 @@ public class RegisterServlet extends HttpServlet {
             stmt.setString(4, fullName);
             stmt.setString(5, gender);
             stmt.setInt(6, roleId);
-            stmt.setString(7, status);
 
             stmt.executeUpdate();
 
@@ -68,8 +68,6 @@ public class RegisterServlet extends HttpServlet {
             e.printStackTrace();
             request.setAttribute("error", "Registration failed due to server error.");
             request.getRequestDispatcher("/jsp/register.jsp").forward(request, response);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
         } finally {
             try {
                 if (rs != null) rs.close();
@@ -79,18 +77,5 @@ public class RegisterServlet extends HttpServlet {
                 e.printStackTrace();
             }
         }
-    }
-
-    // Method to hash the password using SHA-256
-    private String hashPassword(String password) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        byte[] hashedBytes = md.digest(password.getBytes()); // Hash the password bytes
-
-        // Convert the hashed bytes into a hexadecimal format
-        StringBuilder sb = new StringBuilder();
-        for (byte b : hashedBytes) {
-            sb.append(String.format("%02x", b));
-        }
-        return sb.toString(); // Return the hashed password as a hexadecimal string
     }
 }
