@@ -21,12 +21,12 @@ public class Users {
         private String created_at;
         private byte[] avatar;
         private byte[] feature_face;
-        private boolean status;
+        private String gender;
 
         public Users() {
         }
 
-        public Users(int id, String username, String password, String email, int role_id, String created_at, byte[] avatar, byte[] feature_face) {
+        public Users(int id, String username, String password, String email, int role_id, String created_at, byte[] avatar, byte[] feature_face, String gender) {
             this.id = id;
             this.username = username;
             this.password = password;
@@ -35,6 +35,7 @@ public class Users {
             this.created_at = created_at;
             this.avatar = avatar;
             this.feature_face = feature_face;
+            this.gender = gender;
         }
 
         public Users(String username, String password, String email, int role_id, String created_at, byte[] avatar, byte[] feature_face) {
@@ -118,6 +119,14 @@ public class Users {
 
         public void setFeature_face(byte[] feature_face) {
             this.feature_face = feature_face;
+        }
+
+        public String getGender() {
+            return gender;
+        }
+
+        public void setGender(String gender) {
+            this.gender = gender;
         }
 
         @Override
