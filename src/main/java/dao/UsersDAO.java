@@ -30,6 +30,7 @@ public class UsersDAO {
                 user.setCreated_at(rs.getString("created_at"));
                 user.setAvatar(rs.getBytes("avatar"));
                 user.setFeature_face(rs.getBytes("feature_face"));
+                user.setGender(rs.getString("gender"));
                 users.add(user);
             }
         } catch (SQLException e) {
@@ -56,6 +57,7 @@ public class UsersDAO {
                 user.setCreated_at(rs.getString("created_at"));
                 user.setAvatar(rs.getBytes("avatar"));
                 user.setFeature_face(rs.getBytes("feature_face"));
+                user.setGender(rs.getString("gender"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -80,6 +82,7 @@ public class UsersDAO {
                 user.setCreated_at(rs.getString("created_at"));
                 user.setAvatar(rs.getBytes("avatar"));
                 user.setFeature_face(rs.getBytes("feature_face"));
+                user.setGender(rs.getString("gender"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -90,7 +93,7 @@ public class UsersDAO {
     //add new user
     public boolean addUser(Users user) throws SQLException, ClassNotFoundException {
         Connection connection = new DBConnect().getConnection();
-        String sql = "INSERT INTO users(username, password, email, role_id, created_at, avatar, feature_face) VALUES(?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO users(username, password, email, role_id, created_at, avatar, feature_face, gender) VALUES(?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement ps = connection.prepareCall(sql);
             ps.setString(1, user.getUsername());
@@ -100,6 +103,7 @@ public class UsersDAO {
             ps.setString(5, user.getCreated_at());
             ps.setBytes(6, user.getAvatar());
             ps.setBytes(7, user.getFeature_face());
+            ps.setString(8, user.getGender());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -110,7 +114,7 @@ public class UsersDAO {
     //update user
     public boolean updateUser(Users user) throws SQLException, ClassNotFoundException {
         Connection connection = new DBConnect().getConnection();
-        String sql = "UPDATE users SET username = ?, password = ?, email = ?, role_id = ?, created_at = ?, avatar= ?, feature_face = ? WHERE id = ?";
+        String sql = "UPDATE users SET username = ?, password = ?, email = ?, role_id = ?, created_at = ?, avatar= ?, feature_face = ?, gender = ? WHERE id = ?";
         try {
             PreparedStatement ps = connection.prepareCall(sql);
             ps.setString(1, user.getUsername());
@@ -120,7 +124,8 @@ public class UsersDAO {
             ps.setString(5, user.getCreated_at());
             ps.setBytes(6, user.getAvatar());
             ps.setBytes(7, user.getFeature_face());
-            ps.setInt(8, user.getId());
+            ps.setString(8, user.getGender());
+            ps.setInt(9, user.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -158,6 +163,7 @@ public class UsersDAO {
                 user.setCreated_at(rs.getString("created_at"));
                 user.setAvatar(rs.getBytes("avatar"));
                 user.setFeature_face(rs.getBytes("feature_face"));
+                user.setGender(rs.getString("gender"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -182,6 +188,7 @@ public class UsersDAO {
                 user.setCreated_at(rs.getString("created_at"));
                 user.setAvatar(rs.getBytes("avatar"));
                 user.setFeature_face(rs.getBytes("feature_face"));
+                user.setGender(rs.getString("gender"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -206,6 +213,7 @@ public class UsersDAO {
                 user.setCreated_at(rs.getString("created_at"));
                 user.setAvatar(rs.getBytes("avatar"));
                 user.setFeature_face(rs.getBytes("feature_face"));
+                user.setGender(rs.getString("gender"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

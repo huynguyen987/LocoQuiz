@@ -10,6 +10,7 @@ public class Users {
 //                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 //                     avatar MEDIUMBLOB NULL,
 //                     feature_face MEDIUMBLOB NULL,
+//                     gender VARCHAR(255) NOT NULL,
 //                     FOREIGN KEY(role_id) REFERENCES role(id)
 //);
 
