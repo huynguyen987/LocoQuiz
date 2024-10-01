@@ -31,7 +31,7 @@ public class LoginServlet extends HttpServlet {
             connection = DatabaseConnection.getConnection();
 
             // Query the user from the database using the hashed password
-            String sql = "SELECT * FROM users WHERE username = ? AND password_hash = ?";
+            String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
             stmt = connection.prepareStatement(sql);
             stmt.setString(1, username);
             stmt.setString(2, hashedPassword); // Compare hashed passwords
@@ -42,9 +42,9 @@ public class LoginServlet extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("username", username);
 
-                int roleId = rs.getInt("role_id");
+                int roleId = rs.getInt("role_id"); // Get the role of the user
                 if (roleId == 3) {
-                    response.sendRedirect("../admin.jsp");
+                    response.sendRedirect("jsp/admin.jsp");
                 } else {
                     response.sendRedirect("index.jsp");
                 }
