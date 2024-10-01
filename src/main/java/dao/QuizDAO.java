@@ -123,7 +123,7 @@ public class QuizDAO {
             System.out.println(dao.getAllQuiz());
             System.out.println(dao.getQuizById(1));
             System.out.println(dao.insertQuiz(new quiz("name", "description", "created_at", "updated_at", 1, 1, "answer")));
-            System.out.println(dao.updateQuiz(new quiz(1, "name", "description", "created_at", "updated_at", 1, 1, "answer")));
+            System.out.println(dao.updateQuiz(new quiz(1, "name", "description", "created_at", "updated_at", 1, 1, "answer", true)));
             System.out.println(dao.deleteQuiz(1));
         }
 

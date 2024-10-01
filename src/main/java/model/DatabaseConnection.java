@@ -32,5 +32,21 @@ public class DatabaseConnection {
             }
         }
     }
+//    test print all user
+    public static void main(String[] args) {
+        Connection connection = null;
+        try {
+            connection = DatabaseConnection.getConnection();
+            if (connection != null) {
+                System.out.println("Database connection successful!");
+            } else {
+                System.out.println("Failed to make connection!");
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            DatabaseConnection.closeConnection(connection);
+        }
+}
 }
 

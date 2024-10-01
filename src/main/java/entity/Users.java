@@ -1,6 +1,6 @@
 package entity;
 
-public class users {
+public class Users {
 //    CREATE TABLE user(
 //                     id INT PRIMARY KEY AUTO_INCREMENT,
 //                     username VARCHAR(255) NOT NULL,
@@ -21,11 +21,12 @@ public class users {
         private String created_at;
         private byte[] avatar;
         private byte[] feature_face;
+        private boolean status;
 
-        public users() {
+        public Users() {
         }
 
-        public users(int id, String username, String password, String email, int role_id, String created_at, byte[] avatar, byte[] feature_face) {
+        public Users(int id, String username, String password, String email, int role_id, String created_at, byte[] avatar, byte[] feature_face) {
             this.id = id;
             this.username = username;
             this.password = password;
@@ -36,7 +37,7 @@ public class users {
             this.feature_face = feature_face;
         }
 
-        public users(String username, String password, String email, int role_id, String created_at, byte[] avatar, byte[] feature_face) {
+        public Users(String username, String password, String email, int role_id, String created_at, byte[] avatar, byte[] feature_face) {
             this.username = username;
             this.password = password;
             this.email = email;
@@ -46,7 +47,7 @@ public class users {
             this.feature_face = feature_face;
         }
 
-        public users(String username, String password, String email, int role_id, byte[] avatar, byte[] feature_face) {
+        public Users(String username, String password, String email, int role_id, byte[] avatar, byte[] feature_face) {
             this.username = username;
             this.password = password;
             this.email = email;

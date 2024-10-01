@@ -1,6 +1,6 @@
 package dao;
 
-import model.Users;
+import entity.Users;
 import Module.DBConnect;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,9 +14,9 @@ public class UsersDAO {
 
     //get all Users
     public List<Users> getAllUsers() throws SQLException, ClassNotFoundException {
-        List<Users> users = new ArrayList<>();
         Connection connection = new DBConnect().getConnection();
         String sql = "SELECT * FROM users";
+        List<Users> users = new ArrayList<>();
         try {
             PreparedStatement ps = connection.prepareCall(sql);
             ResultSet rs = ps.executeQuery();
@@ -24,17 +24,17 @@ public class UsersDAO {
                 Users user = new Users();
                 user.setId(rs.getInt("id"));
                 user.setUsername(rs.getString("username"));
-                user.setPasswordHash(rs.getString("password"));
+                user.setPassword(rs.getString("password"));
                 user.setEmail(rs.getString("email"));
-                user.setRoleId(rs.getInt("role_id"));
-                user.setCreatedAt(rs.getString("created_at"));
+                user.setRole_id(rs.getInt("role_id"));
+                user.setCreated_at(rs.getString("created_at"));
                 user.setAvatar(rs.getBytes("avatar"));
-                user.setFeatureFace(rs.getBytes("feature_face"));
+                user.setFeature_face(rs.getBytes("feature_face"));
                 users.add(user);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+    }
         return users;
     }
 
@@ -50,12 +50,36 @@ public class UsersDAO {
             while (rs.next()) {
                 user.setId(rs.getInt("id"));
                 user.setUsername(rs.getString("username"));
-                user.setPasswordHash(rs.getString("password"));
+                user.setPassword(rs.getString("password"));
                 user.setEmail(rs.getString("email"));
-                user.setRoleId(rs.getInt("role_id"));
-                user.setCreatedAt(rs.getString("created_at"));
+                user.setRole_id(rs.getInt("role_id"));
+                user.setCreated_at(rs.getString("created_at"));
                 user.setAvatar(rs.getBytes("avatar"));
-                user.setFeatureFace(rs.getBytes("feature_face"));
+                user.setFeature_face(rs.getBytes("feature_face"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+    //get all users by id
+    public Users getUsersByEmail(String email) throws SQLException, ClassNotFoundException {
+        Connection connection = new DBConnect().getConnection();
+        String sql = "SELECT * FROM users WHERE email = ?";
+        Users user = new Users();
+        try {
+            PreparedStatement ps = connection.prepareCall(sql);
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                user.setId(rs.getInt("id"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setEmail(rs.getString("email"));
+                user.setRole_id(rs.getInt("role_id"));
+                user.setCreated_at(rs.getString("created_at"));
+                user.setAvatar(rs.getBytes("avatar"));
+                user.setFeature_face(rs.getBytes("feature_face"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -70,12 +94,12 @@ public class UsersDAO {
         try {
             PreparedStatement ps = connection.prepareCall(sql);
             ps.setString(1, user.getUsername());
-            ps.setString(2, user.getPasswordHash());
+            ps.setString(2, user.getPassword());
             ps.setString(3, user.getEmail());
-            ps.setInt(4, user.getRoleId());
-            ps.setString(5, user.getCreatedAt());
+            ps.setInt(4, user.getRole_id());
+            ps.setString(5, user.getCreated_at());
             ps.setBytes(6, user.getAvatar());
-            ps.setBytes(7, user.getFeatureFace());
+            ps.setBytes(7, user.getFeature_face());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -90,12 +114,12 @@ public class UsersDAO {
         try {
             PreparedStatement ps = connection.prepareCall(sql);
             ps.setString(1, user.getUsername());
-            ps.setString(2, user.getPasswordHash());
+            ps.setString(2, user.getPassword());
             ps.setString(3, user.getEmail());
-            ps.setInt(4, user.getRoleId());
-            ps.setString(5, user.getCreatedAt());
+            ps.setInt(4, user.getRole_id());
+            ps.setString(5, user.getCreated_at());
             ps.setBytes(6, user.getAvatar());
-            ps.setBytes(7, user.getFeatureFace());
+            ps.setBytes(7, user.getFeature_face());
             ps.setInt(8, user.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -117,7 +141,7 @@ public class UsersDAO {
         }
     }
 
-    public  Users getUserByid(int id) throws SQLException, ClassNotFoundException {
+    public Users getUserByid(int id) throws SQLException, ClassNotFoundException {
         Connection connection = new DBConnect().getConnection();
         String sql = "SELECT * FROM users WHERE id = ?";
         Users user = new Users();
@@ -128,12 +152,12 @@ public class UsersDAO {
             while (rs.next()) {
                 user.setId(rs.getInt("id"));
                 user.setUsername(rs.getString("username"));
-                user.setPasswordHash(rs.getString("password_hash"));
+                user.setPassword(rs.getString("password"));
                 user.setEmail(rs.getString("email"));
-                user.setRoleId(rs.getInt("role_id"));
-                user.setCreatedAt(rs.getString("created_at"));
+                user.setRole_id(rs.getInt("role_id"));
+                user.setCreated_at(rs.getString("created_at"));
                 user.setAvatar(rs.getBytes("avatar"));
-                user.setFeatureFace(rs.getBytes("feature_face"));
+                user.setFeature_face(rs.getBytes("feature_face"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -152,12 +176,12 @@ public class UsersDAO {
             while (rs.next()) {
                 user.setId(rs.getInt("id"));
                 user.setUsername(rs.getString("username"));
-                user.setPasswordHash(rs.getString("password_hash"));
+                user.setPassword(rs.getString("password"));
                 user.setEmail(rs.getString("email"));
-                user.setRoleId(rs.getInt("role_id"));
-                user.setCreatedAt(rs.getString("created_at"));
+                user.setRole_id(rs.getInt("role_id"));
+                user.setCreated_at(rs.getString("created_at"));
                 user.setAvatar(rs.getBytes("avatar"));
-                user.setFeatureFace(rs.getBytes("feature_face"));
+                user.setFeature_face(rs.getBytes("feature_face"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -176,12 +200,12 @@ public class UsersDAO {
             while (rs.next()) {
                 user.setId(rs.getInt("id"));
                 user.setUsername(rs.getString("username"));
-                user.setPasswordHash(rs.getString("password_hash"));
+                user.setPassword(rs.getString("password"));
                 user.setEmail(rs.getString("email"));
-                user.setRoleId(rs.getInt("role_id"));
-                user.setCreatedAt(rs.getString("created_at"));
+                user.setRole_id(rs.getInt("role_id"));
+                user.setCreated_at(rs.getString("created_at"));
                 user.setAvatar(rs.getBytes("avatar"));
-                user.setFeatureFace(rs.getBytes("feature_face"));
+                user.setFeature_face(rs.getBytes("feature_face"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

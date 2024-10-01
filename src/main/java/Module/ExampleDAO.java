@@ -1,7 +1,5 @@
 package Module;
 
-import model.Users;
-
 import java.sql.*;
 import java.util.Vector;
 

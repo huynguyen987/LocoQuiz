@@ -12,6 +12,7 @@ public class quiz {
 //                     answer JSON NOT NULL,
 //                     FOREIGN KEY (user_id) REFERENCES users(id),
 //                     FOREIGN KEY (type_id) REFERENCES type(id)
+//    status BOOLEAN DEFAULT TRUE,
 //);
         private int id;
         private String name;
@@ -21,11 +22,12 @@ public class quiz {
         private int user_id;
         private int type_id;
         private String answer;
+        private boolean status;
 
         public quiz() {
         }
 
-        public quiz(int id, String name, String description, String created_at, String updated_at, int user_id, int type_id, String answer) {
+        public quiz(int id, String name, String description, String created_at, String updated_at, int user_id, int type_id, String answer, boolean status) {
             this.id = id;
             this.name = name;
             this.description = description;
@@ -34,6 +36,7 @@ public class quiz {
             this.user_id = user_id;
             this.type_id = type_id;
             this.answer = answer;
+            this.status = status;
         }
 
         public quiz(String name, String description, String created_at, String updated_at, int user_id, int type_id, String answer) {
@@ -108,6 +111,29 @@ public class quiz {
 
         public void setAnswer(String answer) {
             this.answer = answer;
+        }
+
+        public boolean getStatus() {
+            return status;
+        }
+
+        public void setStatus(boolean status) {
+            this.status = status;
+        }
+
+        @Override
+        public String toString() {
+            return "quiz{" +
+                    "id=" + id +
+                    ", name='" + name + '\'' +
+                    ", description='" + description + '\'' +
+                    ", created_at='" + created_at + '\'' +
+                    ", updated_at='" + updated_at + '\'' +
+                    ", user_id=" + user_id +
+                    ", type_id=" + type_id +
+                    ", answer='" + answer + '\'' +
+                    ", status=" + status +
+                    '}';
         }
 
 }

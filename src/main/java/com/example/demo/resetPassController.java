@@ -1,16 +1,17 @@
 package com.example.demo;
 
 import Module.HashPassword;
-import entity.User;
+import dao.UsersDAO;
+import entity.Users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.UserDAO;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 
 @WebServlet(name = "resetPassController", value = "/resetpass")
@@ -32,7 +33,14 @@ public class resetPassController extends HttpServlet {
                 return;  // Exit the method to prevent further processing
             }
             System.out.println("Email: " + email);
-            User user = new UserDAO().getUserByEmail(email);
+            Users user = null;
+            try {
+                user = new UsersDAO().getUserByEmail(email);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             System.out.println("User: " + user.toString());
             if (user == null) {
                 session.setAttribute("error", "Người dùng không tồn tại.");
@@ -40,8 +48,15 @@ public class resetPassController extends HttpServlet {
                 return;
             }
             String hashedPassword = HashPassword.hashPassword(password);
-            user.setPasswordHash(hashedPassword);
-            boolean updated = new UserDAO().updateUser(user);
+            user.setPassword(hashedPassword);
+            boolean updated = false;
+            try {
+                updated = new UsersDAO().updateUser(user);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             if (updated) {
                 session.setAttribute("success", "Cập nhật mật khẩu thành công.");
                 response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");

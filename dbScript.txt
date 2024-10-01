@@ -45,6 +45,7 @@ CREATE TABLE quiz(
                      user_id INT NOT NULL,
                      type_id INT NOT NULL,
                      answer JSON NOT NULL,
+                     status BOOLEAN DEFAULT TRUE,
                      FOREIGN KEY (user_id) REFERENCES users(id),
                      FOREIGN KEY (type_id) REFERENCES type(id)
 );
