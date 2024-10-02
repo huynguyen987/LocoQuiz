@@ -1,4 +1,4 @@
-package com.example.demo;
+package Servlet;
 
 import Module.HashPassword;
 import java.io.IOException;

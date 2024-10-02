@@ -1,10 +1,8 @@
 package dao;
 
 import entity.quiz;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import Module.DBConnect;
@@ -62,25 +60,35 @@ public class QuizDAO {
             return q;
         }
 
-        //insert quiz
-        public boolean insertQuiz(quiz q) throws SQLException, ClassNotFoundException {
-            Connection connection = new DBConnect().getConnection();
-            String sql = "INSERT INTO quiz(name, description, created_at, updated_at, user_id, type_id, answer) VALUES(?,?,?,?,?,?,?)";
-            try {
-                PreparedStatement ps = connection.prepareCall(sql);
-                ps.setString(1, q.getName());
-                ps.setString(2, q.getDescription());
-                ps.setString(3, q.getCreated_at());
-                ps.setString(4, q.getUpdated_at());
-                ps.setInt(5, q.getUser_id());
-                ps.setInt(6, q.getType_id());
-                ps.setString(7, q.getAnswer());
-                return ps.executeUpdate() == 1;
-            } catch (SQLException e) {
-                e.printStackTrace();
+    // Insert quiz and return generated ID
+    public int insertQuiz(quiz q) throws SQLException, ClassNotFoundException {
+        Connection connection = new DBConnect().getConnection();
+        String sql = "INSERT INTO quiz(name, description, user_id, type_id, answer) VALUES(?,?,?,?,?)";
+        int generatedId = -1;
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, q.getName());
+            ps.setString(2, q.getDescription());
+            ps.setInt(3, q.getUser_id());
+            ps.setInt(4, q.getType_id());
+            ps.setString(5, q.getAnswer());
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Creating quiz failed, no rows affected.");
             }
-            return false;
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    generatedId = generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("Creating quiz failed, no ID obtained.");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return generatedId;
+    }
+
 
         //update quiz
         public boolean updateQuiz(quiz q) throws SQLException, ClassNotFoundException {

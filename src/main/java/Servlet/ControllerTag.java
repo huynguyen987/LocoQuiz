@@ -1,4 +1,4 @@
-package com.example.demo;
+package Servlet;
 
 import dao.TagDAO;
 import dao.UserTagDAO;
