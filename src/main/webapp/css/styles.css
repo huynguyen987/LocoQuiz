@@ -1231,3 +1231,53 @@ body.sidebar-open .sidebar {
         width: 20%;
     }
 }
+
+/* ... existing styles ... */
+
+/* Search Container Styles */
+.search-container {
+    position: relative;
+    margin-left: 1.5rem;
+}
+
+.search-container input[type="text"] {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    width: 200px;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%; /* Position below the input field */
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    display: none; /* Initially hidden */
+    z-index: 1000;
+}
+
+.search-result-item {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.search-result-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* Adjust for mobile responsiveness */
+@media screen and (max-width: 768px) {
+    .search-container {
+        width: 100%;
+        margin: 1rem 0;
+    }
+
+    .search-container input[type="text"] {
+        width: 100%;
+    }
+}
