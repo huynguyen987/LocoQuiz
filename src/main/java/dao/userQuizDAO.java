@@ -70,19 +70,17 @@ public class userQuizDAO {
     }
 
     //insert user_quiz
-    public boolean insertUserQuiz(int userId, int quizId, int tagId) throws SQLException, ClassNotFoundException {
+    public void insertUserQuiz(user_quiz userquiz) throws SQLException, ClassNotFoundException {
         Connection connection = new DBConnect().getConnection();
         String sql = "INSERT INTO user_quiz(user_id, quiz_id, tag_id) VALUES(?,?,?)";
         try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, userId);
-            ps.setInt(2, quizId);
-            ps.setInt(3, tagId);
-            int affectedRows = ps.executeUpdate();
-            return affectedRows > 0;
+            PreparedStatement ps = connection.prepareCall(sql);
+            ps.setInt(1, userquiz.getUser_id());
+            ps.setInt(2, userquiz.getQuiz_id());
+            ps.setInt(3, userquiz.getTag_id());
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
     }
 
@@ -232,17 +230,17 @@ public class userQuizDAO {
         for (user_quiz uq : list) {
             System.out.println(uq.getUser_id() + " - " + uq.getQuiz_id() + " - " + uq.getTag_id());
         }
-//        //test getUserQuizById
-//        user_quiz uq = userquizDAO.getUserQuizById(1);
-//        System.out.println(uq.getUser_id() + " - " + uq.getQuiz_id() + " - " + uq.getTag_id());
-//        //test insertUserQuiz
-//        user_quiz uq1 = new user_quiz(1, 1, 1);
-//        userquizDAO.insertUserQuiz(uq1);
-//        //test deleteUserQuiz
-//        userquizDAO.deleteUserQuiz(1);
-//        //test updateUserQuiz
-//        user_quiz uq2 = new user_quiz(1, 1, 1);
-//        userquizDAO.updateUserQuiz(uq2);
+        //test getUserQuizById
+        user_quiz uq = userquizDAO.getUserQuizById(1);
+        System.out.println(uq.getUser_id() + " - " + uq.getQuiz_id() + " - " + uq.getTag_id());
+        //test insertUserQuiz
+        user_quiz uq1 = new user_quiz(1, 1, 1);
+        userquizDAO.insertUserQuiz(uq1);
+        //test deleteUserQuiz
+        userquizDAO.deleteUserQuiz(1);
+        //test updateUserQuiz
+        user_quiz uq2 = new user_quiz(1, 1, 1);
+        userquizDAO.updateUserQuiz(uq2);
         //test getUserQuizByUserId
         List<user_quiz> list1 = userquizDAO.getUserQuizByUserId(1);
         for (user_quiz uq3 : list1) {

@@ -1,17 +1,62 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.*" %>
+<%
+    String username = (String) session.getAttribute("username");
+    String role = (String) session.getAttribute("role"); // Assuming you store user role in session
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QuizLoco - Your Ultimate Interactive Learning Platform</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <!-- Font Awesome -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <!-- Pass contextPath to JavaScript -->
+    <script type="text/javascript">
+        var contextPath = '<%= request.getContextPath() %>';
+    </script>
 </head>
-<body>
+<body id="body">
+<!-- Sidebar -->
+<div id="sidebar" class="sidebar">
+    <!-- Sidebar Toggle Button -->
+    <div class="sidebar-toggle">
+        <button id="sidebarClose" aria-label="Close sidebar"><i class="fas fa-times"></i></button>
+    </div>
+    <!-- Sidebar Content -->
+    <div class="sidebar-content">
+        <ul>
+            <li><a href="index.jsp">Home</a></li>
+            <li><a href="${pageContext.request.contextPath}/jsp/all-quizzes.jsp">All Quizzes</a></li>
+            <li><a href="${pageContext.request.contextPath}/jsp/tag-list.jsp">Tag List</a></li>
+            <%
+                if (role != null && role.equals("student")) {
+            %>
+            <li><a href="${pageContext.request.contextPath}/jsp/my-classes.jsp">My Classes</a></li>
+            <li><a href="${pageContext.request.contextPath}/jsp/recent-quizzes.jsp">Recent Quizzes</a></li>
+            <%
+            } else if (role != null && role.equals("teacher")) {
+            %>
+            <li><a href="${pageContext.request.contextPath}/jsp/my-classes.jsp">My Classes</a></li>
+            <li><a href="${pageContext.request.contextPath}/jsp/create-class.jsp">Create Class</a></li>
+            <%
+                }
+            %>
+        </ul>
+    </div>
+</div>
+
+<!-- Header -->
 <header>
     <div class="container">
+        <!-- Sidebar Toggle Button -->
+        <button id="sidebarToggle" class="sidebar-toggle-btn" aria-label="Open sidebar">
+            <i class="fas fa-bars"></i>
+        </button>
+        <!-- Logo -->
         <a href="index.jsp" class="logo">QuizLoco</a>
+        <!-- Navigation Menu -->
         <nav>
             <ul>
                 <li><a href="#home">Home</a></li>
@@ -21,11 +66,16 @@
                 <li><a href="#contact">Contact</a></li>
             </ul>
         </nav>
+
+        <!-- Search Container -->
+        <div class="search-container">
+            <input type="text" id="liveSearch" placeholder="Search quizzes..." aria-label="Search quizzes">
+            <div id="searchResults" class="search-results"></div>
+        </div>
+
+        <!-- Authentication Links -->
         <div class="auth-links">
-            <%
-                String username = (String) session.getAttribute("username");
-                if (username != null) {
-            %>
+            <% if (username != null) { %>
             <div class="user-info">
                 <a href="${pageContext.request.contextPath}/jsp/user-profile.jsp" class="user-profile">
                     <i class="fas fa-user-circle"></i>
@@ -33,15 +83,12 @@
                 </a>
                 <a href="LogoutServlet" class="btn-logout">Logout</a>
             </div>
-            <%
-            } else {
-            %>
+            <% } else { %>
             <a href="jsp/login.jsp" class="btn-login">Login</a>
             <a href="jsp/register.jsp" class="btn-register">Register</a>
-            <%
-                }
-            %>
+            <% } %>
         </div>
+        <!-- Mobile Menu Toggle and Theme Toggle -->
         <button class="mobile-menu-toggle" aria-label="Toggle navigation">
             <i class="fas fa-bars"></i>
         </button>
@@ -55,18 +102,21 @@
     </div>
 </header>
 
+<!-- Main Content -->
 <main>
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="container">
             <h1 class="fade-in-up">Welcome to QuizLoco</h1>
-            <p class="fade-in-up">Challenge yourself, learn, and have fun with our interactive quizzes and study tools!</p>
+            <p class="fade-in-up">Challenge yourself, learn, and have fun with our interactive quizzes and study
+                tools!</p>
             <div class="cta-buttons fade-in-up">
                 <a href="#subjects" class="cta-button">Start Quizzing Now</a>
                 <a href="#create-quiz" class="cta-button secondary">Create Your Own Quiz</a>
             </div>
         </div>
     </section>
+
 
     <!-- Features Section -->
     <section id="features" class="features">
@@ -133,7 +183,8 @@
                     <div class="quiz-content">
                         <h3>Basic Algebra</h3>
                         <p>Test your foundational algebra skills with this engaging quiz.</p>
-                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=1" class="btn-quiz">Take Quiz</a>
+                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=1" class="btn-quiz">Take
+                            Quiz</a>
                     </div>
                 </div>
                 <div class="quiz-card fade-in">
@@ -141,7 +192,8 @@
                     <div class="quiz-content">
                         <h3>World History</h3>
                         <p>Challenge your knowledge of global historical events.</p>
-                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=2" class="btn-quiz">Take Quiz</a>
+                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=2" class="btn-quiz">Take
+                            Quiz</a>
                     </div>
                 </div>
                 <div class="quiz-card fade-in">
@@ -149,15 +201,18 @@
                     <div class="quiz-content">
                         <h3>Basic Chemistry</h3>
                         <p>Assess your understanding of fundamental chemistry concepts.</p>
-                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=3" class="btn-quiz">Take Quiz</a>
+                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=3" class="btn-quiz">Take
+                            Quiz</a>
                     </div>
                 </div>
                 <div class="quiz-card fade-in">
-                    <img src="${pageContext.request.contextPath}/img/literature.jpg" alt="English Literature" loading="lazy">
+                    <img src="${pageContext.request.contextPath}/img/literature.jpg" alt="English Literature"
+                         loading="lazy">
                     <div class="quiz-content">
                         <h3>English Literature</h3>
                         <p>Explore classic and contemporary works in English literature.</p>
-                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=4" class="btn-quiz">Take Quiz</a>
+                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=4" class="btn-quiz">Take
+                            Quiz</a>
                     </div>
                 </div>
             </div>
@@ -200,7 +255,8 @@
             <h2>Create Your Own Quiz</h2>
             <p>Share your knowledge and challenge others by creating your own quizzes!</p>
             <div class="quiz-creator-preview fade-in">
-                <img src="${pageContext.request.contextPath}/img/quiz-create.jpg" alt="Quiz Creator Interface" loading="lazy">
+                <img src="${pageContext.request.contextPath}/img/quiz-create.jpg" alt="Quiz Creator Interface"
+                     loading="lazy">
             </div>
             <a href="${pageContext.request.contextPath}/jsp/quiz-creator.jsp" class="cta-button">Start Creating</a>
         </div>
@@ -210,7 +266,8 @@
         <div class="container">
             <h2>Take a Quiz Test</h2>
             <p>Are you ready to test your knowledge? Click the link below to start the quiz.</p>
-            <a href="${pageContext.request.contextPath}/jsp/quiz.jsp" class="btn-quiz">Start Test Multiple Choice Quiz</a>
+            <a href="${pageContext.request.contextPath}/jsp/quiz.jsp" class="btn-quiz">Start Test Multiple Choice
+                Quiz</a>
             <a href="${pageContext.request.contextPath}/jsp/match-quiz.jsp" class="btn-quiz">Start Test Match Quiz</a>
         </div>
     </section>
@@ -224,18 +281,22 @@
                     <img src="${pageContext.request.contextPath}/img/physics.jpg" alt="Advanced Physics" loading="lazy">
                     <div class="carousel-caption">
                         <h3>Advanced Physics</h3>
-                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=5" class="btn-quiz">Take Quiz</a>
+                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=5" class="btn-quiz">Take
+                            Quiz</a>
                     </div>
                 </div>
                 <div class="carousel-slide">
-                    <img src="${pageContext.request.contextPath}/img/geography.jpg" alt="World Geography" loading="lazy">
+                    <img src="${pageContext.request.contextPath}/img/geography.jpg" alt="World Geography"
+                         loading="lazy">
                     <div class="carousel-caption">
                         <h3>World Geography</h3>
-                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=6" class="btn-quiz">Take Quiz</a>
+                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=6" class="btn-quiz">Take
+                            Quiz</a>
                     </div>
                 </div>
             </div>
-            <button class="carousel-control prev" aria-label="Previous Slide"><i class="fas fa-chevron-left"></i></button>
+            <button class="carousel-control prev" aria-label="Previous Slide"><i class="fas fa-chevron-left"></i>
+            </button>
             <button class="carousel-control next" aria-label="Next Slide"><i class="fas fa-chevron-right"></i></button>
         </div>
     </section>
@@ -246,15 +307,18 @@
             <h2>What Our Users Say</h2>
             <div class="testimonial-slider fade-in">
                 <div class="testimonial">
-                    <p>"QuizLoco has revolutionized the way I study. The variety of subjects and quiz types keeps me engaged and motivated!"</p>
+                    <p>"QuizLoco has revolutionized the way I study. The variety of subjects and quiz types keeps me
+                        engaged and motivated!"</p>
                     <cite>- Sarah K., Student</cite>
                 </div>
                 <div class="testimonial">
-                    <p>"As a teacher, I love using QuizLoco to create interactive quizzes for my students. It's so easy to use!"</p>
+                    <p>"As a teacher, I love using QuizLoco to create interactive quizzes for my students. It's so easy
+                        to use!"</p>
                     <cite>- Mr. Johnson, High School Teacher</cite>
                 </div>
                 <div class="testimonial">
-                    <p>"The multiplayer challenges are addictive! I've made new friends while improving my knowledge."</p>
+                    <p>"The multiplayer challenges are addictive! I've made new friends while improving my
+                        knowledge."</p>
                     <cite>- Alex M., Quiz Enthusiast</cite>
                 </div>
             </div>
@@ -267,27 +331,38 @@
             <h2>Frequently Asked Questions</h2>
             <div class="faq-accordion">
                 <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false" aria-controls="faq1">How do I create a quiz?</button>
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq1">How do I create a quiz?
+                    </button>
                     <div class="faq-answer" id="faq1" aria-hidden="true">
-                        <p>To create a quiz, navigate to the "Create Your Own Quiz" section, choose your subject, and start adding questions. You can customize various settings like time limits, question types, and more.</p>
+                        <p>To create a quiz, navigate to the "Create Your Own Quiz" section, choose your subject, and
+                            start adding questions. You can customize various settings like time limits, question types,
+                            and more.</p>
                     </div>
                 </div>
                 <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false" aria-controls="faq2">Can I track my progress?</button>
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq2">Can I track my progress?
+                    </button>
                     <div class="faq-answer" id="faq2" aria-hidden="true">
-                        <p>Yes! Once you log in, you can access your dashboard where you can view your quiz history, scores, and progress over time.</p>
+                        <p>Yes! Once you log in, you can access your dashboard where you can view your quiz history,
+                            scores, and progress over time.</p>
                     </div>
                 </div>
                 <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false" aria-controls="faq3">Is QuizLoco free to use?</button>
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq3">Is QuizLoco free to use?
+                    </button>
                     <div class="faq-answer" id="faq3" aria-hidden="true">
-                        <p>QuizLoco offers both free and premium features. While many of our core functionalities are free, premium subscriptions unlock additional features like advanced analytics and exclusive quiz content.</p>
+                        <p>QuizLoco offers both free and premium features. While many of our core functionalities are
+                            free, premium subscriptions unlock additional features like advanced analytics and exclusive
+                            quiz content.</p>
                     </div>
                 </div>
                 <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false" aria-controls="faq4">How can teachers benefit from QuizLoco?</button>
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq4">How can teachers benefit
+                        from QuizLoco?
+                    </button>
                     <div class="faq-answer" id="faq4" aria-hidden="true">
-                        <p>Teachers can create customized quizzes, assign them to their classes, track student performance, and gain insights into areas where students may need additional support.</p>
+                        <p>Teachers can create customized quizzes, assign them to their classes, track student
+                            performance, and gain insights into areas where students may need additional support.</p>
                     </div>
                 </div>
             </div>
@@ -337,7 +412,8 @@
             </div>
             <div class="footer-section">
                 <h3>Subscribe to Our Newsletter</h3>
-                <form action="${pageContext.request.contextPath}/SubscribeFooterServlet" method="POST" class="footer-newsletter-form">
+                <form action="${pageContext.request.contextPath}/SubscribeFooterServlet" method="POST"
+                      class="footer-newsletter-form">
                     <input type="email" name="email" placeholder="Your email" required aria-label="Email Address">
                     <button type="submit"><i class="fas fa-paper-plane"></i></button>
                 </form>
