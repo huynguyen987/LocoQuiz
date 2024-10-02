@@ -53,4 +53,6 @@ public class class_quiz {
     public String toString() {
         return "class_quiz{" + "id=" + id + ", class_id=" + class_id + ", quiz_id=" + quiz_id + '}';
     }
+
+   
 }

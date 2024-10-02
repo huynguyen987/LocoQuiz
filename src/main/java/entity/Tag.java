@@ -1,7 +1,7 @@
 package entity;
 
-public class tag {
-//    CREATE TABLE tag(
+public class Tag {
+//    CREATE TABLE Tag(
 //                    id INT PRIMARY KEY AUTO_INCREMENT,
 //                    name VARCHAR(255) NOT NULL,
 //                    description VARCHAR(255) NOT NULL
@@ -10,26 +10,18 @@ public class tag {
     private String name;
     private String description;
 
-    public tag() {
+    public Tag() {
     }
 
-    public tag(int id, String name, String description) {
+    public Tag(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
     }
 
-    public tag(String name, String description) {
+    public Tag(String name, String description) {
         this.name = name;
         this.description = description;
-    }
-
-    public tag(String name) {
-        this.name = name;
-    }
-
-    public tag(int id) {
-        this.id = id;
     }
 
     public int getId() {
@@ -55,4 +47,14 @@ public class tag {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return "Tag{" + "id=" + id + ", name=" + name + ", description=" + description + '}';
+    }
+    
+    
+    
+
+   
 }

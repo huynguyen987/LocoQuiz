@@ -1,123 +1,152 @@
 package dao;
 
 import Module.DBConnect;
-import entity.tag;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import entity.Tag;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class TagDAO {
 
-    //get all tags
-    public List<tag> getAllTags() throws SQLException, ClassNotFoundException {
-        List<tag> tags = new ArrayList<>();
-        Connection connection = new DBConnect().getConnection();
+    // Lấy tất cả các Tag
+    public List<Tag> getAllTags() throws SQLException, ClassNotFoundException {
+        List<Tag> tags = new ArrayList<>();
         String sql = "SELECT * FROM tag";
-        try {
-            PreparedStatement ps = connection.prepareCall(sql);
-            ResultSet rs = ps.executeQuery();
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
-                tag tag = new tag();
+                Tag tag = new Tag();
                 tag.setId(rs.getInt("id"));
                 tag.setName(rs.getString("name"));
+                tag.setDescription(rs.getString("description"));
                 tags.add(tag);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return tags;
     }
 
-    //get tag by id
-    public tag getTagById(int id) throws SQLException, ClassNotFoundException {
-        Connection connection = new DBConnect().getConnection();
+    // Lấy Tag theo id
+    public Tag getTagById(int id) throws SQLException, ClassNotFoundException {
         String sql = "SELECT * FROM tag WHERE id = ?";
-        tag tag = new tag();
-        try {
-            PreparedStatement ps = connection.prepareCall(sql);
+        Tag tag = null;
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
             ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                tag.setId(rs.getInt("id"));
-                tag.setName(rs.getString("name"));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    tag = new Tag();
+                    tag.setId(rs.getInt("id"));
+                    tag.setName(rs.getString("name"));
+                    tag.setDescription(rs.getString("description"));
+                }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return tag;
     }
 
-    //get tag by name
-    public tag getTagByName(String name) throws SQLException, ClassNotFoundException {
-        Connection connection = new DBConnect().getConnection();
+    // Lấy Tag theo tên
+    public Tag getTagByName(String name) throws SQLException, ClassNotFoundException {
         String sql = "SELECT * FROM tag WHERE name = ?";
-        tag tag = new tag();
-        try {
-            PreparedStatement ps = connection.prepareCall(sql);
+        Tag tag = null;
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
             ps.setString(1, name);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                tag.setId(rs.getInt("id"));
-                tag.setName(rs.getString("name"));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    tag = new Tag();
+                    tag.setId(rs.getInt("id"));
+                    tag.setName(rs.getString("name"));
+                    tag.setDescription(rs.getString("description"));
+                }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return tag;
     }
 
-    //insert tag
-    public boolean insertTag(tag tag) throws SQLException, ClassNotFoundException {
-        Connection connection = new DBConnect().getConnection();
-        String sql = "INSERT INTO tag(name) VALUES(?)";
-        try {
-            PreparedStatement ps = connection.prepareCall(sql);
+    // Thêm Tag mới
+    public boolean insertTag(Tag tag) throws SQLException, ClassNotFoundException {
+        String sql = "INSERT INTO tag (name, description) VALUES (?, ?)";
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
             ps.setString(1, tag.getName());
-            ps.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
+            ps.setString(2, tag.getDescription());
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
         }
-        return false;
     }
 
-    //update tag
-    public boolean updateTag(tag tag) throws SQLException, ClassNotFoundException {
-        Connection connection = new DBConnect().getConnection();
-        String sql = "UPDATE tag SET name = ? WHERE id = ?";
-        try {
-            PreparedStatement ps = connection.prepareCall(sql);
+
+    // Cập nhật Tag
+    public boolean updateTag(Tag tag) throws SQLException, ClassNotFoundException {
+        String sql = "UPDATE tag SET name = ?, description = ? WHERE id = ?";
+        boolean rowUpdated;
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
             ps.setString(1, tag.getName());
-            ps.setInt(2, tag.getId());
-            ps.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
+            ps.setString(2, tag.getDescription());
+            ps.setInt(3, tag.getId());
+            rowUpdated = ps.executeUpdate() > 0;
         }
-        return false;
+        return rowUpdated;
     }
 
-    //delete tag
-    public void deleteTag(int id) throws SQLException, ClassNotFoundException {
-        Connection connection = new DBConnect().getConnection();
+    // Xóa Tag
+    public boolean deleteTag(int id) throws SQLException, ClassNotFoundException {
         String sql = "DELETE FROM tag WHERE id = ?";
-        try {
-            PreparedStatement ps = connection.prepareCall(sql);
+        boolean rowDeleted;
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
             ps.setInt(1, id);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            rowDeleted = ps.executeUpdate() > 0;
         }
+        return rowDeleted;
     }
 
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        TagDAO dao = new TagDAO();
-        System.out.println(dao.getAllTags());
-    }
+    // Tìm kiếm Tag theo tên
+    public List<Tag> searchTagByName(String name) throws SQLException, ClassNotFoundException {
+        List<Tag> tags = new ArrayList<>();
+        String sql = "SELECT * FROM tag WHERE name LIKE ?";
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
 
+            ps.setString(1, "%" + name + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Tag tag = new Tag();
+                    tag.setId(rs.getInt("id"));
+                    tag.setName(rs.getString("name"));
+                    tag.setDescription(rs.getString("description"));
+                    tags.add(tag);
+                }
+            }
+        }
+        return tags;
+    }
+    public List<Tag> getFixedTags() throws SQLException, ClassNotFoundException {
+        List<Tag> tags = new ArrayList<>();
+        String sql = "SELECT * FROM tag WHERE name IN ('Khoa Học', 'Xã Hội')"; // Thay thế bằng danh sách các Tag cố định
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Tag tag = new Tag();
+                tag.setId(rs.getInt("id"));
+                tag.setName(rs.getString("name"));
+                tag.setDescription(rs.getString("description"));
+                tags.add(tag);
+            }
+        }
+        return tags;
+    }
 
 }

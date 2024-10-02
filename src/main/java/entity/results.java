@@ -29,6 +29,7 @@ public class results {
     }
     public results(){
     }
+
     public int getId() {
         return id;
     }
@@ -52,6 +53,7 @@ public class results {
     public void setQuiz_id(int quiz_id) {
         this.quiz_id = quiz_id;
     }
+
     public int getClass_id() {
         return class_id;
     }
@@ -78,15 +80,9 @@ public class results {
 
     @Override
     public String toString() {
-        return "results{" +
-                "id=" + id +
-                ", user_id=" + user_id +
-                ", quiz_id=" + quiz_id +
-                ", class_id=" + class_id +
-                ", score=" + score +
-                ", created_at='" + created_at + '\'' +
-                '}';
+        return "results{" + "id=" + id + ", user_id=" + user_id + ", quiz_id=" + quiz_id + ", class_id=" + class_id + ", score=" + score + ", created_at=" + created_at + '}';
     }
+    
 }
 
 

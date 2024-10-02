@@ -6,7 +6,7 @@ public class user_quiz {
 //                          tag_id INT NOT NULL,
 //                          FOREIGN KEY (user_id) REFERENCES users(id),
 //                          FOREIGN KEY (quiz_id) REFERENCES quiz(id),
-//                          FOREIGN KEY (tag_id) REFERENCES tag(id)
+//                          FOREIGN KEY (tag_id) REFERENCES Tag(id)
 //);
     private int user_id;
     private int quiz_id;
@@ -50,4 +50,12 @@ public class user_quiz {
     public void setTag_id(int tag_id) {
         this.tag_id = tag_id;
     }
+
+    @Override
+    public String toString() {
+        return "user_quiz{" + "user_id=" + user_id + ", quiz_id=" + quiz_id + ", tag_id=" + tag_id + '}';
+    }
+
+    
+    
 }

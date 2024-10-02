@@ -1,4 +1,5 @@
 package com.example.demo;
+
 import Module.HashPassword;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -8,10 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
 import model.DatabaseConnection;
 
 @WebServlet(name = "loginServlet", value = "/login")
@@ -40,6 +38,9 @@ public class LoginServlet extends HttpServlet {
             if (rs.next()) {
                 // User is authenticated, set session and redirect based on role
                 HttpSession session = request.getSession();
+
+                int userId = rs.getInt("id"); // Lấy userId từ kết quả truy vấn
+                session.setAttribute("userId", userId); // Lưu userId vào session
                 session.setAttribute("username", username);
 
                 int roleId = rs.getInt("role_id"); // Get the role of the user

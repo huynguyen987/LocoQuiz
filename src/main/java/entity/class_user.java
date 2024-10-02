@@ -48,4 +48,11 @@ public class class_user {
     public void setUser_id(int user_id) {
         this.user_id = user_id;
     }
+
+    @Override
+    public String toString() {
+        return "class_user{" + "id=" + id + ", class_id=" + class_id + ", user_id=" + user_id + '}';
+    }
+
+    
 }

@@ -24,14 +24,6 @@ public class role {
         this.description = description;
     }
 
-    public role(String name) {
-        this.name = name;
-    }
-
-    public role(int id) {
-        this.id = id;
-    }
-
     public int getId() {
         return id;
     }
@@ -55,4 +47,11 @@ public class role {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return "role{" + "id=" + id + ", name=" + name + ", description=" + description + '}';
+    }
+
+   
 }

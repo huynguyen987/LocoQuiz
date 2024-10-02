@@ -87,4 +87,11 @@ public class classs {
     public void setTeacher_id(int teacher_id) {
         this.teacher_id = teacher_id;
     }
+
+    @Override
+    public String toString() {
+        return "classs{" + "id=" + id + ", name=" + name + ", class_key=" + class_key + ", description=" + description + ", created_at=" + created_at + ", updated_at=" + updated_at + ", teacher_id=" + teacher_id + '}';
+    }
+
+   
 }
