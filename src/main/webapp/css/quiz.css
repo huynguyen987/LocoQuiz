@@ -1,0 +1,235 @@
+/* Reset and Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.quiz-container {
+    width: 90%;
+    max-width: 1000px;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+}
+
+.quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.countdown-timer {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #ff4d4d;
+}
+
+.progress-container {
+    width: 60%;
+}
+
+.progress-bar {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 25px;
+    overflow: hidden;
+    height: 20px;
+}
+
+.progress {
+    height: 100%;
+    width: 0%;
+    background-color: #4caf50;
+    transition: width 0.3s ease;
+}
+
+.progress-details {
+    margin-top: 5px;
+    font-size: 0.9em;
+    color: #555555;
+}
+
+.quiz-content {
+    margin-bottom: 20px;
+}
+
+.question-number {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    color: #333333;
+}
+
+#question-text {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #555555;
+}
+
+.answer-options {
+    display: flex;
+    flex-direction: column;
+}
+
+.answer-option {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.answer-option input {
+    margin-right: 15px;
+    transform: scale(1.2);
+}
+
+.answer-option label {
+    font-size: 1.1em;
+    color: #333333;
+    cursor: pointer;
+}
+
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.navigation-buttons button {
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.navigation-buttons button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.navigation-buttons button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.jump-to-section {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.jump-to-section label {
+    margin-right: 10px;
+    font-size: 1em;
+    color: #333333;
+}
+
+.jump-to-section select {
+    padding: 5px 10px;
+    font-size: 1em;
+    border-radius: 5px;
+    border: 1px solid #cccccc;
+}
+
+.question-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.question-selector button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    color: #333333;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.question-selector button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.question-selector button.answered {
+    background-color: #4caf50;
+    color: white;
+}
+
+.question-selector button:hover {
+    background-color: #bdbdbd;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.close-button {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #000;
+}
+
+@media (max-width: 768px) {
+    .quiz-container {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .question-selector {
+        grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
+        gap: 5px;
+    }
+
+    .navigation-buttons button {
+        padding: 8px 16px;
+        font-size: 0.9em;
+    }
+
+    .progress-container {
+        width: 100%;
+    }
+}
