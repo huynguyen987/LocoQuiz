@@ -192,3 +192,31 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Sidebar Toggle
+    const sidebarToggleBtn = document.getElementById('sidebarToggle');
+    const sidebarCloseBtn = document.getElementById('sidebarClose');
+    const sidebar = document.getElementById('sidebar');
+    const body = document.body;
+
+    sidebarToggleBtn.addEventListener('click', function() {
+        body.classList.toggle('sidebar-open');
+    });
+
+    sidebarCloseBtn.addEventListener('click', function() {
+        body.classList.remove('sidebar-open');
+    });
+
+    // Close sidebar when clicking outside
+    document.addEventListener('click', function(event) {
+        if (body.classList.contains('sidebar-open')) {
+            if (!sidebar.contains(event.target) && !sidebarToggleBtn.contains(event.target)) {
+                body.classList.remove('sidebar-open');
+            }
+        }
+    });
+
+    // Search bar submit function (already handled in form action)
+});
+
