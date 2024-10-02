@@ -82,6 +82,32 @@ public class TagDAO {
         }
     }
 
+    public int insertTagg(Tag tag) throws SQLException, ClassNotFoundException {
+        String sql = "INSERT INTO tag(name, description) VALUES(?, ?)";
+        int generatedId = -1;
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, tag.getName());
+            ps.setString(2, tag.getDescription());
+
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Inserting tag failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    generatedId = generatedKeys.getInt(1);
+                    tag.setId(generatedId);
+                } else {
+                    throw new SQLException("Inserting tag failed, no ID obtained.");
+                }
+            }
+        }
+        return generatedId;
+    }
+
 
     // Cập nhật Tag
     public boolean updateTag(Tag tag) throws SQLException, ClassNotFoundException {
@@ -133,7 +159,7 @@ public class TagDAO {
     }
     public List<Tag> getFixedTags() throws SQLException, ClassNotFoundException {
         List<Tag> tags = new ArrayList<>();
-        String sql = "SELECT * FROM tag WHERE name IN ('Khoa Học', 'Xã Hội')"; // Thay thế bằng danh sách các Tag cố định
+        String sql = "SELECT * FROM tag WHERE name IN ('Khoa Học', 'Xã Hội')";
         try (Connection connection = new DBConnect().getConnection();
              PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {

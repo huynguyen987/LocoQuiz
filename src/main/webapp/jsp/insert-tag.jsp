@@ -1,4 +1,6 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.util.List"%>
+<%@page import="entity.Tag"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,23 +11,28 @@
 <h1>Thêm Tag Mới</h1>
 <form action="ControllerTag?action=insertTag" method="post">
     <input type="hidden" name="submit" value="true" />
-    <label for="name">Tên Tag:</label><br/>
-    <input type="text" id="name" name="name" required/><br/><br/>
-    <label for="description">Mô Tả:</label><br/>
-    <textarea id="description" name="description"></textarea><br/><br/>
+    <label for="tagId">Chọn Tag:</label><br/>
+    <select id="tagId" name="tagId" required>
+        <option value="">-- Chọn một tag --</option>
+        <%
+            List<Tag> fixedTags = (List<Tag>) request.getAttribute("fixedTags");
+            if (fixedTags != null) {
+                for (Tag tag : fixedTags) {
+        %>
+        <option value="<%= tag.getId() %>"><%= tag.getName() %></option>
+        <%
+                }
+            }
+        %>
+    </select><br/><br/>
     <input type="submit" value="Thêm Tag"/>
 </form>
 <br/>
 <a href="ControllerTag?action=listTag">Quay lại danh sách Tag</a>
 
 <!-- Hiển thị thông báo lỗi nếu có -->
-<%
-    String error = (String) request.getAttribute("error");
-    if (error != null) {
-%>
-<p style="color:red;"><%= error %></p>
-<%
-    }
-%>
+<% if (request.getAttribute("error") != null) { %>
+<p style="color:red;"><%= request.getAttribute("error") %></p>
+<% } %>
 </body>
 </html>

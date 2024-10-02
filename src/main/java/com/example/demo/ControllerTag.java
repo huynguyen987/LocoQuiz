@@ -1,15 +1,18 @@
 package com.example.demo;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+
 import dao.TagDAO;
 import dao.UserTagDAO;
 import entity.Tag;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
 
 @WebServlet(name = "ControllerTag", urlPatterns = {"/ControllerTag"})
 public class ControllerTag extends HttpServlet {
@@ -23,104 +26,110 @@ public class ControllerTag extends HttpServlet {
 
         try {
             if (action == null || action.equals("listTag")) {
-                // Hiển thị danh sách tất cả các Tag
-                List<Tag> tags = tagDAO.getAllTags();
+                // Hiển thị danh sách các tag của người dùng
+                Integer userIdObj = (Integer) request.getSession().getAttribute("userId");
+                if (userIdObj == null) {
+                    // User chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                    response.sendRedirect("jsp/login.jsp");
+                    return;
+                }
+                int userId = userIdObj.intValue();
+
+                List<Tag> tags = userTagDAO.getUserTagsByUserId(userId);
                 request.setAttribute("tags", tags);
                 request.getRequestDispatcher("jsp/tag.jsp").forward(request, response);
+            } else if (action.equals("searchTag")) {
+                // Xử lý tìm kiếm tag theo tên trong danh sách tag của người dùng
+                String searchName = request.getParameter("searchName");
+                Integer userIdObj = (Integer) request.getSession().getAttribute("userId");
+                if (userIdObj == null) {
+                    // User chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                    response.sendRedirect("jsp/login.jsp");
+                    return;
+                }
+                int userId = userIdObj.intValue();
 
+                List<Tag> tags = userTagDAO.searchUserTagsByName(userId, searchName);
+                request.setAttribute("tags", tags);
+                request.setAttribute("searchName", searchName);
+                request.getRequestDispatcher("jsp/tag.jsp").forward(request, response);
             } else if (action.equals("insertTag")) {
                 String submit = request.getParameter("submit");
                 if (submit == null) {
-                    // Hiển thị trang thêm Tag
-                    request.getRequestDispatcher("jsp/insert-tag.jsp").forward(request, response);
+                    // Hiển thị trang thêm tag với danh sách tag cố định
+                    List<Tag> fixedTags = tagDAO.getFixedTags();
+                    request.setAttribute("fixedTags", fixedTags);
+                    request.getRequestDispatcher("/jsp/insert-tag.jsp").forward(request, response);
                 } else {
-                    // Xử lý thêm Tag mới
-                    String name = request.getParameter("name");
-                    String description = request.getParameter("description");
-                    if (name == null || name.trim().isEmpty()) {
-                        request.setAttribute("error", "Tên tag là bắt buộc.");
+                    // Xử lý thêm tag cho người dùng
+                    String tagIdStr = request.getParameter("tagId");
+                    if (tagIdStr == null || tagIdStr.isEmpty()) {
+                        request.setAttribute("error", "Vui lòng chọn một tag.");
+                        List<Tag> fixedTags = tagDAO.getFixedTags();
+                        request.setAttribute("fixedTags", fixedTags);
                         request.getRequestDispatcher("jsp/insert-tag.jsp").forward(request, response);
-                    } else {
-                        Tag tag = new Tag(name, description);
-                        boolean inserted = tagDAO.insertTag(tag);
-                        if (inserted) {
+                        return;
+                    }
+                    int tagId = Integer.parseInt(tagIdStr);
+
+                    Integer userIdObj = (Integer) request.getSession().getAttribute("userId");
+                    if (userIdObj == null) {
+                        // User chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                        response.sendRedirect("jsp/login.jsp");
+                        return;
+                    }
+                    int userId = userIdObj.intValue();
+
+                    // Kiểm tra xem người dùng đã có tag này chưa
+                    if (!userTagDAO.userHasTag(userId, tagId)) {
+                        boolean added = userTagDAO.addUserTag(userId, tagId);
+                        if (added) {
                             response.sendRedirect("ControllerTag?action=listTag");
                         } else {
                             request.setAttribute("error", "Thêm tag thất bại.");
+                            List<Tag> fixedTags = tagDAO.getFixedTags();
+                            request.setAttribute("fixedTags", fixedTags);
                             request.getRequestDispatcher("jsp/insert-tag.jsp").forward(request, response);
                         }
-                    }
-                }
-
-            } else if (action.equals("updateTag")) {
-                String submit = request.getParameter("submit");
-                if (submit == null) {
-                    // Hiển thị trang cập nhật tag
-                    String idParam = request.getParameter("id");
-                    if (idParam != null && !idParam.isEmpty()) {
-                        int id = Integer.parseInt(idParam);
-                        Tag tag = tagDAO.getTagById(id);
-                        if (tag != null) {
-                            request.setAttribute("tag", tag);
-                            request.getRequestDispatcher("jsp/update-tag.jsp").forward(request, response);
-                        } else {
-                            request.setAttribute("error", "Không tìm thấy tag.");
-                            request.getRequestDispatcher("ControllerTag?action=listTag").forward(request, response);
-                        }
                     } else {
-                        // Không có tham số id, chuyển hướng về danh sách tag
-                        response.sendRedirect("ControllerTag?action=listTag");
-                    }
-                } else {
-                    // Xử lý cập nhật tag
-                    String idParam = request.getParameter("id");
-                    if (idParam != null && !idParam.isEmpty()) {
-                        int id = Integer.parseInt(idParam);
-                        String name = request.getParameter("name");
-                        String description = request.getParameter("description");
-                        Tag tag = new Tag(id, name, description);
-                        boolean updated = tagDAO.updateTag(tag);
-                        if (updated) {
-                            response.sendRedirect("ControllerTag?action=listTag");
-                        } else {
-                            request.setAttribute("error", "Cập nhật tag thất bại.");
-                            request.setAttribute("tag", tag);
-                            request.getRequestDispatcher("jsp/update-tag.jsp").forward(request, response);
-                        }
-                    } else {
-                        request.setAttribute("error", "ID tag không hợp lệ.");
-                        response.sendRedirect("ControllerTag?action=listTag");
+                        request.setAttribute("error", "Bạn đã có tag này rồi.");
+                        List<Tag> fixedTags = tagDAO.getFixedTags();
+                        request.setAttribute("fixedTags", fixedTags);
+                        request.getRequestDispatcher("jsp/insert-tag.jsp").forward(request, response);
                     }
                 }
             } else if (action.equals("deleteTag")) {
-                // Xử lý xóa tag
-                String idParam = request.getParameter("id");
-                if (idParam != null && !idParam.isEmpty()) {
-                    int id = Integer.parseInt(idParam);
-                    boolean deleted = tagDAO.deleteTag(id);
-                    if (deleted) {
-                        response.sendRedirect("ControllerTag?action=listTag");
-                    } else {
-                        request.setAttribute("error", "Xóa tag thất bại.");
-                        request.getRequestDispatcher("ControllerTag?action=listTag").forward(request, response);
-                    }
-                } else {
-                    // Không có tham số id, chuyển hướng về danh sách tag
+                // Xử lý xóa tag khỏi danh sách của người dùng
+                String tagIdStr = request.getParameter("tagId");
+                if (tagIdStr == null || tagIdStr.isEmpty()) {
+                    request.setAttribute("error", "Không tìm thấy tag để xóa.");
+                    request.getRequestDispatcher("ControllerTag?action=listTag").forward(request, response);
+                    return;
+                }
+                int tagId = Integer.parseInt(tagIdStr);
+
+                Integer userIdObj = (Integer) request.getSession().getAttribute("userId");
+                if (userIdObj == null) {
+                    // User chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                    response.sendRedirect("jsp/login.jsp");
+                    return;
+                }
+                int userId = userIdObj.intValue();
+
+                boolean deleted = userTagDAO.deleteUserTag(userId, tagId);
+                if (deleted) {
                     response.sendRedirect("ControllerTag?action=listTag");
+                } else {
+                    request.setAttribute("error", "Xóa tag thất bại.");
+                    request.getRequestDispatcher("ControllerTag?action=listTag").forward(request, response);
                 }
             } else {
-                // Hành động không xác định
+                // Hành động không xác định, chuyển hướng về danh sách tag
                 response.sendRedirect("ControllerTag?action=listTag");
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
-            request.setAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
-            request.getRequestDispatcher("jsp/error.jsp").forward(request, response);
-
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            request.setAttribute("error", "Tham số không hợp lệ.");
-            request.getRequestDispatcher("jsp/error.jsp").forward(request, response);
+            response.sendRedirect("jsp/error.jsp");
         }
     }
 

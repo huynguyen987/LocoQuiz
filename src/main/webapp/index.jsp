@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page import="entity.Tag"%>
+<%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,12 +13,12 @@
 <body>
 <header>
     <div class="container">
-        <a href="index.jsp" class="logo">QuizLoco</a>
+        <a href="home" class="logo">QuizLoco</a>
         <nav>
             <ul>
                 <li><a href="#home">Home</a></li>
                 <li><a href="#features">Features</a></li>
-                <li><a href="#subjects">Subjects</a></li>
+                <li><a href="#tags">Tags</a></li>
                 <li><a href="#latest-quizzes">Latest Quizzes</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
@@ -62,7 +64,7 @@
             <h1 class="fade-in-up">Welcome to QuizLoco</h1>
             <p class="fade-in-up">Challenge yourself, learn, and have fun with our interactive quizzes and study tools!</p>
             <div class="cta-buttons fade-in-up">
-                <a href="#subjects" class="cta-button">Start Quizzing Now</a>
+                <a href="#tags" class="cta-button">Start Quizzing Now</a>
                 <a href="#create-quiz" class="cta-button secondary">Create Your Own Quiz</a>
             </div>
         </div>
@@ -97,29 +99,39 @@
         </div>
     </section>
 
-    <!-- Subjects Section -->
-    <section id="subjects" class="subjects">
+    <!-- Tags Section -->
+    <section id="tags" class="tags">
         <div class="container">
-            <h2>Popular Subjects</h2>
-            <div class="subject-grid">
-                <a href="${pageContext.request.contextPath}/jsp/subject.jsp?id=math" class="subject-card">
-                    <img src="${pageContext.request.contextPath}/img/math.jpg" alt="Mathematics" loading="lazy">
-                    <h3>Mathematics</h3>
-                </a>
-                <a href="${pageContext.request.contextPath}/jsp/subject.jsp?id=science" class="subject-card">
-                    <img src="${pageContext.request.contextPath}/img/science.jpg" alt="Science" loading="lazy">
-                    <h3>Science</h3>
-                </a>
-                <a href="${pageContext.request.contextPath}/jsp/subject.jsp?id=history" class="subject-card">
-                    <img src="${pageContext.request.contextPath}/img/history.jpg" alt="History" loading="lazy">
-                    <h3>History</h3>
-                </a>
-                <a href="${pageContext.request.contextPath}/jsp/subject.jsp?id=literature" class="subject-card">
-                    <img src="${pageContext.request.contextPath}/img/literature.jpg" alt="Literature" loading="lazy">
-                    <h3>Literature</h3>
-                </a>
+            <h2>Main Tags</h2>
+            <div class="tag-grid">
+                <%
+                    // Lấy danh sách các Tag từ thuộc tính request
+                    List<Tag> tags = (List<Tag>) request.getAttribute("tags");
+                    if (tags != null && !tags.isEmpty()) {
+                        for (Tag tag : tags) {
+                %>
+                <div class="tag-card fade-in">
+                    <div class="tag-icon">
+                        <i class="fas fa-tag"></i>
+                    </div>
+                    <h3><%= tag.getName() %></h3>
+                    <p><%= tag.getDescription() %></p>
+                    <div class="tag-actions">
+                        <a href="<%= request.getContextPath() %>/ControllerTag?action=viewTag&id=<%= tag.getId() %>" class="btn-quiz">View</a>
+                        <a href="<%= request.getContextPath() %>/ControllerTag?action=updateTag&id=<%= tag.getId() %>" class="btn-quiz">Edit</a>
+                        <a href="<%= request.getContextPath() %>/ControllerTag?action=deleteTag&id=<%= tag.getId() %>" class="btn-quiz delete" onclick="return confirm('Are you sure you want to delete this Tag?');">Delete</a>
+                    </div>
+                </div>
+                <%
+                    }
+                } else {
+                %>
+                <p>No tags available.</p>
+                <%
+                    }
+                %>
             </div>
-            <a href="${pageContext.request.contextPath}/jsp/all-subjects.jsp" class="btn-view-all">View All Subjects</a>
+            <a href="<%= request.getContextPath() %>/ControllerTag?action=insertTag" class="btn-view-all">Add New Tag</a>
         </div>
     </section>
 
@@ -140,7 +152,7 @@
                     <img src="${pageContext.request.contextPath}/img/history.jpg" alt="World History" loading="lazy">
                     <div class="quiz-content">
                         <h3>World History</h3>
-                        <p>Challenge your knowledge of global historical events.</p>
+                        < p>Challenge your knowledge of global historical events.</p>
                         <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=2" class="btn-quiz">Take Quiz</a>
                     </div>
                 </div>
@@ -314,7 +326,7 @@
                 <ul>
                     <li><a href="#home">Home</a></li>
                     <li><a href="#features">Features</a></li>
-                    <li><a href="#subjects">Subjects</a></li>
+                    <li><a href="#tags">Tags</a></li>
                     <li><a href="#latest-quizzes">Latest Quizzes</a></li>
                     <li><a href="#faq">FAQ</a></li>
                     <li><a href="#contact">Contact</a></li>

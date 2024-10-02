@@ -1,56 +1,39 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.List" %>
-<%@ page import="entity.Tag" %>
-<%@ page import="entity.Tag" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="entity.Tag"%>
+<%
+  Tag tag = (Tag) request.getAttribute("tag");
+  if (tag == null) {
+%>
+<p>Tag không tồn tại.</p>
+<a href="ControllerTag?action=listTag">Quay lại danh sách Tag</a>
+<%
+} else {
+%>
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Danh Sách Tag Của Bạn</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+  <title>Cập Nhật Tag</title>
 </head>
 <body>
-<h1>Danh Sách Tag Của Bạn</h1>
-<a href="ControllerTag?action=insertTag">Thêm Tag Mới</a>
-<table border="1">
-  <tr>
-    <th>ID</th>
-    <th>Tên</th>
-    <th>Mô Tả</th>
-    <th>Hành Động</th>
-  </tr>
-  <%
-    List<Tag> tags = (List<Tag>) request.getAttribute("tags");
-    if (tags != null && !tags.isEmpty()) {
-      for (Tag tag : tags) {
-  %>
-  <tr>
-    <td><%= tag.getId() %></td>
-    <td><%= tag.getName() %></td>
-    <td><%= tag.getDescription() %></td>
-    <td>
-      <a href="ControllerTag?action=deleteUserTag&tagId=<%= tag.getId() %>" onclick="return confirm('Bạn có chắc chắn muốn xóa Tag này khỏi danh sách của bạn?');">Xóa</a>
-    </td>
-  </tr>
-  <%
-    }
-  } else {
-  %>
-  <tr>
-    <td colspan="4">Bạn chưa có tag nào.</td>
-  </tr>
-  <%
-    }
-  %>
-</table>
+<h1>Cập Nhật Tag</h1>
+<form action="ControllerTag?action=updateTag" method="post">
+  <input type="hidden" name="submit" value="true" />
+  <input type="hidden" name="id" value="<%= tag.getId() %>" />
+  <label for="name">Tên Tag:</label><br/>
+  <input type="text" id="name" name="name" value="<%= tag.getName() %>" required/><br/>
+  <label for="description">Mô Tả:</label><br/>
+  <textarea id="description" name="description" required><%= tag.getDescription() %></textarea><br/><br/>
+  <input type="submit" value="Cập Nhật Tag"/>
+</form>
+<br/>
+<a href="ControllerTag?action=listTag">Quay lại danh sách Tag</a>
 
 <!-- Hiển thị thông báo lỗi nếu có -->
-<%
-  String error = (String) request.getAttribute("error");
-  if (error != null) {
-%>
-<p style="color:red;"><%= error %></p>
+<% if (request.getAttribute("error") != null) { %>
+<p style="color:red;"><%= request.getAttribute("error") %></p>
+<% } %>
+</body>
+</html>
 <%
   }
 %>
-</body>
-</html>
