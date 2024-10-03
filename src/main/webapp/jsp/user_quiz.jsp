@@ -1,24 +1,14 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="dao.userQuizDAO"%>
-<%@page import="entity.user_quiz"%>
-<%@page import="java.util.List"%>
-<%
-  userQuizDAO dao = new userQuizDAO();
-  List<user_quiz> userQuizList = null;
-  try {
-    userQuizList = dao.getAllUserQuiz();
-  } catch (Exception e) {
-    e.printStackTrace();
-  }
-%>
-<!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="entity.user_quiz" %>
 <html>
 <head>
   <title>Danh Sách User Quiz</title>
 </head>
 <body>
-<h1>Danh Sách User Quiz</h1>
-<a href="UserQuizServlet?action=insertUserQuiz">Thêm User Quiz</a>
+<h2>Danh Sách User Quiz</h2>
+<a href="<%= request.getContextPath() %>/UserQuizServlet?action=insertUserQuiz">Thêm User Quiz</a><br><br>
+
 <table border="1">
   <tr>
     <th>User ID</th>
@@ -27,25 +17,39 @@
     <th>Hành Động</th>
   </tr>
   <%
-    if (userQuizList != null) {
-      for (user_quiz userQuiz : userQuizList) {
+    // Lấy danh sách user_quiz từ request
+    List<user_quiz> userQuizzes = (List<user_quiz>) request.getAttribute("userQuizzes");
+    if (userQuizzes != null && !userQuizzes.isEmpty()) {
+      for (user_quiz uq : userQuizzes) {
   %>
   <tr>
-    <td><%= userQuiz.getUser_id() %></td>
-    <td><%= userQuiz.getQuiz_id() %></td>
-    <td><%= userQuiz.getTag_id() %></td>
+    <td><%= uq.getUser_id() %></td>
+    <td><%= uq.getQuiz_id() %></td>
+    <td><%= uq.getTag_id() %></td>
     <td>
-      <a href="UserQuizServlet?action=updateUserQuiz&old_user_id=<%= userQuiz.getUser_id() %>&old_quiz_id=<%= userQuiz.getQuiz_id() %>&old_tag_id=<%= userQuiz.getTag_id() %>">Sửa</a> |
-      <a href="UserQuizServlet?action=deleteUserQuiz&user_id=<%= userQuiz.getUser_id() %>&quiz_id=<%= userQuiz.getQuiz_id() %>&tag_id=<%= userQuiz.getTag_id() %>" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">Xóa</a>
+      <a href="<%= request.getContextPath() %>/UserQuizServlet?action=updateUserQuiz&old_user_id=<%= uq.getUser_id() %>&old_quiz_id=<%= uq.getQuiz_id() %>&old_tag_id=<%= uq.getTag_id() %>">Cập Nhật</a> |
+      <a href="<%= request.getContextPath() %>/UserQuizServlet?action=deleteUserQuiz&user_id=<%= uq.getUser_id() %>&quiz_id=<%= uq.getQuiz_id() %>&tag_id=<%= uq.getTag_id() %>" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">Xóa</a>
     </td>
   </tr>
   <%
-      }
+    }
+  } else {
+  %>
+  <tr>
+    <td colspan="4">Không có dữ liệu nào.</td>
+  </tr>
+  <%
     }
   %>
 </table>
-<% if (request.getAttribute("error") != null) { %>
-<p style="color:red;"><%= request.getAttribute("error") %></p>
-<% } %>
+
+<%
+  String error = (String) request.getAttribute("error");
+  if (error != null) {
+%>
+<p style="color:red;"><%= error %></p>
+<%
+  }
+%>
 </body>
 </html>
