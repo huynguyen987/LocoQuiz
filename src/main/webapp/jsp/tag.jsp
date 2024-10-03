@@ -1,23 +1,33 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.List" %>
-<%@ page import="entity.Tag" %>
-<%@ page import="entity.Tag" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.util.List"%>
+<%@page import="entity.Tag"%>
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Danh Sách Tag Chính</title>
+  <title>Danh Sách Tag Của Bạn</title>
   <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
 </head>
 <body>
-<h1>Danh Sách Tag Chính</h1>
+<h1>Danh Sách Tag Của Bạn</h1>
+
+<!-- Form tìm kiếm -->
+<form action="ControllerTag" method="get">
+  <input type="hidden" name="action" value="searchTag" />
+  <input type="text" name="searchName" value="<%= request.getAttribute("searchName") != null ? request.getAttribute("searchName") : "" %>" placeholder="Nhập tên tag cần tìm" />
+  <input type="submit" value="Tìm kiếm" />
+</form>
+
+<!-- Liên kết thêm tag mới -->
 <a href="ControllerTag?action=insertTag">Thêm Tag Mới</a>
+<br/><br/>
+
+<!-- Bảng hiển thị danh sách tag -->
 <table border="1">
   <tr>
     <th>ID</th>
     <th>Tên</th>
     <th>Mô Tả</th>
-    <th>Delete</th>
-    <th>Update</th>
+    <th>Hành Động</th>
   </tr>
   <%
     List<Tag> tags = (List<Tag>) request.getAttribute("tags");
@@ -29,10 +39,7 @@
     <td><%= tag.getName() %></td>
     <td><%= tag.getDescription() %></td>
     <td>
-      <a href="ControllerTag?action=viewTag&id=<%= tag.getId() %>">Xem</a>
-      <a href="ControllerTag?action=insertTag">Thêm Tag Mới</a>
-      <a href="ControllerTag?action=updateTag&id=<%= tag.getId() %>">Sửa</a>
-      <a href="ControllerTag?action=deleteTag&id=<%= tag.getId() %>" onclick="return confirm('Bạn có chắc chắn muốn xóa Tag này?');">Xóa</a>
+      <a href="ControllerTag?action=deleteTag&tagId=<%= tag.getId() %>" onclick="return confirm('Bạn có chắc chắn muốn xóa tag này khỏi danh sách của bạn?');">Xóa</a>
     </td>
   </tr>
   <%
@@ -40,25 +47,16 @@
   } else {
   %>
   <tr>
-    <td colspan="4">Không có tag nào.</td>
+    <td colspan="4">Bạn chưa có tag nào.</td>
   </tr>
   <%
     }
   %>
 </table>
 
-<!-- Nút quay lại trang chủ -->
-<br/>
-<a href="<%= request.getContextPath() %>/index.jsp">Quay lại Trang Chủ</a>
-
 <!-- Hiển thị thông báo lỗi nếu có -->
-<%
-  String error = (String) request.getAttribute("error");
-  if (error != null) {
-%>
-<p style="color:red;"><%= error %></p>
-<%
-  }
-%>
+<% if (request.getAttribute("error") != null) { %>
+<p style="color:red;"><%= request.getAttribute("error") %></p>
+<% } %>
 </body>
 </html>

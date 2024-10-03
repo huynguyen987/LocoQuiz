@@ -1,5 +1,6 @@
-package com.example.demo;
+package Servlet;
 
+import Module.ReturnMail;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,29 +11,27 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 
-@WebServlet(name = "verifyController", value = "/verify")
-public class verifyController extends HttpServlet {
+@WebServlet(name = "forgetPass", value = "/forgetPass")
+public class forgetPass extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession(true);
         String service = request.getParameter("service");
-        if (service == null) {
-            service = "verify";
+        if (service == null){
+            service = "forgetPass";
         }
-        if (service.equals("verify")) {
-            String capcha = request.getParameter("capcha");
-            String email = (String) session.getAttribute("email");
-            String capchaSession = (String) session.getAttribute("capcha");
-            if (capcha.equals(capchaSession)) {
-                session.setAttribute("email", email);
-                session.setAttribute("capcha", capcha);
-                session.setAttribute("service1", "resetPass");
-                response.sendRedirect(request.getContextPath() + "/jsp/resetPass.jsp");
-            } else {
-                session.setAttribute("error", "Mã xác nhận không đúng");
-                response.sendRedirect(request.getContextPath() + "/jsp/verify.jsp");
-            }
+        if (service.equals("forgetPass")) {
+            ReturnMail mail = new ReturnMail();
+            String email = request.getParameter("email");
+            String capcha = mail.generateVerificationCode();
+            mail.sendMail(email , capcha);
+            session.setAttribute("email", email);
+            session.setAttribute("capcha", capcha);
+            response.sendRedirect(request.getContextPath() + "/jsp/verify.jsp");
+            // send email and capcha to resetPassController.java via session.setAttribute to get email and capcha in verify.jsp
+            // o day email va capcha qua session.setattribute de lay email va capcha o trang verify.jsp
+            // neu chuyen sang trang verifyController thi can phai truyen email va capcha qua request.getparameter
         }
     }
 

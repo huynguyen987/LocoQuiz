@@ -1,4 +1,4 @@
-package com.example.demo;
+package Servlet;
 
 import java.io.IOException;
 import java.security.MessageDigest;
