@@ -1,0 +1,65 @@
+/* Base Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 2em;
+    color: #3498db;
+}
+
+form {
+    max-width: 500px;
+    margin: 2em auto;
+    background-color: #fff;
+    padding: 2em;
+    border-radius: 10px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+}
+
+form select {
+    width: 100%;
+    padding: 0.8em;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 1.5em;
+}
+
+form input[type="submit"] {
+    background-color: #3498db;
+    color: #fff;
+    padding: 0.8em 1.5em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+form input[type="submit"]:hover {
+    background-color: #2980b9;
+}
+
+a {
+    display: block;
+    text-align: center;
+    margin-top: 1em;
+    color: #3498db;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Error Message Styles */
+.error-message {
+    color: red;
+    text-align: center;
+    margin-top: 1em;
+}

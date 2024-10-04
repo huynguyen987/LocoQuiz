@@ -1,0 +1,71 @@
+/* Base styles */
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5;
+    color: #333;
+}
+
+.container {
+    width: 90%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2em 0;
+}
+
+/* Header styles */
+header {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 1em 0;
+}
+
+/* Question styles */
+.question-block {
+    margin-bottom: 2em;
+}
+
+.question-block p {
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+
+.answer-option {
+    margin-bottom: 0.5em;
+}
+
+.answer-option label {
+    margin-left: 0.5em;
+}
+
+.btn-submit {
+    background-color: #3498db;
+    color: #fff;
+    padding: 0.8em 2em;
+    border: none;
+    border-radius: 30px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-submit:hover {
+    background-color: #2980b9;
+}
+
+/* Footer styles */
+footer {
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    padding: 1em 0;
+    text-align: center;
+    color: #555;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+    }
+}

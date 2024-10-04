@@ -1,0 +1,64 @@
+/* Base Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+h2 {
+    text-align: center;
+    margin-top: 2em;
+    color: #3498db;
+}
+
+a {
+    color: #3498db;
+    text-decoration: none;
+    margin-bottom: 1em;
+    display: inline-block;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+table {
+    width: 90%;
+    max-width: 800px;
+    margin: 1em auto;
+    border-collapse: collapse;
+    background-color: #fff;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 0.8em;
+    text-align: left;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+td a {
+    margin-right: 0.5em;
+    color: #3498db;
+}
+
+td a:hover {
+    text-decoration: underline;
+}
+
+/* Error Message Styles */
+.error-message {
+    color: red;
+    text-align: center;
+    margin-top: 1em;
+}
