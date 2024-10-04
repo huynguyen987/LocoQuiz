@@ -135,5 +135,82 @@ public class QuizDAO {
             System.out.println(dao.deleteQuiz(1));
         }
 
+    // Method to retrieve the latest quizzes
+    public List<quiz> getLatestQuizzes() {
+        List<quiz> latestQuizzes = new ArrayList<>();
+        try {
+            Connection conn = getConnection();
+            String sql = "SELECT * FROM quiz ORDER BY created_at DESC LIMIT 4";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+               quiz quiz = extractQuizFromResultSet(rs);
+                latestQuizzes.add(quiz);
+            }
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return latestQuizzes;
+    }
+
+    // Method to retrieve the most popular quizzes
+    public List<quiz> getPopularQuizzes() {
+        List<quiz> popularQuizzes = new ArrayList<>();
+        try {
+            Connection conn = getConnection();
+            String sql = "SELECT q.*, COUNT(r.quiz_id) as attempts FROM quiz q " +
+                    "LEFT JOIN result r ON q.id = r.quiz_id " +
+                    "GROUP BY q.id ORDER BY attempts DESC LIMIT 4";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                quiz quiz = extractQuizFromResultSet(rs);
+                popularQuizzes.add(quiz);
+            }
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return popularQuizzes;
+    }
+
+    // Method to retrieve all quizzes
+    public List<quiz> getAllQuizzes() {
+        List<quiz> allQuizzes = new ArrayList<>();
+        try {
+            Connection conn = getConnection();
+            String sql = "SELECT * FROM quiz";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                quiz quiz = extractQuizFromResultSet(rs);
+                allQuizzes.add(quiz);
+            }
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return allQuizzes;
+    }
+
+    // Helper method to extract quiz from ResultSet
+    private quiz extractQuizFromResultSet(ResultSet rs) throws SQLException {
+        quiz quiz = new quiz();
+        quiz.setId(rs.getInt("id"));
+        quiz.setName(rs.getString("name"));
+        quiz.setDescription(rs.getString("description"));
+        // Set other properties as needed
+        return quiz;
+    }
+
+    // Method to establish database connection
+    private Connection getConnection() throws SQLException {
+        // Replace with your actual database connection details
+        String url = "jdbc:mysql://localhost:3306/test";
+        String username = "root";
+        String password = "password";
+        return DriverManager.getConnection(url, username, password);
+    }
 
 }
