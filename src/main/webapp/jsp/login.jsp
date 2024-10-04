@@ -7,7 +7,7 @@
 <body>
 <style>
     .error-message {
-        color: #2fff00;
+        color: #ff0026;
         font-size: 14px;
         position: absolute;
         top: 10px;
