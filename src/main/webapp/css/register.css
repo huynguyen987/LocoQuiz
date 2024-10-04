@@ -1,9 +1,7 @@
-/* General Styles */
+/* Base Styles */
 body {
     font-family: 'Roboto', Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f0f2f5; /* Softer background color */
+    background-color: #f0f2f5;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -12,12 +10,13 @@ body {
 
 .register-container {
     width: 100%;
-    max-width: 400px; /* Increased width for better space usage */
+    max-width: 400px;
     padding: 40px;
     background-color: #fff;
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Softer shadow */
+    border-radius: 10px;
     text-align: center;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .register-container h2 {
@@ -35,8 +34,7 @@ body {
     padding: 12px;
     margin-bottom: 20px;
     border: 1px solid #ddd;
-    border-radius: 5px; /* Rounded input fields */
-    box-sizing: border-box;
+    border-radius: 5px;
     font-size: 16px;
 }
 
@@ -44,17 +42,17 @@ body {
 .register-container input[type="password"]:focus,
 .register-container input[type="email"]:focus,
 .register-container select:focus {
-    border-color: #3498db; /* Blue border on focus */
+    border-color: #3498db;
     outline: none;
 }
 
 .register-container input[type="submit"] {
     width: 100%;
     padding: 12px;
-    background-color: #3498db; /* Soft blue button */
+    background-color: #2ecc71;
     color: #fff;
     border: none;
-    border-radius: 5px; /* Rounded submit button */
+    border-radius: 5px;
     font-size: 18px;
     font-weight: 600;
     cursor: pointer;
@@ -62,39 +60,9 @@ body {
 }
 
 .register-container input[type="submit"]:hover {
-    background-color: #2980b9; /* Darker blue on hover */
+    background-color: #27ae60;
 }
 
-/* Error Message Styles */
-.error-message {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #f8d7da; /* Light red background */
-    color: #721c24; /* Dark red text */
-    border: 1px solid #f5c6cb; /* Border matching the red background */
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 14px;
-    text-align: center;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1); /* Slight shadow for emphasis */
-}
-
-.forgot-password {
-    margin-top: 15px;
-    text-align: center;
-}
-
-.forgot-password a {
-    color: #3498db; /* Blue color for the link */
-    text-decoration: none;
-    font-size: 14px;
-}
-
-.forgot-password a:hover {
-    text-decoration: underline;
-}
-
-/* Back to Home Button */
 .back-home {
     margin-top: 20px;
     text-align: center;
@@ -103,7 +71,7 @@ body {
 .back-home .btn-back {
     display: inline-block;
     padding: 10px 20px;
-    background-color: #3498db; /* Soft blue color */
+    background-color: #3498db;
     color: #fff;
     text-decoration: none;
     border-radius: 5px;
@@ -112,6 +80,19 @@ body {
 }
 
 .back-home .btn-back:hover {
-    background-color: #2980b9; /* Darker blue on hover */
+    background-color: #2980b9;
 }
 
+/* Error Message Styles */
+.error-message {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}

@@ -1,0 +1,40 @@
+/* Base Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    padding: 2em;
+}
+
+h1 {
+    text-align: center;
+    color: #3498db;
+    margin-bottom: 1em;
+}
+
+p {
+    font-size: 1.1em;
+    margin-bottom: 0.5em;
+}
+
+p strong {
+    color: #2c3e50;
+}
+
+a {
+    display: inline-block;
+    margin-top: 1em;
+    color: #3498db;
+    text-decoration: none;
+    margin-right: 1em;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+    margin-top: 1em;
+}

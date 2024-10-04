@@ -1,9 +1,9 @@
-/* General Styles */
+/* Base Styles */
 body {
     font-family: 'Roboto', Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f2f5; /* Softer background color */
+    background-color: #f0f2f5;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -12,16 +12,17 @@ body {
 
 .login-container {
     width: 100%;
-    max-width: 400px; /* Increased width for better space usage */
-    padding: 40px; /* Added padding for better spacing */
+    max-width: 400px;
+    padding: 40px;
     background-color: #fff;
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Softer shadow */
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     text-align: center;
+    position: relative;
 }
 
 .login-container h2 {
-    margin-bottom: 30px; /* More space below heading */
+    margin-bottom: 30px;
     font-size: 24px;
     color: #333;
     font-weight: 700;
@@ -33,45 +34,31 @@ body {
     padding: 12px;
     margin-bottom: 20px;
     border: 1px solid #ddd;
-    border-radius: 5px; /* Rounded input fields */
-    box-sizing: border-box;
-    font-size: 16px; /* Larger font for better readability */
+    border-radius: 5px;
+    font-size: 16px;
 }
 
 .login-container input[type="text"]:focus,
 .login-container input[type="password"]:focus {
-    border-color: #3498db; /* Blue border on focus */
+    border-color: #3498db;
     outline: none;
 }
 
 .login-container input[type="submit"] {
     width: 100%;
     padding: 12px;
-    background-color: #3498db; /* Soft blue button */
+    background-color: #3498db;
     color: #fff;
     border: none;
-    border-radius: 5px; /* Rounded submit button */
-    font-size: 18px; /* Larger font for the button */
+    border-radius: 5px;
+    font-size: 18px;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .login-container input[type="submit"]:hover {
-    background-color: #2980b9; /* Darker blue on hover */
-}
-
-/* Error Message */
-.error-message {
-    margin-top: 20px;
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 10px;
-    border: 1px solid #f5c6cb;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    font-weight: bold;
-    animation: fadeIn 0.5s ease;
+    background-color: #2980b9;
 }
 
 .forgot-password {
@@ -80,7 +67,7 @@ body {
 }
 
 .forgot-password a {
-    color: #3498db; /* Blue color for the link */
+    color: #3498db;
     text-decoration: none;
     font-size: 14px;
 }
@@ -89,7 +76,6 @@ body {
     text-decoration: underline;
 }
 
-/* Back to Home Button */
 .back-home {
     margin-top: 20px;
     text-align: center;
@@ -98,7 +84,7 @@ body {
 .back-home .btn-back {
     display: inline-block;
     padding: 10px 20px;
-    background-color: #3498db; /* Soft blue color */
+    background-color: #3498db;
     color: #fff;
     text-decoration: none;
     border-radius: 5px;
@@ -107,16 +93,19 @@ body {
 }
 
 .back-home .btn-back:hover {
-    background-color: #2980b9; /* Darker blue on hover */
+    background-color: #2980b9;
 }
 
-
-/* Fade-in animation for error message */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+/* Error Message Styles */
+.error-message {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }
