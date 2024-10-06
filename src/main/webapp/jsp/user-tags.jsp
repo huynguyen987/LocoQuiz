@@ -13,6 +13,7 @@
 <html>
 <head>
   <title>Cập Nhật Tag</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user-tag.css">
 </head>
 <body>
 <h1>Cập Nhật Tag</h1>
