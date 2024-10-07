@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.*, entity.Tag" %>
+<%@ page import="dao.TagDAO" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,10 +27,8 @@
 </header>
 <%
   // Retrieve the list of tags from the request attribute
-  List<Tag> tagList = (List<Tag>) request.getAttribute("tagList");
-  if (tagList == null) {
-    tagList = new ArrayList<>();
-  }
+  List<Tag> tagList = new TagDAO().getAllTags();
+
 %>
 <div class="container">
   <h1>Create a New Quiz</h1>
@@ -48,12 +47,15 @@
     <textarea id="quizDescription" name="quizDescription" required></textarea>
 
     <!-- Tag -->
-    <label for="quizTag">Tag:</label>
-    <select id="quizTag" name="quizTag" required>
+    <label for="quizTag">Tags:</label>
+    <select id="quizTag" name="quizTag" multiple required size="5">
       <% for (Tag tag : tagList) { %>
       <option value="<%= tag.getId() %>"><%= tag.getName() %></option>
       <% } %>
     </select>
+
+    <p>Hold down the Ctrl (Windows) or Command (Mac) button to select multiple tags.</p>
+
 
     <!-- Question List Table -->
     <h2>Questions</h2>

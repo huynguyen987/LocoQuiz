@@ -26,6 +26,7 @@ public class QuizController extends HttpServlet {
         try {
             List<Tag> tagList = tagDAO.getAllTags();
             request.setAttribute("tagList", tagList);
+            System.out.println("Number of tags retrieved: " + tagList.size());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -43,7 +44,6 @@ public class QuizController extends HttpServlet {
         // Retrieve form parameters
         String quizName = request.getParameter("quizName");
         String quizDescription = request.getParameter("quizDescription");
-        String quizTagIdStr = request.getParameter("quizTag");
 
         // Get the creator username and user ID from session
         HttpSession session = request.getSession();
@@ -57,7 +57,14 @@ public class QuizController extends HttpServlet {
         }
 
         try {
-            int quizTagId = Integer.parseInt(quizTagIdStr);
+            // Retrieve all selected tag IDs
+            String[] quizTagIds = request.getParameterValues("quizTag");
+            if (quizTagIds == null || quizTagIds.length == 0) {
+                // No tags selected, set an error message
+                request.setAttribute("errorMessage", "Please select at least one tag.");
+                doGet(request, response);
+                return;
+            }
 
             // Collect all questions and build the JSON array
             JSONArray questionsArray = new JSONArray();
@@ -121,9 +128,14 @@ public class QuizController extends HttpServlet {
             int quizId = quizDAO.insertQuiz(newQuiz);
 
             if (quizId != -1) {
-                // Insert into user_quiz table
+                // Insert into user_quiz table for each selected tag
                 userQuizDAO userQuizDAO = new userQuizDAO();
-                userQuizDAO.insertUserQuiz(userId, quizId, quizTagId);
+
+                for (String tagIdStr : quizTagIds) {
+                    int tagId = Integer.parseInt(tagIdStr);
+                    userQuizDAO.insertUserQuiz(userId, quizId, tagId);
+                }
+
                 // Redirect to a success page or quiz list
                 response.sendRedirect("quizList.jsp");
             } else {
