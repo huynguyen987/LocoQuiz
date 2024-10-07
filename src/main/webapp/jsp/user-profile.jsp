@@ -4,18 +4,18 @@
 <%@ page import="java.util.Base64" %>
 
 <%
-    // Check if the user is logged in
+    // Kiểm tra nếu người dùng đã đăng nhập
     String username = (String) session.getAttribute("username");
     if (username == null) {
-        // Redirect to login page if not logged in
+        // Chuyển hướng đến trang đăng nhập nếu chưa đăng nhập
         response.sendRedirect("login.jsp");
         return;
     }
 
-    // Create an instance of UserDAO
+    // Tạo một instance của UsersDAO
     UsersDAO userDAO = new UsersDAO();
 
-    // Fetch user details from the database using username
+    // Lấy thông tin người dùng từ cơ sở dữ liệu bằng username
     Users user = null;
     try {
         user = userDAO.getUserByUsername(username);
@@ -24,7 +24,7 @@
     }
 
     if (user == null) {
-        // Handle the case where user is not found
+        // Xử lý trường hợp không tìm thấy người dùng
         out.println("<p>User not found.</p>");
         return;
     }
@@ -76,23 +76,15 @@
 
             <div class="profile-details">
                 <p><strong>Username:</strong> <%= user.getUsername() %></p>
-                <p><strong>Full Name:</strong> <%= user.getFullName() %></p>
                 <p><strong>Email:</strong> <%= user.getEmail() %></p>
-                <p><strong>Gender:</strong> <%= user.getGender() %></p>
-                <p><strong>Status:</strong> <%= user.getStatus() %></p>
-                <p><strong>Created At:</strong> <%= user.getCreatedAt() %></p>
-                <p><strong>Updated At:</strong> <%= user.getUpdatedAt() %></p>
+                <p><strong>Gender:</strong> <%= user.getGender() != null ? user.getGender() : "N/A" %></p>
+                <p><strong>Created At:</strong> <%= user.getCreated_at() != null ? user.getCreated_at() : "N/A" %></p>
             </div>
-        </div>
-
-        <div class="profile-actions">
-            <a href="${pageContext.request.contextPath}/jsp/edit-profile.jsp" class="btn-edit">Edit Profile</a>
-            <a href="${pageContext.request.contextPath}/jsp/change-password.jsp" class="btn-password">Change Password</a>
         </div>
 
         <div class="profile-activity">
             <h2>Recent Activity</h2>
-            <!-- You can add logic here to display recent activity of the user -->
+            <!-- Bạn có thể thêm logic ở đây để hiển thị hoạt động gần đây của người dùng -->
             <ul>
                 <li>Attempted "Math Quiz" on <%= new Timestamp(System.currentTimeMillis()) %></li>
                 <li>Scored 85% on "Science Quiz" on <%= new Timestamp(System.currentTimeMillis() - 86400000) %></li>
