@@ -1,3 +1,5 @@
+/* File: css/quiz-creator.css */
+
 /* Reset and base styles */
 * {
     margin: 0;
@@ -7,34 +9,43 @@
 
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
     line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f4;
 }
 
+/* Container */
 .container {
     width: 90%;
     max-width: 1200px;
     margin: 2rem auto;
+    padding: 0 20px;
 }
 
 /* Header styles */
 header {
     background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 1rem 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 header .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 1rem 0;
 }
 
-header a.logo {
+.logo {
     font-size: 1.8rem;
+    font-weight: bold;
     color: #3498db;
     text-decoration: none;
+    transition: color 0.3s ease;
 }
 
 nav ul {
@@ -47,13 +58,38 @@ nav ul li {
 }
 
 nav ul li a {
-    text-decoration: none;
     color: #333;
+    text-decoration: none;
     transition: color 0.3s ease;
+    position: relative;
+}
+
+nav ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    background-color: #3498db;
+    left: 0;
+    bottom: -5px;
+    transition: width 0.3s ease;
+}
+
+nav ul li a:hover::after,
+nav ul li a.active::after {
+    width: 100%;
 }
 
 nav ul li a:hover {
     color: #3498db;
+}
+
+/* Page Heading */
+.container h1 {
+    margin-top: 100px; /* To offset the fixed header */
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    text-align: center;
 }
 
 /* Form styles */
@@ -86,7 +122,8 @@ form textarea {
     resize: vertical;
 }
 
-form input[type="submit"] {
+form input[type="submit"],
+#add-question-btn {
     background-color: #3498db;
     color: #fff;
     padding: 0.75rem 1.5rem;
@@ -94,13 +131,31 @@ form input[type="submit"] {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-size: 1rem;
+    margin-top: 1rem;
 }
 
-form input[type="submit"]:hover {
+form input[type="submit"]:hover,
+#add-question-btn:hover {
     background-color: #2980b9;
 }
 
-/* Answer option styles */
+#add-question-btn {
+    display: block;
+    margin: 1rem 0;
+    width: 100%;
+}
+
+.question-block {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.question-block:last-of-type {
+    border-bottom: none;
+}
+
 .answer-option {
     display: flex;
     align-items: center;
@@ -111,6 +166,13 @@ form input[type="submit"]:hover {
     margin-right: 1rem;
 }
 
+.answer-option input[type="text"] {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
 .error-message {
     background-color: #e74c3c;
     color: #fff;
@@ -118,4 +180,125 @@ form input[type="submit"]:hover {
     border-radius: 5px;
     margin-bottom: 1.5rem;
     text-align: center;
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+    .container {
+        width: 95%;
+    }
+
+    header .container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    nav ul {
+        flex-direction: column;
+        width: 100%;
+        display: none;
+        background-color: #fff;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        padding: 1rem 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    nav ul.show {
+        display: flex;
+    }
+
+    nav ul li {
+        margin: 1rem 0;
+        text-align: center;
+    }
+
+    .question-block {
+        margin-bottom: 2rem;
+    }
+
+    form input[type="submit"],
+    #add-question-btn {
+        width: 100%;
+        margin-top: 1rem;
+    }
+}
+
+/* Accessibility improvements */
+:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+/* Add styles for the question table */
+#questionTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+}
+
+#questionTable th, #questionTable td {
+    border: 1px solid #ccc;
+    padding: 0.75rem;
+    text-align: center;
+}
+
+#questionTable th {
+    background-color: #f9f9f9;
+}
+
+#questionTable td a {
+    text-decoration: none;
+    color: #3498db;
+}
+
+#questionTable td button {
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#questionTable td button:hover {
+    background-color: #c0392b;
+}
+
+/* Styles for question sections */
+.question-section {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 5px;
+}
+
+.question-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.question-section label {
+    font-weight: bold;
+    margin-top: 1rem;
+    display: block;
+}
+
+.answer-option label {
+    margin-left: 1rem;
+    font-weight: normal;
+}
+
+#addQuestionBtn {
+    background-color: #2ecc71;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+}
+
+#addQuestionBtn:hover {
+    background-color: #27ae60;
 }

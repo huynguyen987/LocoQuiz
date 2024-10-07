@@ -1,4 +1,3 @@
-// File: src/java/controller/QuizController.java
 package Servlet;
 
 import dao.QuizDAO;
@@ -8,10 +7,12 @@ import entity.quiz;
 import entity.Tag;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 @WebServlet(name = "QuizController", urlPatterns = {"/QuizController"})
 public class QuizController extends HttpServlet {
@@ -43,12 +44,6 @@ public class QuizController extends HttpServlet {
         String quizName = request.getParameter("quizName");
         String quizDescription = request.getParameter("quizDescription");
         String quizTagIdStr = request.getParameter("quizTag");
-        String questionContent = request.getParameter("questionContent");
-        String answer1 = request.getParameter("answer1");
-        String answer2 = request.getParameter("answer2");
-        String answer3 = request.getParameter("answer3");
-        String answer4 = request.getParameter("answer4");
-        String correctAnswerStr = request.getParameter("correctAnswer");
 
         // Get the creator username and user ID from session
         HttpSession session = request.getSession();
@@ -62,33 +57,56 @@ public class QuizController extends HttpServlet {
         }
 
         try {
-            int correctAnswer = Integer.parseInt(correctAnswerStr);
             int quizTagId = Integer.parseInt(quizTagIdStr);
 
-            // Build the answer JSON
-            String correctAnswerText = "";
-            switch (correctAnswer) {
-                case 1:
-                    correctAnswerText = answer1;
-                    break;
-                case 2:
-                    correctAnswerText = answer2;
-                    break;
-                case 3:
-                    correctAnswerText = answer3;
-                    break;
-                case 4:
-                    correctAnswerText = answer4;
-                    break;
+            // Collect all questions and build the JSON array
+            JSONArray questionsArray = new JSONArray();
+
+            // Retrieve the total number of questions
+            int questionCount = Integer.parseInt(request.getParameter("questionCount"));
+
+            for (int i = 1; i <= questionCount; i++) {
+                String questionContent = request.getParameter("questionContent" + i);
+                String answer1 = request.getParameter("answer" + i + "_1");
+                String answer2 = request.getParameter("answer" + i + "_2");
+                String answer3 = request.getParameter("answer" + i + "_3");
+                String answer4 = request.getParameter("answer" + i + "_4");
+                String correctAnswerStr = request.getParameter("correctAnswer" + i);
+
+                if (questionContent == null || correctAnswerStr == null) {
+                    continue; // Skip if question or correct answer is missing
+                }
+
+                int correctAnswer = Integer.parseInt(correctAnswerStr);
+
+                String correctAnswerText = "";
+                switch (correctAnswer) {
+                    case 1:
+                        correctAnswerText = answer1;
+                        break;
+                    case 2:
+                        correctAnswerText = answer2;
+                        break;
+                    case 3:
+                        correctAnswerText = answer3;
+                        break;
+                    case 4:
+                        correctAnswerText = answer4;
+                        break;
+                }
+
+                // Build the question JSON object
+                JSONObject questionObj = new JSONObject();
+                questionObj.put("question", questionContent);
+                questionObj.put("options", Arrays.asList(answer1, answer2, answer3, answer4));
+                questionObj.put("correct", correctAnswerText);
+
+                // Add to the questions array
+                questionsArray.put(questionObj);
             }
 
-            StringBuilder answerJsonBuilder = new StringBuilder();
-            answerJsonBuilder.append("{");
-            answerJsonBuilder.append("\"question\":\"").append(questionContent).append("\",");
-            answerJsonBuilder.append("\"options\":[\"").append(answer1).append("\",\"").append(answer2).append("\",\"").append(answer3).append("\",\"").append(answer4).append("\"],");
-            answerJsonBuilder.append("\"correct\":\"").append(correctAnswerText).append("\"");
-            answerJsonBuilder.append("}");
-            String answersJson = answerJsonBuilder.toString();
+            // Convert questions array to string
+            String answersJson = questionsArray.toString();
 
             // Create quiz object
             quiz newQuiz = new quiz();
