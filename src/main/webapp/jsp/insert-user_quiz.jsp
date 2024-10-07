@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Thêm User Quiz</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/insert-user_quiz.css">
 </head>
 <body>
 <h2>Thêm User Quiz</h2>

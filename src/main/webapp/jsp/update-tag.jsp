@@ -4,7 +4,7 @@
 <html>
 <head>
     <title>Cập Nhật Tag</title>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/update-tag.css">
 </head>
 <body>
 <%

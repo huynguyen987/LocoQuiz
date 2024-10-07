@@ -4,7 +4,7 @@
 <html>
 <head>
     <title>Quiz Lists - QuizLoco</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/quiz-lists.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="${pageContext.request.contextPath}/css/fonts.css" rel="stylesheet">
 </head>

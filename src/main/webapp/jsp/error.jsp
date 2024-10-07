@@ -3,6 +3,7 @@
 <html>
 <head>
     <title>Lỗi</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/error.css">
 </head>
 <body>
 <h1>Đã xảy ra lỗi trong quá trình xử lý yêu cầu.</h1>

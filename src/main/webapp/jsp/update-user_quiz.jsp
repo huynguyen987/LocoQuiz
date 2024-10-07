@@ -3,6 +3,7 @@
 <html>
 <head>
   <title>Cập Nhật User Quiz</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/update-user_quiz.css">
 </head>
 <body>
 <h2>Cập Nhật User Quiz</h2>

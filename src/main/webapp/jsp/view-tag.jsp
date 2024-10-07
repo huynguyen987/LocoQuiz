@@ -4,7 +4,7 @@
 <html>
 <head>
     <title>Chi Tiết Tag</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/view-tag.css">
 </head>
 <body>
 <%

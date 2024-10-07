@@ -5,7 +5,7 @@
 <html>
 <head>
     <title>Thêm Tag Mới</title>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/insert-tag.css">
 </head>
 <body>
 <h1>Thêm Tag Mới</h1>

@@ -4,6 +4,7 @@
 <html>
 <head>
   <title>Danh Sách User Quiz</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user_quiz.css">
 </head>
 <body>
 <h2>Danh Sách User Quiz</h2>

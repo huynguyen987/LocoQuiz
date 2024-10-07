@@ -5,7 +5,7 @@
 <html>
 <head>
   <title>Danh Sách Tag Của Bạn</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/tag.css">
 </head>
 <body>
 <h1>Danh Sách Tag Của Bạn</h1>

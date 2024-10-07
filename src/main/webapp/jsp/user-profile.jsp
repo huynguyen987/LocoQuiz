@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="entity.User, model.UserDAO" %>
+<%@ page import="entity.Users, dao.UsersDAO" %>
 <%@ page import="java.sql.Timestamp" %>
 <%@ page import="java.util.Base64" %>
 
@@ -13,10 +13,10 @@
     }
 
     // Create an instance of UserDAO
-    UserDAO userDAO = new UserDAO();
+    UsersDAO userDAO = new UsersDAO();
 
     // Fetch user details from the database using username
-    User user = null;
+    Users user = null;
     try {
         user = userDAO.getUserByUsername(username);
     } catch (Exception e) {
