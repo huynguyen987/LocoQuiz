@@ -12,19 +12,7 @@
 </head>
 
 <body>
-<header>
-  <div class="container">
-    <h1><a href="${pageContext.request.contextPath}/index.jsp" class="logo">QuizLoco</a></h1>
-    <nav>
-      <ul>
-        <li><a href="${pageContext.request.contextPath}/index.jsp">Home</a></li>
-        <li><a href="${pageContext.request.contextPath}/index.jsp#about">About</a></li>
-        <li><a href="${pageContext.request.contextPath}/index.jsp#services">Services</a></li>
-        <li><a href="${pageContext.request.contextPath}/index.jsp#contact">Contact</a></li>
-      </ul>
-    </nav>
-  </div>
-</header>
+
 <%
   // Retrieve the list of tags from the request attribute
   List<Tag> tagList = new TagDAO().getAllTags();
