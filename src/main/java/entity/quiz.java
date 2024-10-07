@@ -1,53 +1,41 @@
 package entity;
 
 public class quiz {
-//    CREATE TABLE quiz(
-//                     id INT PRIMARY KEY AUTO_INCREMENT,
-//                     name VARCHAR(255) NOT NULL,
-//                     description VARCHAR(255) NOT NULL,
-//                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-//                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-//                     user_id INT NOT NULL,
-//                     type_id INT NOT NULL,
-//                     answer JSON NOT NULL,
-//                     FOREIGN KEY (user_id) REFERENCES users(id),
-//                     FOREIGN KEY (type_id) REFERENCES type(id)
-//    status BOOLEAN DEFAULT TRUE,
-//);
-        private int id;
-        private String name;
-        private String description;
-        private String created_at;
-        private String updated_at;
-        private int user_id;
-        private int type_id;
-        private String answer;
-        private boolean status;
 
-        public quiz() {
-        }
+    private int id;
+    private String name;
+    private String description;
+    private String created_at;
+    private String updated_at;
+    private int user_id;
+    private int type_id;
+    private String answer;
+    private boolean status;
 
-        public quiz(int id, String name, String description, String created_at, String updated_at, int user_id, int type_id, String answer, boolean status) {
-            this.id = id;
-            this.name = name;
-            this.description = description;
-            this.created_at = created_at;
-            this.updated_at = updated_at;
-            this.user_id = user_id;
-            this.type_id = type_id;
-            this.answer = answer;
-            this.status = status;
-        }
+    public quiz() {
+    }
 
-        public quiz(String name, String description, String created_at, String updated_at, int user_id, int type_id, String answer) {
-            this.name = name;
-            this.description = description;
-            this.created_at = created_at;
-            this.updated_at = updated_at;
-            this.user_id = user_id;
-            this.type_id = type_id;
-            this.answer = answer;
-        }
+    public quiz(int id, String name, String description, String created_at, String updated_at, int user_id, int type_id, String answer, boolean status) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+        this.user_id = user_id;
+        this.type_id = type_id;
+        this.answer = answer;
+        this.status = status;
+    }
+
+    public quiz(String name, String description, String created_at, String updated_at, int user_id, int type_id, String answer) {
+        this.name = name;
+        this.description = description;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+        this.user_id = user_id;
+        this.type_id = type_id;
+        this.answer = answer;
+    }
 
     public int getId() {
         return id;
@@ -126,6 +114,5 @@ public class quiz {
         return "quiz{" + "id=" + id + ", name=" + name + ", description=" + description + ", created_at=" + created_at + ", updated_at=" + updated_at + ", user_id=" + user_id + ", type_id=" + type_id + ", answer=" + answer + ", status=" + status + '}';
     }
 
-        
 
 }

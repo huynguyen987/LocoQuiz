@@ -54,25 +54,35 @@ function searchshow2(){
 
 //global search function
 function search() {
-    let input = document.querySelector('.searchbar').value
-    input=input.toLowerCase();
+    let input = document.querySelector('.searchbar').value.toLowerCase();
     let x = document.getElementsByClassName('section');
     let noresult = document.querySelector('.noresult');
-    let list= 0;
+    let list = 0;
+
+    // Show results only if input length is 3 or more characters
+    if (input.length < 3) {
+        document.querySelector('.list').classList.remove('show');
+        noresult.style.display = "none";
+        return;
+    }
 
     for (let i = 0; i < x.length; i++) {
-        if (!x[i].innerHTML.toLowerCase().includes(input)) {
-            x[i].style.display="none";
-        } else {
-            x[i].style.display="list-item";
+        let quizName = x[i].querySelector('.quiz-name').innerText.toLowerCase();
+        let userName = x[i].querySelector('.user-name').innerText.toLowerCase();
+        let className = x[i].querySelector('.class-name').innerText.toLowerCase();
+
+        if (quizName.includes(input) || userName.includes(input) || className.includes(input)) {
+            x[i].style.display = "list-item";
             list += 1;
+        } else {
+            x[i].style.display = "none";
         }
     }
 
     if (list === 0) {
-        noresult.style.display="list-item";
+        noresult.style.display = "list-item";
     } else {
-        noresult.style.display="none";
+        noresult.style.display = "none";
     }
 
     document.querySelector('.list').classList.add('show');

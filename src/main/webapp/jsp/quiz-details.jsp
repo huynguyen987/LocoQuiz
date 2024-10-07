@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" session="true" %>
+<%@ page import="entity.quiz" %>
 <html>
 <head>
   <title>Quiz Details - QuizLoco</title>
@@ -26,28 +27,14 @@
   <div class="container">
     <h2>Quiz Details</h2>
     <div class="quiz-details">
-      <h3>Quiz Title</h3>
-      <p>Description: A detailed description of the quiz.</p>
-      <p>Category: Science</p>
-      <p>Number of Questions: 10</p>
-      <p>Difficulty: Medium</p>
-      <p>Author: John Doe</p>
-      <p>Date Created: 2024-01-01</p>
-      <p>Average Rating: 4.5</p>
-      <p>Number of Attempts: 150</p>
-      <p>Tags: Science, General Knowledge</p>
-      <p>Estimated Time: 15 minutes</p>
-      <h4>Instructions</h4>
-      <p>Here are the detailed instructions for the quiz...</p>
-      <h4>Sample Questions</h4>
-      <ul>
-        <li>Question 1: Sample question text...</li>
-        <li>Question 2: Sample question text...</li>
-        <li>Question 3: Sample question text...</li>
-      </ul>
-      <div class="quiz-actions">
-        <a href="start-quiz.jsp" class="btn btn-start">Start Quiz</a>
-      </div>
+      <h3><%= ((quiz) request.getAttribute("quiz")).getName() %></h3>
+      <p>Description: <%= ((quiz) request.getAttribute("quiz")).getDescription() %></p>
+      <p>Created At: <%= ((quiz) request.getAttribute("quiz")).getCreated_at() %></p>
+      <p>Updated At: <%= ((quiz) request.getAttribute("quiz")).getUpdated_at() %></p>
+      <p>User ID: <%= ((quiz) request.getAttribute("quiz")).getUser_id() %></p>
+      <p>Type ID: <%= ((quiz) request.getAttribute("quiz")).getType_id() %></p>
+      <p>Answer: <%= ((quiz) request.getAttribute("quiz")).getAnswer() %></p>
+      <p>Status: <%= ((quiz) request.getAttribute("quiz")).isStatus() %></p>
     </div>
   </div>
 </main>
