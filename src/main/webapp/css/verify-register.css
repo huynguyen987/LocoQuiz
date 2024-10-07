@@ -53,11 +53,12 @@ nav ul li a:hover {
 }
 
 /* Main Content Styles */
-.verify-code-container {
+.password-reset-container { /* Updated from .verify-code-container */
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 4em 0;
+    background-color: #f0f2f5; /* Ensures background matches body */
 }
 
 .form-wrapper {
@@ -68,6 +69,7 @@ nav ul li a:hover {
     max-width: 500px;
     width: 100%;
     text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds subtle shadow */
 }
 
 .form-wrapper h2 {
@@ -80,29 +82,31 @@ nav ul li a:hover {
     color: #555;
 }
 
-.verify-form .input-group {
+.reset-form .input-group { /* Updated from .verify-form .input-group */
     margin-bottom: 1.5em;
     text-align: left;
 }
 
-.verify-form label {
+.reset-form label { /* Updated from .verify-form label */
     display: block;
     margin-bottom: 0.5em;
     font-weight: 500;
 }
 
-.verify-form input[type="text"] {
+.reset-form input[type="text"] { /* Updated from .verify-form input[type="text"] */
     width: 100%;
     padding: 0.8em;
     border-radius: 5px;
     border: 1px solid #ccc;
     font-size: 1em;
     box-sizing: border-box;
+    transition: border-color 0.3s ease;
 }
 
-.verify-form input[type="text"]:focus {
+.reset-form input[type="text"]:focus { /* Updated from .verify-form input[type="text"]:focus */
     border-color: #3498db;
     outline: none;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); /* Adds focus shadow */
 }
 
 .btn-submit {
@@ -113,7 +117,7 @@ nav ul li a:hover {
     border-radius: 30px;
     font-size: 1em;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, transform 0.1s ease;
 }
 
 .btn-submit:hover {
@@ -151,5 +155,14 @@ footer {
 @media (max-width: 768px) {
     .form-wrapper {
         padding: 1.5em;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .password-reset-container { /* Ensures proper padding on smaller screens */
+        padding: 2em 0;
     }
 }
