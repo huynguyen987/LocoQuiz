@@ -243,3 +243,115 @@ INSERT INTO result (user_id, quiz_id, class_id, score) VALUES
 INSERT INTO result (user_id, quiz_id, class_id, score) VALUES
                                                            (3, 3, 3, 76.0), -- Carol scored 76.0 in World Geography
                                                            (3, 4, 4, 85.5); -- Carol scored 85.5 in Literature Classics
+INSERT INTO users (username, password, email, role_id, avatar, feature_face, gender) VALUES
+('david_teacher', 'hashed_password5', 'david.teacher@example.com', 1, NULL, NULL, 'male'),
+('emma_teacher', 'hashed_password6', 'emma.teacher@example.com', 1, NULL, NULL, 'female'),
+('frank_student', 'hashed_password7', 'frank.student@example.com', 2, NULL, NULL, 'male'),
+('grace_student', 'hashed_password8', 'grace.student@example.com', 2, NULL, NULL, 'female'),
+('henry_student', 'hashed_password9', 'henry.student@example.com', 2, NULL, NULL, 'male'),
+('isla_student', 'hashed_password10', 'isla.student@example.com', 2, NULL, NULL, 'female'),
+('jack_student', 'hashed_password11', 'jack.student@example.com', 2, NULL, NULL, 'male'),
+('karen_student', 'hashed_password12', 'karen.student@example.com', 2, NULL, NULL, 'female');
+INSERT INTO tag (name, description) VALUES
+('Art', 'Quizzes related to art topics'),
+('Music', 'Quizzes related to music topics'),
+('Physics', 'Quizzes related to physics topics'),
+('Chemistry', 'Quizzes related to chemistry topics'),
+('Biology', 'Quizzes related to biology topics');
+INSERT INTO quiz (name, description, user_id, type_id, answer) VALUES
+('Advanced Algebra', 'An advanced quiz on algebraic concepts', 1, 1,
+ JSON_ARRAY(
+   JSON_OBJECT('question', 'What is the quadratic formula?', 'options', JSON_ARRAY('x = (-b ± √(b²-4ac))/(2a)', 'x = b² - 4ac', 'x = -b/a', 'x = c/a'), 'correct', 'x = (-b ± √(b²-4ac))/(2a)'),
+   JSON_OBJECT('question', 'Solve for x: x² - 4x + 4 = 0.', 'options', JSON_ARRAY('x = 2', 'x = -2', 'x = 4', 'x = -4'), 'correct', 'x = 2')
+ )),
+('Organic Chemistry', 'A quiz on basic organic chemistry', 5, 1,
+ JSON_ARRAY(
+   JSON_OBJECT('question', 'What is the functional group of alcohols?', 'options', JSON_ARRAY('-OH', '-COOH', '-NH₂', '-SH'), 'correct', '-OH'),
+   JSON_OBJECT('question', 'What is the simplest alkane?', 'options', JSON_ARRAY('Methane', 'Ethane', 'Propane', 'Butane'), 'correct', 'Methane')
+ )),
+('Classical Physics', 'A quiz on classical mechanics', 6, 2,
+ JSON_ARRAY(
+   JSON_OBJECT('question', 'Newton\'s first law states that an object in motion stays in motion unless acted upon by an external force.', 'correct', true),
+   JSON_OBJECT('question', 'Energy can be created and destroyed.', 'correct', false)
+ )),
+('World History', 'A quiz on important historical events', 1, 3,
+ JSON_ARRAY(
+   JSON_OBJECT('question', 'Who was the first President of the United States?', 'correct', 'George Washington'),
+   JSON_OBJECT('question', 'In what year did World War II end?', 'correct', '1945')
+ )),
+('Modern Art', 'A quiz on modern art movements', 5, 1,
+ JSON_ARRAY(
+   JSON_OBJECT('question', 'Which artist is known for Cubism?', 'options', JSON_ARRAY('Pablo Picasso', 'Vincent van Gogh', 'Claude Monet', 'Salvador Dalí'), 'correct', 'Pablo Picasso'),
+   JSON_OBJECT('question', 'Abstract Expressionism originated in which country?', 'options', JSON_ARRAY('France', 'USA', 'Spain', 'Italy'), 'correct', 'USA')
+ )),
+('Biology Basics', 'A quiz on basic biology concepts', 6, 2,
+ JSON_ARRAY(
+   JSON_OBJECT('question', 'Cells are the basic unit of life.', 'correct', true),
+   JSON_OBJECT('question', 'DNA stands for Deoxyribonucleic Acid.', 'correct', true)
+ ));
+INSERT INTO user_quiz (user_id, quiz_id, tag_id) VALUES
+(1, 5, 1),    -- Alice created Advanced Algebra tagged Mathematics
+(5, 6, 9),    -- David created Organic Chemistry tagged Chemistry
+(6, 7, 8),    -- Emma created Classical Physics tagged Physics
+(1, 8, 3),    -- Alice created World History tagged History
+(5, 9, 6),    -- David created Modern Art tagged Art
+(6, 10, 10);  -- Emma created Biology Basics tagged Biology
+INSERT INTO class (name, class_key, description, teacher_id) VALUES
+('Algebra 201', 'ALG201', 'Advanced Algebra Concepts', 1),
+('Chemistry 101', 'CHEM101', 'Introduction to Chemistry', 5),
+('Physics 101', 'PHY101', 'Introduction to Physics', 6),
+('History 201', 'HIS201', 'Advanced World History', 1),
+('Art Appreciation', 'ART101', 'Understanding Modern Art', 5),
+('Biology 101', 'BIO101', 'Introduction to Biology', 6);
+INSERT INTO class_user (class_id, user_id) VALUES
+(5, 7),  -- Frank
+(5, 8),  -- Grace
+(5, 9);  -- Henry
+INSERT INTO class_user (class_id, user_id) VALUES
+(6, 10), -- Isla
+(6, 11), -- Jack
+(6, 12); -- Karen
+INSERT INTO class_user (class_id, user_id) VALUES
+(7, 7),  -- Frank
+(7, 10); -- Isla
+INSERT INTO class_user (class_id, user_id) VALUES
+(8, 8),  -- Grace
+(8, 9),  -- Henry
+(8, 12); -- Karen
+INSERT INTO class_user (class_id, user_id) VALUES
+(9, 11), -- Jack
+(9, 12); -- Karen
+INSERT INTO class_user (class_id, user_id) VALUES
+(10, 7), -- Frank
+(10, 8); -- Grace
+INSERT INTO class_quiz (class_id, quiz_id) VALUES
+(5, 5),   -- Advanced Algebra assigned to Algebra 201
+(6, 6),   -- Organic Chemistry assigned to Chemistry 101
+(7, 7),   -- Classical Physics assigned to Physics 101
+(8, 8),   -- World History assigned to History 201
+(9, 9),   -- Modern Art assigned to Art Appreciation
+(10, 10); -- Biology Basics assigned to Biology 101
+INSERT INTO result (user_id, quiz_id, class_id, score) VALUES
+(7, 5, 5, 88.0),   -- Frank scored 88.0
+(8, 5, 5, 92.5),   -- Grace scored 92.5
+(9, 5, 5, 85.0);   -- Henry scored 85.0
+INSERT INTO result (user_id, quiz_id, class_id, score) VALUES
+(10, 6, 6, 90.0),  -- Isla scored 90.0
+(11, 6, 6, 87.0),  -- Jack scored 87.0
+(12, 6, 6, 93.0);  -- Karen scored 93.0
+INSERT INTO result (user_id, quiz_id, class_id, score) VALUES
+(7, 7, 7, 85.5),   -- Frank scored 85.5
+(10, 7, 7, 88.0);  -- Isla scored 88.0
+INSERT INTO result (user_id, quiz_id, class_id, score) VALUES
+(8, 8, 8, 91.0),   -- Grace scored 91.0
+(9, 8, 8, 86.5),   -- Henry scored 86.5
+(12, 8, 8, 89.0);  -- Karen scored 89.0
+INSERT INTO result (user_id, quiz_id, class_id, score) VALUES
+(11, 9, 9, 92.0),  -- Jack scored 92.0
+(12, 9, 9, 94.5);  -- Karen scored 94.5
+INSERT INTO result (user_id, quiz_id, class_id, score) VALUES
+(7, 10, 10, 88.5), -- Frank scored 88.5
+(8, 10, 10, 91.0); -- Grace scored 91.0
+INSERT INTO type (name, description) VALUES
+('Essay', 'Quizzes requiring detailed written answers'),
+('Matching', 'Quizzes where items must be matched');
