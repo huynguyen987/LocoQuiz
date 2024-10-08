@@ -11,7 +11,7 @@
 <head>
   <meta charset="UTF-8">
   <title>All Quizzes - QuizLoco</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/all-quizzes.css">
   <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <!-- Pass contextPath to JavaScript -->

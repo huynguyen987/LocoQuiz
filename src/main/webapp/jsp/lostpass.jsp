@@ -13,18 +13,8 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 
-    <!-- Inline Styles for Error Message -->
-    <style>
-        .error-message {
-            color: #721c24;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            padding: 10px 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-    </style>
+    <!-- Font Awesome for Icons (Ensure you have this for the theme toggle) -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <!-- Header Section -->
@@ -39,6 +29,14 @@
                 <li><a href="${pageContext.request.contextPath}/index.jsp#contact">Liên Hệ</a></li>
             </ul>
         </nav>
+        <!-- Theme Toggle (Optional) -->
+        <div class="theme-toggle">
+            <input type="checkbox" id="dark-mode-toggle" aria-label="Toggle dark mode">
+            <label for="dark-mode-toggle">
+                <i class="fas fa-moon"></i>
+                <i class="fas fa-sun"></i>
+            </label>
+        </div>
     </div>
 </header>
 
@@ -81,5 +79,27 @@
 
 <!-- External JavaScript -->
 <script src="${pageContext.request.contextPath}/js/script.js"></script>
+<!-- Dark Mode Script (if implementing dark mode) -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleSwitch = document.getElementById('dark-mode-toggle');
+        const currentTheme = localStorage.getItem('theme');
+
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            toggleSwitch.checked = true;
+        }
+
+        toggleSwitch.addEventListener('change', () => {
+            if (toggleSwitch.checked) {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    });
+</script>
 </body>
 </html>

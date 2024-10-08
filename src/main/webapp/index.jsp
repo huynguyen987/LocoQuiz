@@ -18,12 +18,10 @@
     </script>
 </head>
 <body id="body">
+<!-- Sidebar Trigger Area -->
+<div id="sidebar-trigger" role="button" tabindex="0" aria-label="Open sidebar"></div>
 <!-- Sidebar -->
 <div id="sidebar" class="sidebar">
-    <!-- Sidebar Toggle Button -->
-    <div class="sidebar-toggle">
-        <button id="sidebarClose" aria-label="Close sidebar"><i class="fas fa-times"></i></button>
-    </div>
     <!-- Sidebar Content -->
     <div class="sidebar-content">
         <ul>

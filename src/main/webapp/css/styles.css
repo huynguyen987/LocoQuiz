@@ -1135,18 +1135,49 @@ body.dark-theme :focus {
     outline-offset: 2px;
 }
 
+/* Sidebar Trigger Area Styles */
+#sidebar-trigger {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 10px; /* Width of the trigger area */
+    height: 100%;
+    z-index: 1000; /* Above other content but below the sidebar */
+    cursor: pointer;
+    /* Optional: Uncomment the next line to make the trigger area slightly visible */
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
 /* Sidebar Styles */
 .sidebar {
     position: fixed;
     left: -250px; /* Hidden by default */
     top: 0;
     width: 250px;
-    height: 100%;
-    background-color: #fff;
+    height: 100vh; /* Ensure it takes up the full viewport height */
+    background-color: #fff; /* Ensure it has a background */
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
     transition: left 0.3s ease;
-    z-index: 999; /* Above other content */
+    z-index: 999; /* Adjusted z-index */
     overflow-y: auto;
+}
+
+body.sidebar-open .sidebar {
+    left: 0; /* Show sidebar when toggled */
+    z-index: 1001; /* Ensure it's above the sidebar-trigger */
+}
+
+/* Sidebar Trigger Area Styles */
+#sidebar-trigger {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 10px; /* Width of the trigger area */
+    height: 100%;
+    z-index: 1000; /* Below the open sidebar */
+    cursor: pointer;
+    /* Optional: Uncomment the next line to make the trigger area slightly visible */
+    /* background-color: rgba(0, 0, 0, 0.1); */
 }
 
 body.sidebar-open .sidebar {
@@ -1281,3 +1312,5 @@ body.sidebar-open .sidebar {
         width: 100%;
     }
 }
+
+
