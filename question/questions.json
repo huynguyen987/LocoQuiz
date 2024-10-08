@@ -1,0 +1,46 @@
+[
+    {
+        "sequence" : 1,
+        "question": "What is the capital of France?",
+        "answers": [
+            "Paris",
+            "London",
+            "Berlin",
+            "Madrid"
+        ],
+        "correct": "Paris"
+    },
+    {
+        "sequence" : 2,
+        "question": "What is the capital of Germany?",
+        "answers": [
+            "Paris",
+            "London",
+            "Berlin",
+            "Madrid"
+        ],
+        "correct": "Berlin"
+    },
+    {
+        "sequence" : 3,
+        "question": "What is the capital of Spain?",
+        "answers": [
+            "Paris",
+            "London",
+            "Berlin",
+            "Madrid"
+        ],
+        "correct": "Madrid"
+    },
+    {
+        "sequence" : 4,
+        "question": "What is the capital of England?",
+        "answers": [
+            "Paris",
+            "London",
+            "Berlin",
+            "Madrid"
+        ],
+        "correct": "London"
+    }
+]

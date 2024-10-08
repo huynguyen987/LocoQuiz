@@ -2,10 +2,13 @@ package dao;
 
 import entity.quiz;
 
+import java.io.StringReader;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import Module.DBConnect;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 
 public class QuizDAO {
 
@@ -202,6 +205,23 @@ public class QuizDAO {
         quiz.setDescription(rs.getString("description"));
         // Set other properties as needed
         return quiz;
+    }
+//    get answer by id
+    public String getAnswerById(int id) throws SQLException, ClassNotFoundException {
+        Connection connection = new DBConnect().getConnection();
+        String sql = "SELECT answer FROM quiz WHERE id = ?";
+        String answer = "";
+        try {
+            PreparedStatement ps = connection.prepareCall(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                answer = rs.getString("answer");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return answer;
     }
 
     // Method to establish database connection
