@@ -448,3 +448,168 @@ form input[type="submit"]:hover,
     border-color: #3498db;
     box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.5);
 }
+
+/* ... existing styles ... */
+
+/* New styles for the quiz creator layout */
+.quiz-creator-container {
+    display: flex;
+    margin-top: 2rem;
+}
+
+.question-grid {
+    width: 25%;
+    padding-right: 1rem;
+}
+
+.question-grid h2 {
+    margin-bottom: 1rem;
+}
+
+#questionGridContainer {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 0.5rem;
+}
+
+.question-btn {
+    width: 100%;
+    height: 45px;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    text-align: center;
+    line-height: 45px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.question-btn:hover {
+    background-color: #e1e1e1;
+    border-color: #bbb;
+}
+
+.question-btn.active {
+    background-color: #3498db;
+    color: #fff;
+    border-color: #3498db;
+}
+
+.question-grid button {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.question-editor {
+    width: 75%;
+    padding-left: 1rem;
+    border-left: 1px solid #ccc;
+}
+
+.question-section {
+    display: none;
+}
+
+.question-section.active {
+    display: block;
+}
+
+/* Pagination Controls */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.pagination-controls button {
+    background-color: #3498db;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pagination-controls button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination-controls span {
+    font-size: 1rem;
+}
+
+/* Adjust answer-option styles */
+.answer-option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.answer-option input[type="radio"],
+.answer-option input[type="checkbox"] {
+    margin-right: 1rem;
+}
+
+.answer-option label {
+    margin-right: 0.5rem;
+}
+
+.answer-option input[type="text"] {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.add-answer-btn {
+    background-color: #27ae60;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.add-answer-btn:hover {
+    background-color: #219150;
+}
+
+/* Responsive design adjustments */
+@media screen and (max-width: 768px) {
+    .quiz-creator-container {
+        flex-direction: column;
+    }
+
+    .question-grid,
+    .question-editor {
+        width: 100%;
+        padding: 0;
+        border: none;
+    }
+
+    .question-grid button {
+        margin-bottom: 1rem;
+    }
+
+    .question-editor {
+        margin-top: 2rem;
+    }
+
+    #questionGridContainer {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #questionGridContainer {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+

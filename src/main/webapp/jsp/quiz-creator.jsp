@@ -65,24 +65,27 @@
         <!-- Hidden input to store selected quiz type -->
         <input type="hidden" id="quizType" name="quizType" value="multiple-choice">
 
-        <!-- Question List Table -->
-        <h2>Questions</h2>
-        <table id="questionTable">
-            <thead>
-            <tr>
-                <th>Question Number</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody id="questionTableBody">
-            <!-- Dynamic rows will be added here -->
-            </tbody>
-        </table>
-        <button type="button" id="addQuestionBtn">Add Question</button>
+        <!-- Main Quiz Creator Container -->
+        <div class="quiz-creator-container">
+            <!-- Question Grid Sidebar -->
+            <div class="question-grid" id="questionGrid">
+                <h2>Questions</h2>
+                <div id="questionGridContainer">
+                    <!-- Question buttons will be dynamically added here -->
+                </div>
+                <!-- Pagination Controls -->
+                <div class="pagination-controls" id="paginationControls">
+                    <button type="button" id="prevPageBtn" disabled>&laquo; Prev</button>
+                    <span id="currentPage">1</span> / <span id="totalPages">1</span>
+                    <button type="button" id="nextPageBtn" disabled>Next &raquo;</button>
+                </div>
+                <button type="button" id="addQuestionBtn">Add Question</button>
+            </div>
 
-        <!-- Dynamic Questions Container -->
-        <div id="questionsContainer">
-            <!-- Dynamic question sections will be added here -->
+            <!-- Question Editor -->
+            <div class="question-editor" id="questionEditor">
+                <!-- Dynamic question sections will be added here -->
+            </div>
         </div>
 
         <!-- Hidden input to keep track of question count -->
