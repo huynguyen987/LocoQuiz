@@ -1,16 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.*" %>
-<%
-    String username = (String) session.getAttribute("username");
-    String role = (String) session.getAttribute("role");
 
-    // Redirect to login if not authenticated or not a student
-    if (username == null || !"student".equals(role)) {
-        response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");
-        return;
-    }
-%>
 <!DOCTYPE html>
+
+<%
+  // Check if user is student
+  session = request.getSession();
+  entity.Users currentUser = (entity.Users) session.getAttribute("user");
+  if (currentUser == null || !"student".equals(currentUser.getRoleName())) {
+    response.sendRedirect(request.getContextPath() + "/unauthorized.jsp");
+    return;
+  }
+%>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -63,7 +64,7 @@
             <div class="user-info">
                 <a href="<%= request.getContextPath() %>/jsp/user-profile.jsp" class="user-profile">
                     <i class="fas fa-user-circle"></i>
-                    <span class="username">Welcome, <%= username %></span>
+                    <span class="username">Welcome, <%= currentUser.getUsername() %></span>
                 </a>
                 <a href="<%= request.getContextPath() %>/LogoutServlet" class="btn-logout">Logout</a>
             </div>
@@ -84,7 +85,7 @@
     <!-- Student Dashboard -->
     <section id="dashboard" class="dashboard">
         <div class="container">
-            <h1>Welcome, <%= username %>!</h1>
+            <h1>Welcome, <%= currentUser.getUsername() %>!</h1>
             <p>Here's your student dashboard where you can access your classes, quizzes, and track your progress.</p>
 
             <!-- My Classes Section -->

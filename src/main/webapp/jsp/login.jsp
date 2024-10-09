@@ -21,7 +21,7 @@
 </style>
 <div class="login-container">
     <h2>Login</h2>
-    <form action="<%= request.getContextPath() %>/login" method="post">
+    <form action="<%= request.getContextPath() %>/loginn" method="post">
         <% String success = (String) session.getAttribute("success");
             if (success != null) { %>
         <div class="error-message">
