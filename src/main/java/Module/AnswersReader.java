@@ -70,13 +70,24 @@ public class AnswersReader {
                 '}';
     }
 
+    public List<AnswersReader> getAnswersList(String jsonArray) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            // Deserialize JSON array to List<AnswersReader>
+            List<AnswersReader> answersList = mapper.readValue(jsonArray, new TypeReference<List<AnswersReader>>() {});
+            return answersList;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     // Test
     public static void main(String[] args) {
         String jsonArray = "[{\"sequence\": 1, \"correct\": \"4\", \"options\": [\"3\", \"4\", \"5\", \"6\"], \"question\": \"What is 2+2?\"}, {\"sequence\": 2, \"correct\": \"5\", \"options\": [\"3\", \"5\", \"10\", \"15\"], \"question\": \"Solve for x: x + 5 = 10.\"}]";
 
         ObjectMapper mapper = new ObjectMapper();
         try {
-            // Deserialize JSON array to List<AnswersReader>
             List<AnswersReader> answersList = mapper.readValue(jsonArray, new TypeReference<List<AnswersReader>>() {});
 //            giải thích các tham số của hàm readValue
 //            jsonArray: chuỗi JSON cần chuyển đổi
