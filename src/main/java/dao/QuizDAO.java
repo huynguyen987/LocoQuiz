@@ -11,6 +11,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 
 public class QuizDAO {
+    DBConnect dbConnect = new DBConnect();
 
     //get all quiz
     public List<quiz> getAllQuiz() throws SQLException, ClassNotFoundException {
@@ -142,7 +143,12 @@ public class QuizDAO {
     public List<quiz> getLatestQuizzes() {
         List<quiz> latestQuizzes = new ArrayList<>();
         try {
-            Connection conn = getConnection();
+            Connection conn = null;
+            try {
+                conn = dbConnect.getConnection();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             String sql = "SELECT * FROM quiz ORDER BY created_at DESC LIMIT 4";
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
@@ -161,7 +167,12 @@ public class QuizDAO {
     public List<quiz> getPopularQuizzes() {
         List<quiz> popularQuizzes = new ArrayList<>();
         try {
-            Connection conn = getConnection();
+            Connection conn = null;
+            try {
+                conn = dbConnect.getConnection();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             String sql = "SELECT q.*, COUNT(r.quiz_id) as attempts FROM quiz q " +
                     "LEFT JOIN result r ON q.id = r.quiz_id " +
                     "GROUP BY q.id ORDER BY attempts DESC LIMIT 4";
@@ -182,7 +193,12 @@ public class QuizDAO {
     public List<quiz> getAllQuizzes() {
         List<quiz> allQuizzes = new ArrayList<>();
         try {
-            Connection conn = getConnection();
+            Connection conn = null;
+            try {
+                conn = dbConnect.getConnection();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             String sql = "SELECT * FROM quiz";
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
@@ -222,15 +238,6 @@ public class QuizDAO {
             e.printStackTrace();
         }
         return answer;
-    }
-
-    // Method to establish database connection
-    private Connection getConnection() throws SQLException {
-        // Replace with your actual database connection details
-        String url = "jdbc:mysql://localhost:3306/test";
-        String username = "root";
-        String password = "password";
-        return DriverManager.getConnection(url, username, password);
     }
 
 }

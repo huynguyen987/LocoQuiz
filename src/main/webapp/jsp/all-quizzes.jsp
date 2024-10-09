@@ -107,7 +107,7 @@
           <div class="quiz-content">
             <h3><%= quiz.getName() %></h3>
             <p><%= quiz.getDescription() %></p>
-            <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=<%= quiz.getId() %>" class="btn-quiz">Take Quiz</a>
+            <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=<%= quiz.getId() %>" class="btn-quiz">Take Quiz</a>
           </div>
         </div>
         <%   }
@@ -128,7 +128,7 @@
           <div class="quiz-content">
             <h3><%= quiz.getName() %></h3>
             <p><%= quiz.getDescription() %></p>
-            <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=<%= quiz.getId() %>" class="btn-quiz">Take Quiz</a>
+            <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=<%= quiz.getId() %>" class="btn-quiz">Take Quiz</a>
           </div>
         </div>
         <%   }
@@ -149,7 +149,7 @@
           <div class="quiz-content">
             <h3><%= quiz.getName() %></h3>
             <p><%= quiz.getDescription() %></p>
-            <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=<%= quiz.getId() %>" class="btn-quiz">Take Quiz</a>
+            <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=<%= quiz.getId() %>" class="btn-quiz">Take Quiz</a>
           </div>
         </div>
         <%   }

@@ -181,7 +181,7 @@
                     <div class="quiz-content">
                         <h3>Basic Algebra</h3>
                         <p>Test your foundational algebra skills with this engaging quiz.</p>
-                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=1" class="btn-quiz">Take
+                        <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=1" class="btn-quiz">Take
                             Quiz</a>
                     </div>
                 </div>
@@ -190,7 +190,7 @@
                     <div class="quiz-content">
                         <h3>World History</h3>
                         <p>Challenge your knowledge of global historical events.</p>
-                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=2" class="btn-quiz">Take
+                        <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=2" class="btn-quiz">Take
                             Quiz</a>
                     </div>
                 </div>
@@ -209,7 +209,7 @@
                     <div class="quiz-content">
                         <h3>English Literature</h3>
                         <p>Explore classic and contemporary works in English literature.</p>
-                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=4" class="btn-quiz">Take
+                        <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=4" class="btn-quiz">Take
                             Quiz</a>
                     </div>
                 </div>
@@ -279,7 +279,7 @@
                     <img src="${pageContext.request.contextPath}/img/physics.jpg" alt="Advanced Physics" loading="lazy">
                     <div class="carousel-caption">
                         <h3>Advanced Physics</h3>
-                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=5" class="btn-quiz">Take
+                        <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=5" class="btn-quiz">Take
                             Quiz</a>
                     </div>
                 </div>
@@ -288,7 +288,7 @@
                          loading="lazy">
                     <div class="carousel-caption">
                         <h3>World Geography</h3>
-                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=6" class="btn-quiz">Take
+                        <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=6" class="btn-quiz">Take
                             Quiz</a>
                     </div>
                 </div>
