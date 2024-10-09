@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,7 +22,8 @@
 <div class="login-container">
     <h2>Login</h2>
     <form action="<%= request.getContextPath() %>/login" method="post">
-        <% String success=(String) session.getAttribute("success"); if (success !=null) { %>
+        <% String success = (String) session.getAttribute("success");
+            if (success != null) { %>
         <div class="error-message">
             <%= success %>
         </div>
@@ -30,7 +32,7 @@
         <input type="password" name="password" placeholder="Password" required>
         <input type="submit" value="Login">
         <div class="forgot-password">
-            <a href=<%= request.getContextPath() %>/jsp/lostpass.jsp>Forgot Password?</a>
+            <a href="<%= request.getContextPath() %>/jsp/lostpass.jsp">Forgot Password?</a>
         </div>
     </form>
 

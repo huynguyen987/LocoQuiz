@@ -4,52 +4,105 @@ document.addEventListener('DOMContentLoaded', function() {
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const navUl = document.querySelector('nav ul');
 
-    mobileMenuToggle.addEventListener('click', function() {
-        navUl.classList.toggle('show');
-        mobileMenuToggle.classList.toggle('active');
-    });
+    if (mobileMenuToggle && navUl) {
+        mobileMenuToggle.addEventListener('click', function() {
+            navUl.classList.toggle('show');
+            mobileMenuToggle.classList.toggle('active');
+        });
+    }
 
-    // Sidebar Toggle
+    // Sidebar Elements
+    const sidebarTrigger = document.getElementById('sidebar-trigger');
+    const sidebar = document.getElementById('sidebar');
     const sidebarToggleBtn = document.getElementById('sidebarToggle');
     const sidebarCloseBtn = document.getElementById('sidebarClose');
-    const sidebar = document.getElementById('sidebar');
     const body = document.body;
+    let closeSidebarTimeout;
 
-    sidebarToggleBtn.addEventListener('click', function() {
-        body.classList.toggle('sidebar-open');
-    });
+    // Function to Open Sidebar
+    function openSidebar() {
+        body.classList.add('sidebar-open');
+    }
 
-    sidebarCloseBtn.addEventListener('click', function() {
+    // Function to Close Sidebar
+    function closeSidebar() {
         body.classList.remove('sidebar-open');
-    });
+    }
+
+    // Event Listener for Trigger Area (Mouse Enter, Click, Keyboard)
+    if (sidebarTrigger) {
+        // Mouse Enter
+        sidebarTrigger.addEventListener('mouseenter', openSidebar);
+
+        // Click Event
+        sidebarTrigger.addEventListener('click', openSidebar);
+
+        // Keyboard Event
+        sidebarTrigger.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openSidebar();
+            }
+        });
+    }
+
+    // Close sidebar when mouse leaves the sidebar area with a delay
+    if (sidebar) {
+        sidebar.addEventListener('mouseleave', function() {
+            closeSidebarTimeout = setTimeout(closeSidebar, 300); // 300ms delay
+        });
+
+        sidebar.addEventListener('mouseenter', function() {
+            clearTimeout(closeSidebarTimeout);
+        });
+
+        // Prevent Sidebar from Closing when Clicking Inside
+        sidebar.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    }
+
+    // Event Listener for Close Button
+    if (sidebarCloseBtn) {
+        sidebarCloseBtn.addEventListener('click', closeSidebar);
+    }
 
     // Close sidebar when clicking outside
     document.addEventListener('click', function(event) {
         if (body.classList.contains('sidebar-open')) {
-            if (!sidebar.contains(event.target) && !sidebarToggleBtn.contains(event.target)) {
-                body.classList.remove('sidebar-open');
+            if (!sidebar.contains(event.target) && !sidebarTrigger.contains(event.target)) {
+                closeSidebar();
             }
         }
     });
+
+    // Sidebar Toggle Button (if exists)
+    if (sidebarToggleBtn) {
+        sidebarToggleBtn.addEventListener('click', function() {
+            body.classList.toggle('sidebar-open');
+        });
+    }
 
     // Dark Mode Toggle
     const toggleSwitch = document.getElementById('dark-mode-toggle');
     const currentTheme = localStorage.getItem('theme');
 
-    if (currentTheme === 'dark') {
-        document.body.classList.add('dark-theme');
-        toggleSwitch.checked = true;
-    }
-
-    toggleSwitch.addEventListener('change', () => {
-        if (toggleSwitch.checked) {
+    if (toggleSwitch) {
+        if (currentTheme === 'dark') {
             document.body.classList.add('dark-theme');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.body.classList.remove('dark-theme');
-            localStorage.setItem('theme', 'light');
+            toggleSwitch.checked = true;
         }
-    });
+
+        toggleSwitch.addEventListener('change', () => {
+            if (toggleSwitch.checked) {
+                document.body.classList.add('dark-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-theme');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    }
 
     // Live Search functionality
     const searchInput = document.getElementById('liveSearch');
@@ -135,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const nextBtn = document.querySelector('.carousel-control.next');
     let currentSlide = 0;
     const totalSlides = slides.length;
-    let slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+    let slideInterval;
 
     function showSlide(index) {
         slides.forEach((slide, i) => {
@@ -153,6 +206,16 @@ document.addEventListener('DOMContentLoaded', function() {
         showSlide(currentSlide);
     }
 
+    function resetInterval() {
+        clearInterval(slideInterval);
+        slideInterval = setInterval(nextSlide, 5000);
+    }
+
+    if (slides.length > 0) {
+        showSlide(currentSlide);
+        slideInterval = setInterval(nextSlide, 5000);
+    }
+
     if (prevBtn && nextBtn) {
         prevBtn.addEventListener('click', () => {
             prevSlideFunc();
@@ -163,16 +226,6 @@ document.addEventListener('DOMContentLoaded', function() {
             nextSlide();
             resetInterval();
         });
-    }
-
-    function resetInterval() {
-        clearInterval(slideInterval);
-        slideInterval = setInterval(nextSlide, 5000);
-    }
-
-    // Initialize Carousel
-    if (slides.length > 0) {
-        showSlide(currentSlide);
     }
 
     // Testimonial Slider (Swipe Support)
@@ -211,11 +264,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const newsletterForm = document.querySelector('.newsletter-form');
     const formMessage = document.querySelector('.form-message');
 
-    if (newsletterForm) {
+    if (newsletterForm && formMessage) {
         newsletterForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const formData = new FormData(newsletterForm);
-            const email = formData.get('email');
 
             fetch(newsletterForm.action, {
                 method: 'POST',
@@ -243,11 +295,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const footerNewsletterForm = document.querySelector('.footer-newsletter-form');
     const footerFormMessage = footerNewsletterForm?.nextElementSibling;
 
-    if (footerNewsletterForm) {
+    if (footerNewsletterForm && footerFormMessage) {
         footerNewsletterForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const formData = new FormData(footerNewsletterForm);
-            const email = formData.get('email');
 
             fetch(footerNewsletterForm.action, {
                 method: 'POST',

@@ -10,14 +10,13 @@ body {
     line-height: 1.6;
     color: #333;
     background-color: #f4f4f4;
-    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .container {
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 20px 0;
 }
 
 /* Header styles */
@@ -28,7 +27,6 @@ header {
     width: 100%;
     top: 0;
     z-index: 1000;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 header .container {
@@ -38,13 +36,6 @@ header .container {
     padding: 1rem 0;
 }
 
-header .sidebar-toggle-btn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
 .logo {
     font-size: 1.8rem;
     font-weight: bold;
@@ -52,7 +43,6 @@ header .sidebar-toggle-btn {
     text-decoration: none;
 }
 
-/* Navigation styles */
 nav ul {
     display: flex;
     list-style: none;
@@ -66,13 +56,13 @@ nav ul li a {
     color: #333;
     text-decoration: none;
     transition: color 0.3s ease;
+    position: relative;
 }
 
 nav ul li a:hover {
     color: #3498db;
 }
 
-/* Authentication links styles */
 .auth-links {
     display: flex;
     align-items: center;
@@ -82,7 +72,9 @@ nav ul li a:hover {
     padding: 0.5rem 1rem;
     border-radius: 5px;
     text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
     font-size: 0.9rem;
+    margin-left: 1rem;
 }
 
 .btn-login {
@@ -93,7 +85,6 @@ nav ul li a:hover {
 .btn-register {
     background-color: #2ecc71;
     color: #fff;
-    margin-left: 1rem;
 }
 
 .btn-logout {
@@ -113,23 +104,64 @@ nav ul li a:hover {
     background-color: #c0392b;
 }
 
-/* Main Content */
-main {
-    padding-top: 70px;
+.user-profile {
+    display: flex;
+    align-items: center;
+    color: #333;
+    text-decoration: none;
 }
 
-h1, h2 {
+.user-profile i {
+    margin-right: 0.5rem;
+    font-size: 1.5rem;
+    color: #3498db;
+}
+
+.username {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.sidebar-toggle-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #333;
+    margin-right: 1rem;
+}
+
+.sidebar-toggle-btn:hover {
+    color: #3498db;
+}
+
+/* Main Content */
+main {
+    padding-top: 100px; /* To offset fixed header */
+}
+
+main h1 {
     text-align: center;
     margin-bottom: 2rem;
+    font-size: 2.5rem;
     color: #333;
 }
 
-/* Quiz Cards */
+section {
+    margin-bottom: 4rem;
+}
+
+section h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #333;
+}
+
 .quiz-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 2rem;
-    margin-bottom: 2rem;
 }
 
 .quiz-card {
@@ -177,6 +209,7 @@ h1, h2 {
     font-size: 0.95rem;
     color: #666;
     margin-bottom: 1rem;
+    flex-grow: 1;
 }
 
 .btn-quiz {
@@ -188,6 +221,7 @@ h1, h2 {
     border-radius: 5px;
     transition: background-color 0.3s ease;
     font-size: 0.95rem;
+    text-align: center;
 }
 
 .btn-quiz:hover {
@@ -203,22 +237,26 @@ footer {
 }
 
 footer p {
-    margin: 0;
     font-size: 0.9rem;
 }
 
 /* Responsive design */
 @media screen and (max-width: 768px) {
+    header .container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
     nav ul {
         flex-direction: column;
         width: 100%;
-        background-color: #fff;
         display: none;
+        background-color: #fff;
         position: absolute;
         top: 60px;
         left: 0;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         padding: 1rem 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
 
     nav ul.show {
@@ -230,7 +268,118 @@ footer p {
         text-align: center;
     }
 
+    .auth-links {
+        margin-top: 1rem;
+    }
+
+    .sidebar-toggle-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+
     .quiz-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Sidebar Styles */
+.sidebar {
+    position: fixed;
+    left: -250px; /* Hidden by default */
+    top: 0;
+    width: 250px;
+    height: 100vh; /* Full viewport height */
+    background-color: #fff;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    transition: left 0.3s ease;
+    z-index: 999; /* Adjusted z-index */
+    overflow-y: auto;
+}
+
+body.sidebar-open .sidebar {
+    left: 0; /* Show sidebar when toggled */
+    z-index: 1001; /* Ensure it's above the sidebar-trigger */
+}
+
+.sidebar-content {
+    padding: 1rem;
+}
+
+.sidebar-content ul {
+    list-style: none;
+}
+
+.sidebar-content ul li {
+    margin-bottom: 1rem;
+}
+
+.sidebar-content ul li a {
+    color: #333;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.sidebar-content ul li a:hover {
+    color: #3498db;
+}
+
+/* Optional: Adjust the main content when sidebar is open */
+body.sidebar-open main {
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+}
+
+/* Adjust header when sidebar is open */
+body.sidebar-open header {
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+}
+
+/* Ensure the sidebar trigger area is always accessible */
+#sidebar-trigger {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 10px; /* Width of the trigger area */
+    height: 100%;
+    z-index: 1000; /* Below the open sidebar */
+    cursor: pointer;
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+    display: none;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    /* Hide sidebar for mobile */
+    .sidebar {
+        display: none;
+    }
+
+    /* Show mobile menu toggle */
+    .mobile-menu-toggle {
+        display: block;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #333;
+    }
+
+    .mobile-menu-toggle:hover {
+        color: #3498db;
+    }
+
+    /* Adjust header when sidebar is not used */
+    body.sidebar-open header {
+        margin-left: 0;
+    }
+
+    body.sidebar-open main {
+        margin-left: 0;
     }
 }

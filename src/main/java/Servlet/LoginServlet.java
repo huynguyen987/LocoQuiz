@@ -36,19 +36,40 @@ public class LoginServlet extends HttpServlet {
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                // User is authenticated, set session and redirect based on role
+                // User is authenticated
                 HttpSession session = request.getSession();
 
-                int userId = rs.getInt("id"); // Lấy userId từ kết quả truy vấn
-                session.setAttribute("userId", userId); // Lưu userId vào session
+                int userId = rs.getInt("id"); // Get userId from query result
+                int roleId = rs.getInt("role_id"); // Get the role of the user
+
+                session.setAttribute("userId", userId); // Save userId to session
                 session.setAttribute("username", username);
 
-                int roleId = rs.getInt("role_id"); // Get the role of the user
-                if (roleId == 3) {
-                    response.sendRedirect("jsp/admin.jsp");
+                // Map roleId to role name
+                String role;
+                String redirectPage;
+
+                if (roleId == 1) {
+                    role = "student";
+                    redirectPage = "jsp/student.jsp"; // Redirect to student page
+                } else if (roleId == 2) {
+                    role = "teacher";
+                    redirectPage = "jsp/teacher.jsp"; // Redirect to teacher page
+                } else if (roleId == 3) {
+                    role = "admin";
+                    redirectPage = "jsp/admin.jsp"; // Redirect to admin page
                 } else {
-                    response.sendRedirect("index.jsp");
+                    // Default role if role_id is unknown
+                    role = "guest";
+                    redirectPage = "index.jsp";
                 }
+
+                // Set role in session
+                session.setAttribute("role", role);
+
+                // Redirect to the appropriate page based on role using absolute path
+                response.sendRedirect(request.getContextPath() + "/" + redirectPage);
+
             } else {
                 // Authentication failed, send error message
                 request.setAttribute("error", "Invalid username or password.");
