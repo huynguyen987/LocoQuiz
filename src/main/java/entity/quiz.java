@@ -1,5 +1,7 @@
 package entity;
 
+import java.util.List;
+
 public class quiz {
 
     private int id;
@@ -11,11 +13,14 @@ public class quiz {
     private int type_id;
     private String answer;
     private boolean status;
+    private int views;
+    private List<Tag> tag;
+
 
     public quiz() {
     }
 
-    public quiz(int id, String name, String description, String created_at, String updated_at, int user_id, int type_id, String answer, boolean status) {
+    public quiz(int id, String name, String description, String created_at, String updated_at, int user_id, int type_id, String answer, boolean status, int views) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -25,6 +30,8 @@ public class quiz {
         this.type_id = type_id;
         this.answer = answer;
         this.status = status;
+        this.views = views;
+        this.tag = tag;
     }
 
     public quiz(String name, String description, String created_at, String updated_at, int user_id, int type_id, String answer) {
@@ -107,6 +114,22 @@ public class quiz {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public int getViews() {
+        return views;
+    }
+
+    public void setViews(int views) {
+        this.views = views;
+    }
+
+    public List<Tag> getTag() {
+        return tag;
+    }
+
+    public void setTag(List<Tag> tag) {
+        this.tag = tag;
     }
 
     @Override

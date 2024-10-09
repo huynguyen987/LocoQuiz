@@ -199,7 +199,7 @@
                     <div class="quiz-content">
                         <h3>Basic Chemistry</h3>
                         <p>Assess your understanding of fundamental chemistry concepts.</p>
-                        <a href="${pageContext.request.contextPath}/jsp/quiz-detail.jsp?id=3" class="btn-quiz">Take
+                        <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=3" class="btn-quiz">Take
                             Quiz</a>
                     </div>
                 </div>
@@ -214,7 +214,7 @@
                     </div>
                 </div>
             </div>
-            <a href="${pageContext.request.contextPath}/jsp/all-quizzes.jsp" class="btn-view-all">View All Quizzes</a>
+            <a href="${pageContext.request.contextPath}/AllQuizzesServlet" class="btn-view-all">View All Quizzes</a>
         </div>
     </section>
 

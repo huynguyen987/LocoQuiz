@@ -1,10 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.*, entity.quiz, entity.Tag" %>
-<%@ page import="dao.QuizDAO" %>
+<%@ page import="java.util.*, entity.quiz" %>
 <%
-  // Retrieve the username and role from the session
   String username = (String) session.getAttribute("username");
   String role = (String) session.getAttribute("role");
+  List<quiz> latestQuizzes = (List<quiz>) request.getAttribute("latestQuizzes");
+  List<quiz> popularQuizzes = (List<quiz>) request.getAttribute("popularQuizzes");
+  List<quiz> allQuizzes = (List<quiz>) request.getAttribute("allQuizzes");
+  int currentPage = (int) request.getAttribute("currentPage");
+  int totalPages = (int) request.getAttribute("totalPages");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,163 +15,154 @@
   <meta charset="UTF-8">
   <title>All Quizzes - QuizLoco</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/all-quizzes.css">
-  <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  <!-- Pass contextPath to JavaScript -->
-  <script type="text/javascript">
-    var contextPath = '<%= request.getContextPath() %>';
-  </script>
+
+  <!-- Include any additional CSS or JS here -->
 </head>
-<body id="body">
-<!-- Header -->
+<body>
+<!-- Include header or navigation if necessary -->
 <header>
-  <div class="container">
-    <!-- Sidebar Toggle Button -->
-    <button id="sidebarToggle" class="sidebar-toggle-btn" aria-label="Open sidebar">
-      <i class="fas fa-bars"></i>
-    </button>
-    <!-- Logo -->
-    <a href="${pageContext.request.contextPath}/index.jsp" class="logo">QuizLoco</a>
-    <!-- Navigation Menu -->
-    <nav>
-      <ul>
-        <li><a href="${pageContext.request.contextPath}/index.jsp">Home</a></li>
-        <li><a href="${pageContext.request.contextPath}/jsp/all-quizzes.jsp">All Quizzes</a></li>
-        <li><a href="${pageContext.request.contextPath}/jsp/tag-list.jsp">Tag List</a></li>
-        <%
-          if (role != null && role.equals("student")) {
-        %>
-        <li><a href="${pageContext.request.contextPath}/jsp/my-classes.jsp">My Classes</a></li>
-        <li><a href="${pageContext.request.contextPath}/jsp/recent-quizzes.jsp">Recent Quizzes</a></li>
-        <%
-        } else if (role != null && role.equals("teacher")) {
-        %>
-        <li><a href="${pageContext.request.contextPath}/jsp/my-classes.jsp">My Classes</a></li>
-        <li><a href="${pageContext.request.contextPath}/jsp/create-class.jsp">Create Class</a></li>
-        <%
-          }
-        %>
-      </ul>
-    </nav>
-  </div>
-    <!-- Search Container -->
-
-
-
-    <!-- Authentication Links -->
-    <div class="auth-links">
-      <% if (username != null) { %>
-      <div class="user-info">
-        <a href="${pageContext.request.contextPath}/jsp/user-profile.jsp" class="user-profile">
-          <i class="fas fa-user-circle"></i>
-          <span class="username">Welcome, <%= username %></span>
-        </a>
-        <a href="${pageContext.request.contextPath}/jsp/logout.jsp" class="btn-logout">Logout</a>
-      </div>
-      <% } else { %>
-      <a href="${pageContext.request.contextPath}/jsp/login.jsp" class="btn-login">Login</a>
-      <a href="${pageContext.request.contextPath}/jsp/register.jsp" class="btn-register">Register</a>
-      <% } %>
-    </div>
-    <!-- Mobile Menu Toggle and Theme Toggle -->
-
-
-
-
+  <!-- Header content -->
 </header>
 
-<!-- Main Content -->
-<main>
-  <div class="container">
-    <h1>All Quizzes</h1>
-
-    <%
-      // Create an instance of QuizDAO to interact with the database
-      QuizDAO quizDAO = new QuizDAO();
-
-      // Retrieve the latest quizzes from the database
-      List<quiz> latestQuizzes = quizDAO.getLatestQuizzes();
-
-      // Retrieve the most popular quizzes from the database
-      List<quiz> popularQuizzes = quizDAO.getPopularQuizzes();
-
-      // Retrieve all quizzes, including those created via quiz-creator.jsp
-      List<quiz> allQuizzes = quizDAO.getAllQuizzes();
-    %>
-
-    <!-- Latest Quizzes Section -->
-    <section id="latest-quizzes" class="latest-quizzes">
-      <h2>Latest Quizzes</h2>
-      <div class="quiz-grid">
-        <% if (latestQuizzes != null && !latestQuizzes.isEmpty()) {
-          for (quiz quiz : latestQuizzes) { %>
+<main class="container">
+  <!-- Latest Quizzes Section -->
+  <section id="latest-quizzes">
+    <h2>Latest Quizzes</h2>
+    <div class="quiz-carousel">
+      <button class="carousel-control prev" onclick="scrollCarousel('latest', -1)">&#10094;</button>
+      <div class="carousel-wrapper" id="latest-carousel">
+        <% for (quiz q : latestQuizzes) { %>
         <div class="quiz-card">
-          <img src="${pageContext.request.contextPath}/img/quiz.jpg" alt="<%= quiz.getName() %>" loading="lazy">
-          <div class="quiz-content">
-            <h3><%= quiz.getName() %></h3>
-            <p><%= quiz.getDescription() %></p>
-            <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=<%= quiz.getId() %>" class="btn-quiz">Take Quiz</a>
-          </div>
+          <h3><%= q.getName() %></h3>
+          <p><%= q.getDescription() %></p>
+          <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=<%= q.getId() %>" class="btn-quiz">View Detail</a>
         </div>
-        <%   }
-        } else { %>
-        <p>No latest quizzes available.</p>
         <% } %>
       </div>
-    </section>
+      <button class="carousel-control next" onclick="scrollCarousel('latest', 1)">&#10095;</button>
+    </div>
+  </section>
 
-    <!-- Popular Quizzes Section -->
-    <section id="popular-quizzes" class="popular-quizzes">
-      <h2>Popular Quizzes</h2>
-      <div class="quiz-grid">
-        <% if (popularQuizzes != null && !popularQuizzes.isEmpty()) {
-          for (quiz quiz : popularQuizzes) { %>
+  <!-- Popular Quizzes Section -->
+  <section id="popular-quizzes">
+    <h2>Popular Quizzes</h2>
+    <div class="quiz-carousel">
+      <button class="carousel-control prev" onclick="scrollCarousel('popular', -1)">&#10094;</button>
+      <div class="carousel-wrapper" id="popular-carousel">
+        <% for (quiz q : popularQuizzes) { %>
         <div class="quiz-card">
-          <img src="${pageContext.request.contextPath}/img/quiz.jpg" alt="<%= quiz.getName() %>" loading="lazy">
-          <div class="quiz-content">
-            <h3><%= quiz.getName() %></h3>
-            <p><%= quiz.getDescription() %></p>
-            <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=<%= quiz.getId() %>" class="btn-quiz">Take Quiz</a>
-          </div>
+          <h3><%= q.getName() %></h3>
+          <p><%= q.getDescription() %></p>
+          <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=<%= q.getId() %>" class="btn-quiz">View Detail</a>
         </div>
-        <%   }
-        } else { %>
-        <p>No popular quizzes available.</p>
         <% } %>
       </div>
-    </section>
+      <button class="carousel-control next" onclick="scrollCarousel('popular', 1)">&#10095;</button>
+    </div>
+  </section>
 
-    <!-- All Quizzes Section -->
-    <section id="all-quizzes-section" class="all-quizzes">
-      <h2>All Quizzes</h2>
-      <div class="quiz-grid">
-        <% if (allQuizzes != null && !allQuizzes.isEmpty()) {
-          for (quiz quiz : allQuizzes) { %>
-        <div class="quiz-card">
-          <img src="${pageContext.request.contextPath}/img/quiz.jpg" alt="<%= quiz.getName() %>" loading="lazy">
-          <div class="quiz-content">
-            <h3><%= quiz.getName() %></h3>
-            <p><%= quiz.getDescription() %></p>
-            <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=<%= quiz.getId() %>" class="btn-quiz">Take Quiz</a>
-          </div>
-        </div>
-        <%   }
-        } else { %>
-        <p>No quizzes available.</p>
-        <% } %>
+  <!-- All Quizzes Section -->
+  <section id="all-quizzes">
+    <h2>All Quizzes</h2>
+    <div class="quiz-list">
+      <% for (quiz q : allQuizzes) { %>
+      <div class="quiz-card">
+        <h3><%= q.getName() %></h3>
+        <p><%= q.getDescription() %></p>
+        <p><strong>Views:</strong> <%= q.getViews() %></p> <!-- Display views -->
+        <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=<%= q.getId() %>" class="btn-quiz">View Detail</a>
       </div>
-    </section>
-  </div>
+      <% } %>
+    </div>
+    <% if (currentPage < totalPages) { %>
+    <form action="AllQuizzesServlet" method="get">
+      <input type="hidden" name="page" value="<%= currentPage + 1 %>">
+      <button type="submit" class="btn-load-more">Show More</button>
+    </form>
+    <% } else { %>
+    <p>No more quizzes to load.</p>
+    <% } %>
+  </section>
 </main>
 
-<!-- Footer Section -->
+<!-- Include footer if necessary -->
 <footer>
-  <div class="container">
-    <!-- Include your footer content here -->
-    <p>&copy; 2024 QuizLoco. All rights reserved.</p>
-  </div>
+  <!-- Footer content -->
 </footer>
 
-<script src="${pageContext.request.contextPath}/js/script.js"></script>
+<!-- Include any necessary JavaScript -->
+<script>
+  function scrollCarousel(section, direction) {
+    var carousel = document.getElementById(section + '-carousel');
+    var scrollAmount = 0;
+    var slideTimer = setInterval(function () {
+      if (direction === 1) {
+        carousel.scrollLeft += 20;
+      } else {
+        carousel.scrollLeft -= 20;
+      }
+      scrollAmount += 20;
+      if (scrollAmount >= 200) {
+        window.clearInterval(slideTimer);
+      }
+    }, 25);
+  }
+</script>
+
+<style>
+  /* Add necessary styles */
+  .quiz-carousel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  .carousel-wrapper {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  }
+  .carousel-wrapper::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+  .quiz-card {
+    min-width: 200px;
+    margin: 0 1rem;
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  .carousel-control {
+    background-color: rgba(0,0,0,0.5);
+    color: #fff;
+    border: none;
+    font-size: 2rem;
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+  .quiz-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .btn-load-more {
+    display: block;
+    margin: 2rem auto;
+    padding: 0.75rem 1.5rem;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .btn-load-more:hover {
+    background-color: #2980b9;
+  }
+</style>
 </body>
 </html>
