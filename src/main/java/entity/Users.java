@@ -24,6 +24,11 @@ public class Users {
         private byte[] feature_face;
         private String gender;
 
+    // Role constants
+      public static final int ROLE_STUDENT = 1;
+       public static final int ROLE_TEACHER = 2;
+      public static final int ROLE_ADMIN = 3;
+
         public Users() {
         }
 
@@ -58,7 +63,25 @@ public class Users {
             this.feature_face = feature_face;
         }
 
-        public int getId() {
+    public String getRoleName() {
+        switch (this.role_id) {
+            case ROLE_STUDENT:
+                return "student";
+            case ROLE_TEACHER:
+                return "teacher";
+            case ROLE_ADMIN:
+                return "admin";
+            default:
+                return "unknown";
+        }
+    }
+
+    public boolean hasRole(String roleName) {
+        return roleName.equalsIgnoreCase(this.getRoleName());
+    }
+
+
+    public int getId() {
             return id;
         }
 
@@ -143,4 +166,5 @@ public class Users {
                     ", feature_face=" + feature_face +
                     '}';
         }
+
 }

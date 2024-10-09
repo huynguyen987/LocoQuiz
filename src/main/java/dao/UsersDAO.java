@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import Module.*;
 
 public class UsersDAO {
 
@@ -186,6 +187,58 @@ public class UsersDAO {
 
         return isDeleted;
     }
+// Get all students not in class
+    public List<Users> getAllStudentsNotInClass(int classId) throws SQLException, ClassNotFoundException {
+        String sql = "SELECT * FROM users WHERE role_id = 2 AND id NOT IN (SELECT user_id FROM class_user WHERE class_id = ?)";
+        List<Users> students = new ArrayList<>();
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, classId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Users student = new Users();
+                    student.setId(rs.getInt("id"));
+                    student.setUsername(rs.getString("username"));
+                    student.setEmail(rs.getString("email"));
+                    students.add(student);
+                }
+            }
+        }
+        return students;
+    }
+
+    //check login
+    public Users checkLogin(String username, String password) throws SQLException, ClassNotFoundException {
+        String sql = "SELECT * FROM users WHERE username = ?";
+        Users user = null;
+
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, username);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String storedHashedPassword = rs.getString("password");
+                    // Hash the entered password for comparison
+                    String hashedPassword = HashPassword.hashPassword(password);
+
+                    // Compare hashed passwords
+                    if (storedHashedPassword.equals(hashedPassword)) {
+                        // Authentication successful
+                        user = new Users();
+                        user.setId(rs.getInt("id"));
+                        user.setUsername(rs.getString("username"));
+                        user.setEmail(rs.getString("email"));
+                        user.setRole_id(rs.getInt("role_id"));
+                    }
+                }
+            }
+        }
+
+        return user; // Returns null if authentication fails
+    }
+
 
     // Main method for testing
     public static void main(String[] args) throws SQLException, ClassNotFoundException {

@@ -1,5 +1,6 @@
 package dao;
 
+import entity.Users;
 import entity.class_user;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -68,6 +69,7 @@ public class ClassUserDAO {
         }
         return cu;
     }
+
 
     //get class_user by user_id and class_id
     public class_user getClassUserByUserIdAndClassId(int user_id, int class_id) throws SQLException, ClassNotFoundException {
@@ -161,4 +163,48 @@ public class ClassUserDAO {
         }
         return false;
     }
+    //get user by class_id
+    public List<Users> getUsersByClassId(int classId) throws SQLException, ClassNotFoundException {
+        String sql = "SELECT u.* FROM users u JOIN class_user cu ON u.id = cu.user_id WHERE cu.class_id = ?";
+        List<Users> users = new ArrayList<>();
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, classId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Users user = new Users();
+                    user.setId(rs.getInt("id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setEmail(rs.getString("email"));
+                    users.add(user);
+                }
+            }
+        }
+        return users;
+    }
+    //enroll student to class
+    public boolean enrollStudentToClass(int classId, int studentId) throws SQLException, ClassNotFoundException {
+        String sql = "INSERT INTO class_user (class_id, user_id) VALUES (?, ?)";
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, classId);
+            ps.setInt(2, studentId);
+
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        }
+    }
+    //is user enrolled in class
+    public boolean isUserEnrolledInClass(int userId, int classId) throws SQLException, ClassNotFoundException {
+        String sql = "SELECT * FROM class_user WHERE user_id = ? AND class_id = ?";
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, classId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
 }
+

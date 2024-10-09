@@ -36,9 +36,7 @@ public class resetPassController extends HttpServlet {
             Users user = null;
             try {
                 user = new UsersDAO().getUserByEmail(email);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
+            } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
             System.out.println("User: " + user.toString());
@@ -52,9 +50,7 @@ public class resetPassController extends HttpServlet {
             boolean updated = false;
             try {
                 updated = new UsersDAO().updateUser(user);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
+            } catch (SQLException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
             if (updated) {

@@ -2,6 +2,8 @@ package dao;
 
 import Module.DBConnect;
 import entity.class_quiz;
+import entity.quiz;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -161,4 +163,38 @@ public class ClassQuizDAO {
         }
         return false;
     }
+
+    public List<quiz> getQuizzesByClassId(int classId) throws SQLException, ClassNotFoundException {
+        String sql = "SELECT q.* FROM quiz q JOIN class_quiz cq ON q.id = cq.quiz_id WHERE cq.class_id = ?";
+        List<quiz> quizzes = new ArrayList<>();
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, classId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    quiz quiz = new quiz();
+                    quiz.setId(rs.getInt("id"));
+                    quiz.setName(rs.getString("name"));
+                    quiz.setDescription(rs.getString("description"));
+                    quiz.setCreated_at(rs.getTimestamp("created_at").toString());
+                    quiz.setUpdated_at(rs.getTimestamp("updated_at").toString());
+                    quizzes.add(quiz);
+                }
+            }
+        }
+        return quizzes;
+    }
+
+    public boolean assignQuizToClass(int classId, int quizId) throws SQLException, ClassNotFoundException {
+        String sql = "INSERT INTO class_quiz (class_id, quiz_id) VALUES (?, ?)";
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, classId);
+            ps.setInt(2, quizId);
+
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        }
+    }
 }
+

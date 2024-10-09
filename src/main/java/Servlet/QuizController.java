@@ -52,7 +52,7 @@ public class QuizController extends HttpServlet {
 
         if (creatorUsername == null || userId == null) {
             // User is not logged in, redirect to login page
-            response.sendRedirect("login.jsp");
+            response.sendRedirect(request.getContextPath()+ "/jsp/login.jsp");
             return;
         }
 

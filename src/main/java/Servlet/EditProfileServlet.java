@@ -21,7 +21,7 @@ public class EditProfileServlet extends HttpServlet {
         // Lấy session hiện tại, không tạo session mới nếu không tồn tại
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("username") == null) {
-            response.sendRedirect("jsp/login.jsp");
+            response.sendRedirect(request.getContextPath()+ "jsp/login.jsp");
             return;
         }
 
@@ -70,11 +70,11 @@ public class EditProfileServlet extends HttpServlet {
         }
 
         // Chuyển tiếp lại trang edit-profile.jsp để hiển thị thông báo và cập nhật thông tin
-        request.getRequestDispatcher("jsp/edit-profile.jsp").forward(request, response);
+        request.getRequestDispatcher(request.getContextPath()+ "jsp/edit-profile.jsp").forward(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Nếu cần hỗ trợ GET, có thể triển khai tại đây hoặc chuyển hướng tới POST
-        response.sendRedirect("edit-profile.jsp");
+        response.sendRedirect(request.getContextPath()+"edit-profile.jsp");
     }
 }
