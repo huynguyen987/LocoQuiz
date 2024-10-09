@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     let questionCount = 0;
-    let quizType = 'multiple-choice';
+    let quizType = '';
     const questionsPerPage = 20;
     let currentPage = 1;
     let totalPages = 1;
@@ -10,7 +10,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const questionGridContainer = document.getElementById('questionGridContainer');
     const questionEditor = document.getElementById('questionEditor');
     const addQuestionBtn = document.getElementById('addQuestionBtn');
-    const quizTypeButtons = document.querySelectorAll('.quiz-type-btn');
+    const startQuizBtn = document.getElementById('startQuizBtn');
+    const quizCreatorContainer = document.getElementById('quizCreatorContainer');
+    const selectedQuizTypeDiv = document.getElementById('selectedQuizType');
+    const chosenQuizTypeSpan = document.getElementById('chosenQuizType');
+    const quizTypeSelection = document.getElementById('quizTypeSelection');
 
     // Pagination Elements
     const prevPageBtn = document.getElementById('prevPageBtn');
@@ -22,22 +26,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const dropdown = document.querySelector('.dropdown');
     const dropdownToggle = document.querySelector('.dropdown-toggle');
     const dropdownMenu = document.querySelector('.dropdown-menu');
-
-    // Store questions for each quiz type
-    const quizData = {
-        'multiple-choice': {
-            questionCount: 0,
-            questions: []
-        },
-        'fill-in-the-blank': {
-            questionCount: 0,
-            questions: []
-        },
-        'matching': {
-            questionCount: 0,
-            questions: []
-        }
-    };
 
     // Function to toggle dropdown
     function toggleDropdown() {
@@ -92,88 +80,34 @@ document.addEventListener('DOMContentLoaded', function () {
     // Close dropdown when clicking outside
     document.addEventListener('click', closeDropdown);
 
-    // Function to switch quiz type
-    function switchQuizType(type) {
-        // Save current quiz data
-        saveCurrentQuizData();
+    // Start Quiz Creation
+    startQuizBtn.addEventListener('click', function () {
+        const selectedQuizType = document.querySelector('input[name="quizTypeRadio"]:checked');
+        if (selectedQuizType) {
+            quizType = selectedQuizType.value;
+            quizTypeInput.value = quizType;
 
-        // Load new quiz type data
-        quizType = type;
-        quizTypeInput.value = type;
-        questionCount = quizData[type].questionCount;
-        questionCountInput.value = questionCount;
+            // Disable quiz type selection
+            quizTypeSelection.style.display = 'none';
+            startQuizBtn.style.display = 'none';
 
-        // Clear existing content
-        questionGridContainer.innerHTML = '';
-        questionEditor.innerHTML = '';
-        currentPage = 1;
+            // Display selected quiz type
+            chosenQuizTypeSpan.textContent = formatQuizType(quizType);
+            selectedQuizTypeDiv.style.display = 'block';
 
-        // Load questions for the selected quiz type
-        loadQuizData();
+            // Show the quiz creator container
+            quizCreatorContainer.style.display = 'flex';
 
-        updatePagination();
-
-        // Update active button
-        quizTypeButtons.forEach(btn => {
-            const isActive = btn.getAttribute('data-type') === type;
-            btn.classList.toggle('active', isActive);
-            btn.setAttribute('aria-pressed', isActive);
-        });
-    }
-
-    // Function to save current quiz data
-    function saveCurrentQuizData() {
-        const currentQuiz = quizData[quizType];
-        currentQuiz.questionCount = questionCount;
-        currentQuiz.questions = [];
-
-        // Save question buttons and sections
-        const questionButtons = questionGridContainer.querySelectorAll('.question-btn');
-        const questionSections = questionEditor.querySelectorAll('.question-section');
-
-        questionButtons.forEach((btn, index) => {
-            const num = parseInt(btn.getAttribute('data-num'));
-            const btnHtml = btn.outerHTML;
-            const sectionHtml = questionSections[index] ? questionSections[index].outerHTML : '';
-            currentQuiz.questions.push({
-                num,
-                btnHtml,
-                sectionHtml
-            });
-        });
-    }
-
-    // Function to load quiz data for the selected quiz type
-    function loadQuizData() {
-        const currentQuiz = quizData[quizType];
-        questionCount = currentQuiz.questionCount;
-        questionCountInput.value = questionCount;
-
-        currentQuiz.questions.forEach(q => {
-            // Recreate question buttons
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = q.btnHtml;
-            const questionButton = tempDiv.firstElementChild;
-            questionGridContainer.appendChild(questionButton);
-
-            // Recreate question sections
-            if (q.sectionHtml) {
-                const tempDivSection = document.createElement('div');
-                tempDivSection.innerHTML = q.sectionHtml;
-                const questionSection = tempDivSection.firstElementChild;
-                questionEditor.appendChild(questionSection);
-            }
-        });
-
-        // Since we're using event delegation, no need to reattach event listeners
-    }
-
-    // Event listeners for quiz type buttons
-    quizTypeButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            switchQuizType(btn.getAttribute('data-type'));
-        });
+            // Initialize the quiz creator
+            initializeQuizCreator();
+        } else {
+            alert('Please select a quiz type before starting.');
+        }
     });
+
+    function initializeQuizCreator() {
+        // Add any initialization code if needed
+    }
 
     // Function to add a question based on the quiz type
     function addQuestion() {
@@ -307,6 +241,37 @@ document.addEventListener('DOMContentLoaded', function () {
             const answerOptions = section.querySelectorAll('.answer-option');
             section.setAttribute('data-answer-count', answerOptions.length);
         }
+
+        // Update matching pairs if it's a matching question
+        if (quizType === 'matching') {
+            const matchingPairsContainer = section.querySelector(`#matchingPairs${num}`);
+            const matchingPairs = matchingPairsContainer.querySelectorAll('.matching-pair');
+            matchingPairs.forEach((pair, index) => {
+                const pairNum = index + 1;
+                pair.setAttribute('data-pair-num', pairNum);
+                pair.querySelector('.pair-number').textContent = pairNum;
+
+                // Update inputs and labels
+                const inputA = pair.querySelector('.column-a input');
+                const labelA = pair.querySelector('.column-a label');
+                const inputB = pair.querySelector('.column-b input');
+                const labelB = pair.querySelector('.column-b label');
+                const removeBtn = pair.querySelector('.remove-pair-btn');
+
+                inputA.id = `matchA${num}_${pairNum}`;
+                inputA.name = `matchA${num}_${pairNum}`;
+                inputA.placeholder = `Column A Item ${pairNum}`;
+                labelA.setAttribute('for', `matchA${num}_${pairNum}`);
+
+                inputB.id = `matchB${num}_${pairNum}`;
+                inputB.name = `matchB${num}_${pairNum}`;
+                inputB.placeholder = `Column B Item ${pairNum}`;
+                labelB.setAttribute('for', `matchB${num}_${pairNum}`);
+
+                removeBtn.setAttribute('data-question', num);
+                removeBtn.setAttribute('data-pair', pairNum);
+            });
+        }
     }
 
     // Helper function to format quiz type
@@ -330,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <!-- Remove Question Button -->
           <button type="button" class="remove-btn" data-num="${num}">Remove Question</button>
           <!-- Question Content -->
-          <label for="questionContent${num}">Question ${num}:</label>
+          <label for="questionContent${num}">Question:</label>
           <textarea id="questionContent${num}" name="questionContent${num}" required aria-required="true"></textarea>
 
           <!-- Answers -->
@@ -354,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <!-- Remove Question Button -->
           <button type="button" class="remove-btn" data-num="${num}">Remove Question</button>
           <!-- Question Content -->
-          <label for="questionContent${num}">Question ${num}:</label>
+          <label for="questionContent${num}">Question:</label>
           <textarea id="questionContent${num}" name="questionContent${num}" required aria-required="true"></textarea>
           <!-- Correct Answer -->
           <label for="correctAnswer${num}">Correct Answer:</label>
@@ -368,8 +333,14 @@ document.addEventListener('DOMContentLoaded', function () {
           <!-- Remove Question Button -->
           <button type="button" class="remove-btn" data-num="${num}">Remove Question</button>
           <!-- Instructions -->
-          <p>Enter the items for Column A and Column B. The answers will be matched in the order you enter them.</p>
-          <div id="matchingPairs${num}">
+          <p class="matching-instructions">Enter the items for Column A and Column B. The answers will be matched in the order you enter them.</p>
+          <div class="matching-pair-header">
+            <div class="pair-number">#</div>
+            <div class="column-a">Column A</div>
+            <div class="column-b">Column B</div>
+            <div class="actions">Actions</div>
+          </div>
+          <div id="matchingPairs${num}" class="matching-pair-container">
             ${getMatchingPairHTML(num, 1)}
           </div>
           <button type="button" class="add-pair-btn" data-question="${num}">Add Matching Pair</button>
@@ -378,11 +349,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getMatchingPairHTML(questionNum, pairNum) {
         return `
-          <div class="matching-pair">
-            <label for="matchA${questionNum}_${pairNum}">Column A Item ${pairNum}:</label>
-            <input type="text" id="matchA${questionNum}_${pairNum}" name="matchA${questionNum}_${pairNum}" required aria-required="true">
-            <label for="matchB${questionNum}_${pairNum}">Column B Item ${pairNum}:</label>
-            <input type="text" id="matchB${questionNum}_${pairNum}" name="matchB${questionNum}_${pairNum}" required aria-required="true">
+          <div class="matching-pair" data-pair-num="${pairNum}">
+            <div class="pair-number">${pairNum}</div>
+            <div class="column-a">
+              <label for="matchA${questionNum}_${pairNum}">Item:</label>
+              <input type="text" id="matchA${questionNum}_${pairNum}" name="matchA${questionNum}_${pairNum}" required aria-required="true" placeholder="Column A Item ${pairNum}">
+            </div>
+            <div class="column-b">
+              <label for="matchB${questionNum}_${pairNum}">Item:</label>
+              <input type="text" id="matchB${questionNum}_${pairNum}" name="matchB${questionNum}_${pairNum}" required aria-required="true" placeholder="Column B Item ${pairNum}">
+            </div>
+            <button type="button" class="remove-pair-btn" data-question="${questionNum}" data-pair="${pairNum}">Remove</button>
           </div>
         `;
     }
@@ -436,7 +413,54 @@ document.addEventListener('DOMContentLoaded', function () {
             const questionNum = parseInt(e.target.getAttribute('data-question'));
             addMatchingPair(questionNum);
         }
+        if (e.target && e.target.classList.contains('remove-pair-btn')) {
+            const questionNum = parseInt(e.target.getAttribute('data-question'));
+            const pairNum = parseInt(e.target.getAttribute('data-pair'));
+            removeMatchingPair(questionNum, pairNum);
+        }
     });
+
+    // Function to remove a matching pair
+    function removeMatchingPair(questionNum, pairNum) {
+        const matchingPairsContainer = document.getElementById(`matchingPairs${questionNum}`);
+        const pairElement = matchingPairsContainer.querySelector(`.matching-pair[data-pair-num="${pairNum}"]`);
+        if (pairElement) {
+            pairElement.remove();
+
+            // Update pair numbers and attributes
+            updateMatchingPairNumbers(questionNum);
+        }
+    }
+
+    // Function to update matching pair numbers after removal
+    function updateMatchingPairNumbers(questionNum) {
+        const matchingPairsContainer = document.getElementById(`matchingPairs${questionNum}`);
+        const pairs = matchingPairsContainer.querySelectorAll('.matching-pair');
+        pairs.forEach((pair, index) => {
+            const newPairNum = index + 1;
+            pair.setAttribute('data-pair-num', newPairNum);
+            pair.querySelector('.pair-number').textContent = newPairNum;
+
+            // Update inputs and labels
+            const inputA = pair.querySelector('.column-a input');
+            const labelA = pair.querySelector('.column-a label');
+            const inputB = pair.querySelector('.column-b input');
+            const labelB = pair.querySelector('.column-b label');
+            const removeBtn = pair.querySelector('.remove-pair-btn');
+
+            inputA.id = `matchA${questionNum}_${newPairNum}`;
+            inputA.name = `matchA${questionNum}_${newPairNum}`;
+            inputA.placeholder = `Column A Item ${newPairNum}`;
+            labelA.setAttribute('for', `matchA${questionNum}_${newPairNum}`);
+
+            inputB.id = `matchB${questionNum}_${newPairNum}`;
+            inputB.name = `matchB${questionNum}_${newPairNum}`;
+            inputB.placeholder = `Column B Item ${newPairNum}`;
+            labelB.setAttribute('for', `matchB${questionNum}_${newPairNum}`);
+
+            removeBtn.setAttribute('data-pair', newPairNum);
+        });
+    }
 
     // Pagination functions
     function updatePagination() {
@@ -471,9 +495,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Add question button click event
     addQuestionBtn.addEventListener('click', addQuestion);
-
-    // Initialize with default quiz type
-    switchQuizType('multiple-choice');
 
     // Function to update dropdown label on page load
     updateDropdownLabel();

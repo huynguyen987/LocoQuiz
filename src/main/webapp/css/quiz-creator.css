@@ -613,3 +613,209 @@ form input[type="submit"]:hover,
     }
 }
 
+/* Styles for quiz type selection */
+.quiz-type-selection {
+    margin-bottom: 1.5rem;
+}
+
+.quiz-type-selection label {
+    display: inline-block;
+    margin-right: 1rem;
+    font-size: 1rem;
+}
+
+.quiz-type-selection input[type="radio"] {
+    margin-right: 0.5rem;
+}
+
+/* Styles for quiz type selection */
+.quiz-type-selection {
+    margin-bottom: 1.5rem;
+}
+
+.quiz-type-selection label {
+    display: inline-block;
+    margin-right: 1rem;
+    font-size: 1rem;
+}
+
+.quiz-type-selection input[type="radio"] {
+    margin-right: 0.5rem;
+}
+
+/* Styles for Start Creating Quiz button */
+#startQuizBtn {
+    background-color: #3498db;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    transition: background-color 0.3s ease;
+}
+
+#startQuizBtn:hover {
+    background-color: #2980b9;
+}
+
+/* Styles for Selected Quiz Type Display */
+#selectedQuizType {
+    margin-bottom: 1.5rem;
+}
+
+#selectedQuizType h2 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+}
+
+/* ... existing styles ... */
+
+/* ... existing styles ... */
+
+/* Styles for quiz type selection */
+.quiz-type-selection {
+    margin-bottom: 1.5rem;
+}
+
+.quiz-type-selection label {
+    display: inline-block;
+    margin-right: 1rem;
+    font-size: 1rem;
+}
+
+.quiz-type-selection input[type="radio"] {
+    margin-right: 0.5rem;
+}
+
+/* Styles for Start Creating Quiz button */
+#startQuizBtn {
+    background-color: #3498db;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    transition: background-color 0.3s ease;
+}
+
+#startQuizBtn:hover {
+    background-color: #2980b9;
+}
+
+/* Styles for Selected Quiz Type Display */
+#selectedQuizType {
+    margin-bottom: 1.5rem;
+}
+
+#selectedQuizType h2 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+}
+
+/* Styles for Add Matching Pair button */
+.add-pair-btn {
+    background-color: #27ae60;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.add-pair-btn:hover {
+    background-color: #219150;
+}
+
+/* Styles for Back to Home button */
+.back-to-home-btn {
+    display: inline-block;
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.back-to-home-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Styles for Matching Question Interface */
+.matching-instructions {
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+.matching-pair-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.matching-pair {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.matching-pair .pair-number {
+    width: 30px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.matching-pair .column-a,
+.matching-pair .column-b {
+    flex: 1;
+    margin-right: 1rem;
+}
+
+.matching-pair input[type="text"] {
+    width: 100%;
+    padding: 0.4rem;
+    margin-top: 0.2rem;
+    box-sizing: border-box;
+}
+
+.remove-pair-btn {
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 0.3rem 0.6rem;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background-color 0.3s ease;
+}
+
+.remove-pair-btn:hover {
+    background-color: #c0392b;
+}
+
+.matching-pair-header {
+    display: flex;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.matching-pair-header .column-a,
+.matching-pair-header .column-b {
+    flex: 1;
+    margin-right: 1rem;
+}
+
+.matching-pair-header .actions {
+    width: 50px;
+}
+
+
+

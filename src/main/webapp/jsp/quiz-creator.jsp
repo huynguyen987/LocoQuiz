@@ -20,6 +20,9 @@
 %>
 
 <div class="container">
+    <!-- Back to Home Button -->
+    <a href="${pageContext.request.contextPath}/index.jsp" class="back-to-home-btn">Back to Home</a>
+
     <h1>Create a New Quiz</h1>
 
     <!-- Display error message if any -->
@@ -56,17 +59,31 @@
 
         <!-- Quiz Type Selection -->
         <h2>Select Quiz Type</h2>
-        <div class="quiz-type-menu" role="radiogroup" aria-label="Quiz Type">
-            <button type="button" class="quiz-type-btn active" data-type="multiple-choice" aria-pressed="true">Multiple Choice</button>
-            <button type="button" class="quiz-type-btn" data-type="fill-in-the-blank" aria-pressed="false">Fill in the Blank</button>
-            <button type="button" class="quiz-type-btn" data-type="matching" aria-pressed="false">Matching</button>
+        <div class="quiz-type-selection" id="quizTypeSelection">
+            <label>
+                <input type="radio" name="quizTypeRadio" value="multiple-choice" required> Multiple Choice
+            </label>
+            <label>
+                <input type="radio" name="quizTypeRadio" value="fill-in-the-blank"> Fill in the Blank
+            </label>
+            <label>
+                <input type="radio" name="quizTypeRadio" value="matching"> Matching
+            </label>
         </div>
 
         <!-- Hidden input to store selected quiz type -->
-        <input type="hidden" id="quizType" name="quizType" value="multiple-choice">
+        <input type="hidden" id="quizType" name="quizType" value="">
+
+        <!-- Start Quiz Creation Button -->
+        <button type="button" id="startQuizBtn">Start Creating Quiz</button>
+
+        <!-- Display Selected Quiz Type -->
+        <div id="selectedQuizType" style="display: none;">
+            <h2>Quiz Type: <span id="chosenQuizType"></span></h2>
+        </div>
 
         <!-- Main Quiz Creator Container -->
-        <div class="quiz-creator-container">
+        <div class="quiz-creator-container" id="quizCreatorContainer" style="display: none;">
             <!-- Question Grid Sidebar -->
             <div class="question-grid" id="questionGrid">
                 <h2>Questions</h2>
