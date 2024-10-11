@@ -1,13 +1,19 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Lỗi</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/error.css">
+    <title>Error</title>
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/styles.css">
 </head>
 <body>
-<h1>Đã xảy ra lỗi trong quá trình xử lý yêu cầu.</h1>
-<p>Vui lòng thử lại sau hoặc liên hệ với quản trị viên.</p>
-<a href="ControllerTag?action=listTag">Quay lại danh sách Tag</a>
+<div class="container">
+    <h1>An Error Occurred</h1>
+    <% if (request.getAttribute("errorMessage") != null) { %>
+    <p><%= request.getAttribute("errorMessage") %></p>
+    <% } else { %>
+    <p>Sorry, something went wrong. Please try again later.</p>
+    <% } %>
+    <a href="<%= request.getContextPath() %>/jsp/teacher.jsp">Return to Dashboard</a>
+</div>
 </body>
 </html>

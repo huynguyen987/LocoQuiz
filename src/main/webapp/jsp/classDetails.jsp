@@ -11,7 +11,7 @@
 <html>
 <head>
   <title>Chi Tiết Lớp</title>
-  <link rel="stylesheet" href="<%=request.getContextPath()%>/css/styles.css">
+  <link rel="stylesheet" href="<%=request.getContextPath()%>/css/classDetails.css">
   <!-- Include your styles here -->
 </head>
 <body>
@@ -47,6 +47,7 @@
     <form action="<%=request.getContextPath()%>/DeleteClassServlet" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa lớp này?');" style="display:inline;">
       <input type="hidden" name="classId" value="<%= classEntity.getId() %>">
       <button type="submit" class="delete-button">Xóa Lớp</button>
+        <a href="<%=request.getContextPath()%>/jsp/teacher.jsp">Quay lại</a>
     </form>
   </div>
   <% } %>

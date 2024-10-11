@@ -8,7 +8,7 @@
 <html>
 <head>
   <title>Assign Quiz to Class</title>
-  <link rel="stylesheet" href="<%=request.getContextPath()%>/css/styles.css">
+  <link rel="stylesheet" href="<%=request.getContextPath()%>/css/assignQuiz.css">
   <!-- Include your styles here -->
 </head>
 <body>

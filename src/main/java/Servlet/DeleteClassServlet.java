@@ -12,11 +12,11 @@ import java.sql.SQLException;
 @WebServlet(name = "DeleteClassServlet", value = "/DeleteClassServlet")
 public class DeleteClassServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Kiểm tra quyền hạn
+        // Check user permissions
         HttpSession session = request.getSession();
         Users currentUser = (Users) session.getAttribute("user");
-        if (currentUser == null || (currentUser.getRole_id() != 1 && currentUser.getRole_id() != 3)) {
-            response.sendRedirect("login.jsp");
+        if (currentUser == null || (currentUser.getRole_id() != Users.ROLE_TEACHER && currentUser.getRole_id() != Users.ROLE_ADMIN)) {
+            response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");
             return;
         }
 
@@ -28,18 +28,20 @@ public class DeleteClassServlet extends HttpServlet {
             if (classEntity != null && classEntity.getTeacher_id() == currentUser.getId()) {
                 boolean isDeleted = classDAO.deleteClass(classId);
                 if (isDeleted) {
-                    response.sendRedirect("ClassListServlet");
+                    // Redirect to teacher dashboard with a success message
+                    response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=classDeleted");
                 } else {
                     request.setAttribute("errorMessage", "Không thể xóa lớp.");
-                    request.getRequestDispatcher("classDetails.jsp").forward(request, response);
+                    request.getRequestDispatcher("/jsp/teacher.jsp").forward(request, response);
                 }
             } else {
-                response.sendRedirect("error.jsp");
+                response.sendRedirect(request.getContextPath() + "/jsp/error.jsp");
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Đã xảy ra lỗi: " + e.getMessage());
-            request.getRequestDispatcher("classDetails.jsp").forward(request, response);
+            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
         }
     }
 }
+

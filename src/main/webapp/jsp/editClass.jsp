@@ -7,7 +7,7 @@
 <html>
 <head>
     <title>Edit Class</title>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/editClass.css">
 </head>
 <body>
 <div class="container">

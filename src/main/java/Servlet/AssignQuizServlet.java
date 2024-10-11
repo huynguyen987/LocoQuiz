@@ -76,10 +76,10 @@ public class AssignQuizServlet extends HttpServlet {
 
             if (isAssigned) {
                 // Redirect to class details page
-                response.sendRedirect(request.getContextPath() + "/ClassDetailsServlet?classId=" + classId);
+                response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?action=classDetails&classId=" + classId);
             } else {
                 request.setAttribute("errorMessage", "Failed to assign quiz.");
-                request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+                request.getRequestDispatcher("/jsp/teacher.jsp?action=assignQuiz&classId=" + classId).forward(request, response);
             }
 
         } catch (Exception e) {
