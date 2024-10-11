@@ -4,13 +4,13 @@
 <!DOCTYPE html>
 
 <%
-  // Check if user is student
-  session = request.getSession();
-  entity.Users currentUser = (entity.Users) session.getAttribute("user");
-  if (currentUser == null || !"student".equals(currentUser.getRoleName())) {
-    response.sendRedirect(request.getContextPath() + "/unauthorized.jsp");
-    return;
-  }
+    // Check if user is student
+    session = request.getSession();
+    entity.Users currentUser = (entity.Users) session.getAttribute("user");
+    if (currentUser == null || !"student".equals(currentUser.getRoleName())) {
+        response.sendRedirect(request.getContextPath() + "/unauthorized.jsp");
+        return;
+    }
 %>
 <html lang="en">
 <head>
@@ -29,11 +29,37 @@
 <div id="sidebar" class="sidebar">
     <div class="sidebar-content">
         <ul>
-            <li><a href="<%= request.getContextPath() %>/jsp/student.jsp">Dashboard</a></li>
-            <li><a href="<%= request.getContextPath() %>/jsp/my-classes.jsp">My Classes</a></li>
-            <li><a href="<%= request.getContextPath() %>/jsp/recent-quizzes.jsp">Recent Quizzes</a></li>
-            <li><a href="<%= request.getContextPath() %>/jsp/progress.jsp">Progress</a></li>
-            <!-- Add other student-specific links here -->
+            <li>
+                <a href="<%= request.getContextPath() %>/jsp/student.jsp">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="<%= request.getContextPath() %>/jsp/my-classes.jsp">
+                    <i class="fas fa-chalkboard"></i>
+                    <span>My Classes</span>
+                </a>
+            </li>
+            <li>
+                <a href="<%= request.getContextPath() %>/jsp/recent-quizzes.jsp">
+                    <i class="fas fa-pencil-alt"></i>
+                    <span>Recent Quizzes</span>
+                </a>
+            </li>
+            <li>
+                <a href="<%= request.getContextPath() %>/jsp/progress.jsp">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Progress</span>
+                </a>
+            </li>
+            <!-- Logout Button -->
+            <li>
+                <a href="<%= request.getContextPath() %>/LogoutServlet">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
         </ul>
     </div>
 </div>
@@ -43,87 +69,81 @@
     <div class="container">
         <!-- Logo -->
         <a href="<%= request.getContextPath() %>/jsp/student.jsp" class="logo">QuizLoco</a>
-        <!-- Navigation Menu -->
-        <nav>
-            <ul>
-                <li><a href="<%= request.getContextPath() %>/jsp/student.jsp">Home</a></li>
-                <li><a href="<%= request.getContextPath() %>/jsp/my-classes.jsp">My Classes</a></li>
-                <li><a href="<%= request.getContextPath() %>/jsp/recent-quizzes.jsp">Recent Quizzes</a></li>
-                <li><a href="<%= request.getContextPath() %>/jsp/progress.jsp">Progress</a></li>
-            </ul>
-        </nav>
-
         <!-- Search Container -->
         <div class="search-container">
             <input type="text" id="liveSearch" placeholder="Search quizzes..." aria-label="Search quizzes">
-            <div id="searchResults" class="search-results"></div>
+            <ul id="searchResults" class="search-results"></ul>
         </div>
-
         <!-- User Info -->
         <div class="auth-links">
-            <div class="user-info">
-                <a href="<%= request.getContextPath() %>/jsp/user-profile.jsp" class="user-profile">
-                    <i class="fas fa-user-circle"></i>
-                    <span class="username">Welcome, <%= currentUser.getUsername() %></span>
-                </a>
-                <a href="<%= request.getContextPath() %>/LogoutServlet" class="btn-logout">Logout</a>
+            <!-- Notifications -->
+            <div class="notifications">
+                <i class="fas fa-bell"></i>
+                <div class="notification-count">3</div>
+                <!-- Notification Dropdown -->
+                <div class="notification-dropdown">
+                    <ul>
+                        <li><a href="#">New assignment posted in Math</a></li>
+                        <li><a href="#">Quiz results are out!</a></li>
+                        <li><a href="#">Reminder: Science project due tomorrow</a></li>
+                    </ul>
+                </div>
             </div>
-        </div>
-        <!-- Theme Toggle -->
-        <div class="theme-toggle">
-            <input type="checkbox" id="dark-mode-toggle" aria-label="Toggle dark mode">
-            <label for="dark-mode-toggle">
-                <i class="fas fa-moon"></i>
-                <i class="fas fa-sun"></i>
-            </label>
+            <div class="user-profile">
+                <i class="fas fa-user-circle"></i>
+                <span class="username"><%= currentUser.getUsername() %></span>
+                <ul class="profile-menu">
+                    <li><a href="<%= request.getContextPath() %>/jsp/user-profile.jsp">Profile</a></li>
+                    <li><a href="<%= request.getContextPath() %>/LogoutServlet">Logout</a></li>
+                </ul>
+            </div>
+            <!-- Theme Toggle -->
+            <div class="theme-toggle">
+                <input type="checkbox" id="dark-mode-toggle" aria-label="Toggle dark mode">
+                <label for="dark-mode-toggle">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun"></i>
+                </label>
+            </div>
         </div>
     </div>
 </header>
 
-<!-- Main Content -->
 <main>
     <!-- Student Dashboard -->
     <section id="dashboard" class="dashboard">
-        <div class="container">
-            <h1>Welcome, <%= currentUser.getUsername() %>!</h1>
-            <p>Here's your student dashboard where you can access your classes, quizzes, and track your progress.</p>
+        <h1>Welcome, <%= currentUser.getUsername() %>!</h1>
+        <p>Access your classes, quizzes, and track your progress all in one place.</p>
 
-            <!-- My Classes Section -->
-            <section id="my-classes" class="my-classes">
+        <!-- Grid of Cards -->
+        <div class="grid grid-2">
+            <!-- My Classes Card -->
+            <div class="card">
                 <h2>My Classes</h2>
-                <!-- Fetch and display the classes the student is enrolled in -->
-                <!-- Placeholder content -->
-                <p>You are currently enrolled in the following classes:</p>
-                <ul>
-                    <li>Mathematics 101</li>
-                    <li>Science 201</li>
-                    <!-- Replace with dynamic content -->
-                </ul>
-            </section>
+                <p>View and manage your enrolled classes.</p>
+                <a href="<%= request.getContextPath() %>/jsp/my-classes.jsp" class="button">Go to Classes</a>
+            </div>
 
-            <!-- Recent Quizzes Section -->
-            <section id="recent-quizzes" class="recent-quizzes">
+            <!-- Recent Quizzes Card -->
+            <div class="card">
                 <h2>Recent Quizzes</h2>
-                <!-- Fetch and display recent quizzes for the student -->
-                <!-- Placeholder content -->
-                <div class="quiz-list">
-                    <div class="quiz-item">
-                        <h3>Algebra Basics</h3>
-                        <p>Last Attempt: 85%</p>
-                        <a href="<%= request.getContextPath() %>/jsp/quiz-details.jsp?id=1" class="btn-quiz">Retake Quiz</a>
-                    </div>
-                    <!-- Repeat for other quizzes -->
-                </div>
-            </section>
+                <p>Continue where you left off.</p>
+                <a href="<%= request.getContextPath() %>/jsp/recent-quizzes.jsp" class="button">View Quizzes</a>
+            </div>
 
-            <!-- Progress Tracking Section -->
-            <section id="progress-tracking" class="progress-tracking">
+            <!-- Progress Card -->
+            <div class="card">
                 <h2>Your Progress</h2>
-                <!-- Display charts or statistics about student's progress -->
-                <!-- Placeholder content -->
-                <p>Your overall average score is 88%</p>
-                <!-- You can integrate chart libraries like Chart.js here -->
-            </section>
+                <p>Check your learning progress and achievements.</p>
+                <a href="<%= request.getContextPath() %>/jsp/progress.jsp" class="button">View Progress</a>
+            </div>
+
+            <!-- Announcements Card -->
+            <div class="card">
+                <h2>Announcements</h2>
+                <p>Stay updated with the latest news.</p>
+                <a href="<%= request.getContextPath() %>/jsp/announcements.jsp" class="button">View Announcements</a>
+            </div>
         </div>
     </section>
 </main>
@@ -131,7 +151,6 @@
 <!-- Footer -->
 <footer>
     <div class="container">
-        <!-- Reuse the footer content from your index.jsp -->
         <p>&copy; 2024 QuizLoco. All rights reserved.</p>
     </div>
 </footer>
