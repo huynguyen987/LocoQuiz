@@ -25,10 +25,10 @@ public class EnrollStudentServlet extends   HttpServlet {
         try {
             boolean isEnrolled = classUserDAO.enrollStudentToClass(classId, studentId);
             if (isEnrolled) {
-                response.sendRedirect("ClassDetailsServlet?classId=" + classId);
+                response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?action=classDetails&classId=" + classId);
             } else {
                 request.setAttribute("errorMessage", "Không thể ghi danh học sinh.");
-                request.getRequestDispatcher("enrollStudent.jsp").forward(request, response);
+                request.getRequestDispatcher("/jsp/teacher.jsp?action=enrollStudents&classId=" + classId).forward(request, response);
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();

@@ -137,7 +137,7 @@ public class QuizController extends HttpServlet {
                 }
 
                 // Redirect to a success page or quiz list
-                response.sendRedirect("quizList.jsp");
+                response.sendRedirect(request.getContextPath()+"/jsp/quizList.jsp");
             } else {
                 // Display error message
                 request.setAttribute("errorMessage", "Failed to create quiz.");

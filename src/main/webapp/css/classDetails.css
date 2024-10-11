@@ -1,0 +1,97 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container */
+.container {
+    width: 80%;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 30px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading */
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+/* Class Info */
+.container p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.container p strong {
+    color: #555;
+}
+
+/* Sections */
+.section {
+    margin-top: 30px;
+}
+
+.section h2 {
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+    color: #333;
+}
+
+/* Lists */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    background-color: #f9f9f9;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+/* Action Links */
+.action-links {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.action-links a,
+.action-links form button {
+    display: inline-block;
+    margin: 5px;
+    padding: 10px 15px;
+    background-color: #4285f4;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.action-links a:hover,
+.action-links form button:hover {
+    background-color: #3367d6;
+}
+
+.action-links form {
+    display: inline;
+}
+
+.action-links form button {
+    border: none;
+    cursor: pointer;
+}
+
+.action-links .delete-button {
+    background-color: #e74c3c;
+}
+
+.action-links .delete-button:hover {
+    background-color: #c0392b;
+}
