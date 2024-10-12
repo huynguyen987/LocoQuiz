@@ -12,7 +12,8 @@ import java.io.IOException;
 @WebServlet(name = "EditClassServlet", urlPatterns = {"/EditClassServlet"})
 public class EditClassServlet extends HttpServlet {
 
-    // Handle GET requests to display the edit class form
+    private static final int ROLE_TEACHER = 1; // Adjust based on your implementation
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -26,22 +27,33 @@ public class EditClassServlet extends HttpServlet {
         }
 
         // Get classId from the request parameter
-        int classId = Integer.parseInt(request.getParameter("classId"));
+        String classIdStr = request.getParameter("classId");
+        if (classIdStr == null || classIdStr.trim().isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=editError");
+            return;
+        }
+
+        int classId;
+        try {
+            classId = Integer.parseInt(classIdStr);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=editError");
+            return;
+        }
 
         try {
             ClassDAO classDAO = new ClassDAO();
             classs classEntity = classDAO.getClassById(classId);
 
             if (classEntity == null) {
-                request.setAttribute("errorMessage", "Class not found.");
-                request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=editError");
                 return;
             }
 
             // Ensure the current user is the teacher of the class or an admin
             if (classEntity.getTeacher_id() != currentUser.getId() && !currentUser.hasRole("admin")) {
-                request.setAttribute("errorMessage", "You do not have permission to edit this class.");
-                request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=editError");
                 return;
             }
 
@@ -53,15 +65,14 @@ public class EditClassServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "An error occurred: " + e.getMessage());
-            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=editError");
         }
     }
 
     // Handle POST requests to save changes
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Implement the code to save the changes made to the class
-        // Check permissions
+        // Session and authentication check
         HttpSession session = request.getSession();
         Users currentUser = (Users) session.getAttribute("user");
         if (currentUser == null || (currentUser.getRole_id() != Users.ROLE_TEACHER && currentUser.getRole_id() != Users.ROLE_ADMIN)) {
@@ -69,39 +80,55 @@ public class EditClassServlet extends HttpServlet {
             return;
         }
 
-        // Get data from the form
-        int classId = Integer.parseInt(request.getParameter("classId"));
-        String name = request.getParameter("name");
-        String description = request.getParameter("description");
+        // Retrieve form parameters
+        String classIdStr = request.getParameter("classId");
+        String className = request.getParameter("name");
+        String classDescription = request.getParameter("description");
 
-        // Update the class in the database
+        // Validate parameters
+        if (classIdStr == null || className == null || classDescription == null ||
+                classIdStr.trim().isEmpty() || className.trim().isEmpty()) {
+            // Missing parameters, redirect back with error
+            response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=editError");
+            return;
+        }
+
+        int classId;
+        try {
+            classId = Integer.parseInt(classIdStr);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=editError");
+            return;
+        }
+
+        // Update class in the database
         ClassDAO classDAO = new ClassDAO();
         try {
             classs classEntity = classDAO.getClassById(classId);
-            if (classEntity == null) {
-                request.setAttribute("errorMessage", "Class not found.");
-                request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+
+            if (classEntity == null || classEntity.getTeacher_id() != currentUser.getId()) {
+                // Class not found or access denied
+                response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=editError");
                 return;
             }
 
             // Update class details
-            classEntity.setName(name);
-            classEntity.setDescription(description);
+            classEntity.setName(className.trim());
+            classEntity.setDescription(classDescription.trim());
 
-            // Save changes
-            boolean isUpdated = classDAO.updateClass(classEntity);
+            boolean updateSuccess = classDAO.updateClass(classEntity);
 
-            if (isUpdated) {
-                // Redirect to class details page
-                response.sendRedirect(request.getContextPath() + "/ClassDetailsServlet?classId=" + classId);
+            if (updateSuccess) {
+                // Redirect back to dashboard with success message
+                response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=classEdited");
             } else {
-                request.setAttribute("errorMessage", "Failed to update class. Please try again.");
-                request.getRequestDispatcher("/jsp/editClass.jsp").forward(request, response);
+                // Update failed, redirect back with error message
+                response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=editError");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "An error occurred: " + e.getMessage());
-            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=editError");
         }
     }
 }

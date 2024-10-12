@@ -1,75 +1,71 @@
 package Servlet;
 
 import dao.ClassDAO;
-import entity.Users;
 import entity.classs;
+import entity.Users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
-import java.sql.SQLException;
+import java.util.UUID;
 
-@WebServlet(name = "CreateClassServlet", value = "/CreateClassServlet")
+@WebServlet(name = "CreateClassServlet", urlPatterns = {"/CreateClassServlet"})
 public class CreateClassServlet extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Check permissions (teacher or admin)
-        HttpSession session = request.getSession();
-        Users currentUser = (Users) session.getAttribute("user");
-        if (currentUser == null || (currentUser.getRole_id() != 2 && currentUser.getRole_id() != 3)) {
-            response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");
-            return;
-        }
 
-        // Get data from form
+    // Method to generate a unique class key
+    private String generateClassKey() {
+        return UUID.randomUUID().toString();
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Retrieve form parameters
         String name = request.getParameter("name");
         String description = request.getParameter("description");
 
-        // Generate classKey
-        String classKey = generateClassKey();
+        // Session and user authentication
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
 
-        // Create class object
+        Users currentUser = (Users) session.getAttribute("user");
+        if (currentUser == null || currentUser.getRole_id() != Users.ROLE_TEACHER) {
+            response.sendRedirect(request.getContextPath() + "/unauthorized.jsp");
+            return;
+        }
+
+        // Input validation
+        if (name == null || name.trim().isEmpty()) {
+            // Redirect back to Create Class form with an error message
+            response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?action=createClass&message=createError");
+            return;
+        }
+
+        // Create a new class entity
         classs newClass = new classs();
-        newClass.setName(name);
-        newClass.setDescription(description);
-        newClass.setClass_key(classKey);
+        newClass.setName(name.trim());
+        newClass.setDescription(description != null ? description.trim() : "");
         newClass.setTeacher_id(currentUser.getId());
+        newClass.setClass_key(generateClassKey());
 
-        // Save to database
+        // Initialize the ClassDAO
         ClassDAO classDAO = new ClassDAO();
+
         try {
-            boolean isCreated = classDAO.createClass(newClass);
-            if (isCreated) {
-                // Redirect to class details page with the correct classId
-                response.sendRedirect(request.getContextPath() + "/ClassDetailsServlet?classId=" + newClass.getId());
-            } else {
-                // Show error message
-                request.setAttribute("errorMessage", "Không thể tạo lớp. Vui lòng thử lại.");
-                request.getRequestDispatcher("/jsp/createClass.jsp").forward(request, response);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            request.setAttribute("errorMessage", "Lỗi SQL: " + e.getMessage());
-            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            request.setAttribute("errorMessage", "Lỗi ClassNotFound: " + e.getMessage());
-            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+            // Save the new class to the database
+            classDAO.createClass(newClass);
+
+            // Redirect to the dashboard with a success message
+            response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=classCreated");
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "Lỗi không xác định: " + e.getMessage());
-            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+            // Redirect back to Create Class form with an error message
+            response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?action=createClass&message=createError");
         }
-    }
-
-    // Method to generate a random classKey
-    private String generateClassKey() {
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        StringBuilder classKey = new StringBuilder();
-        for (int i = 0; i < 8; i++) {
-            int index = (int) (Math.random() * characters.length());
-            classKey.append(characters.charAt(index));
-        }
-        return classKey.toString();
     }
 }
