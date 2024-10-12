@@ -1,6 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.*, entity.Tag" %>
 <%@ page import="dao.TagDAO" %>
+<%
+    Integer userId = (Integer) session.getAttribute("userId"); // Lấy userId từ session
+    if (userId == null) {
+        // Nếu userId không có trong session (người dùng chưa đăng nhập), chuyển hướng về trang đăng nhập
+        response.sendRedirect("login.jsp");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,13 +33,18 @@
 
     <h1>Create a New Quiz</h1>
 
-    <!-- Display error message if any -->
-    <% String errorMessage = (String) request.getAttribute("errorMessage");
-        if (errorMessage != null) { %>
+    <!-- Display success or error messages -->
+    <% String successMessage = (String) request.getAttribute("successMessage");
+        String errorMessage = (String) request.getAttribute("errorMessage");
+
+        if (successMessage != null) { %>
+    <div class="success-message"><%= successMessage %></div>
+    <% } else if (errorMessage != null) { %>
     <div class="error-message"><%= errorMessage %></div>
     <% } %>
 
-    <form action="QuizController" method="post" id="quizForm">
+
+    <form action="${pageContext.request.contextPath}/QuizController" method="post" id="quizForm">
         <!-- Quiz Name -->
         <label for="quizName">Quiz Name:</label>
         <input type="text" id="quizName" name="quizName" required aria-required="true">
@@ -42,7 +55,7 @@
 
         <!-- Tags -->
         <label for="quizTag">Tags:</label>
-        <div class="dropdown" id="tagDropdown">
+        <div class="dropdown" id="quizTag">
             <button type="button" class="dropdown-toggle" id="dropdownMenuButton" aria-haspopup="true" aria-expanded="false">
                 Select Tags
                 <i class="fas fa-chevron-down"></i>
@@ -108,9 +121,14 @@
         <!-- Hidden input to keep track of question count -->
         <input type="hidden" id="questionCount" name="questionCount" value="0">
 
+        <input type="hidden" name="userId" value="<%= userId %>">
+
         <!-- Submit Button -->
         <input type="submit" value="Create Quiz">
     </form>
+
+
+
 </div>
 
 <!-- Include the external JavaScript file -->
