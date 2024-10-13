@@ -128,9 +128,6 @@
             <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=classDetails&classId=<%= classEntity.getId() %>">
               <i class="fas fa-eye"></i> View
             </a>
-            <a href="<%= request.getContextPath() %>/EditClassServlet?classId=<%= classEntity.getId() %>" class="edit-btn">
-              <i class="fas fa-edit"></i> Edit
-            </a>
           </div>
         </div>
         <% } %>
