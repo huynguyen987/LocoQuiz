@@ -160,17 +160,39 @@ main {
 }
 
 .action-btn {
-    padding: 10px 15px;
-    background-color: #4285f4;
-    color: #fff;
-    border-radius: 5px;
     display: inline-block;
-    font-weight: bold;
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 16px;
     transition: background-color 0.3s;
 }
 
+.action-btn i {
+    margin-right: 5px;
+}
+
 .action-btn:hover {
+    background-color: #0069d9;
+}
+
+.action-btn.create-btn {
+    background-color: #4285f4;
+}
+
+.action-btn.create-btn:hover {
     background-color: #3071d1;
+}
+
+.action-btn.back-btn {
+    background-color: #6c757d;
+}
+
+.action-btn.back-btn:hover {
+    background-color: #5a6268;
 }
 
 .classes-section h2 {
@@ -233,42 +255,45 @@ footer {
     }
     .sidebar {
         display: none;
+        position: absolute;
+        top: 65px;
+        left: 0;
+        width: 200px;
+        height: calc(100% - 65px);
+        z-index: 1000;
+        transition: transform 0.3s ease-in-out;
+        transform: translateX(-100%);
     }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .sidebar-toggle {
+        display: block;
+    }
+
     header .container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    nav ul {
-        flex-direction: column;
-        gap: 10px;
+        justify-content: space-between;
     }
 }
 
-.action-btn {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 15px;
-    background-color: #4285f4;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-    font-size: 16px;
+.sidebar-toggle {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
 }
 
-.action-btn i {
-    margin-right: 5px;
-}
-
-.action-btn:hover {
-    background-color: #3367d6;
-}
+/* Form Container Enhancements */
 .form-container {
-    width: 50%;
+    width: 100%;
     max-width: 600px;
     margin: 30px auto;
     background-color: #fff;
     padding: 30px 40px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
 /* Labels and Inputs */
@@ -306,6 +331,7 @@ footer {
     border-radius: 4px;
     font-size: 16px;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .submit-btn i {
@@ -324,6 +350,7 @@ footer {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .delete-button i {
@@ -334,31 +361,39 @@ footer {
     background-color: #c0392b;
 }
 
-/* Action Buttons */
-.action-btn {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-    font-size: 16px;
+/* Success and Error Messages */
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
 }
 
-.action-btn i {
-    margin-right: 5px;
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
 }
 
-.action-btn:hover {
-    background-color: #0069d9;
-}
-
-/* Back Button */
+/* Back Button Specific Styles */
 .back-btn {
     background-color: #6c757d;
 }
 
 .back-btn:hover {
     background-color: #5a6268;
+}
+
+/* Additional Responsive Enhancements */
+@media (max-width: 768px) {
+    .stats-container {
+        flex-direction: column;
+    }
+
+    .stat-card {
+        flex-direction: row;
+    }
 }
