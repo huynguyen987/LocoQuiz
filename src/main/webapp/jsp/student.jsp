@@ -144,6 +144,13 @@
                 <p>Stay updated with the latest news.</p>
                 <a href="<%= request.getContextPath() %>/jsp/announcements.jsp" class="button">View Announcements</a>
             </div>
+
+            <!-- Take Quiz Card (Newly Added) -->
+            <div class="card">
+                <h2>Take Quiz</h2>
+                <p>Participate in quizzes to test your knowledge.</p>
+                <a href="<%= request.getContextPath() %>/AllQuizzesServlet" class="button">Take Quiz</a>
+            </div>
         </div>
     </section>
 </main>
