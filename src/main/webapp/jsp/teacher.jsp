@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="entity.Users, entity.classs, entity.quiz, dao.ClassDAO, dao.UsersDAO, dao.ClassUserDAO, dao.ClassQuizDAO, dao.QuizDAO" %>
+<%@ page import="entity.Users, entity.classs, dao.ClassDAO, dao.UsersDAO, dao.ClassUserDAO, dao.ClassQuizDAO, dao.QuizDAO" %>
 <%@ page import="java.util.List" %>
+<%@ page import="entity.quiz" %>
 <%
   // Session and user authentication
   session = request.getSession();
@@ -24,6 +25,9 @@
   if (action == null) {
     action = "dashboard"; // Default action
   }
+
+  // Get the message parameter to display success or error messages
+  String message = request.getParameter("message");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,18 +69,30 @@
 <!-- Main Content -->
 <main>
   <div class="dashboard-content">
-    <!-- Display error or success messages -->
-    <% if (request.getAttribute("errorMessage") != null) { %>
-    <div class="error-message">
-      <%= request.getAttribute("errorMessage") %>
-    </div>
-    <% } %>
-
-    <% if ("classDeleted".equals(request.getParameter("message"))) { %>
+    <!-- Display success or error messages -->
+    <% if (message != null) {
+      if ("classCreated".equals(message)) { %>
     <div class="success-message">
-      Class deleted successfully.
+      Class created successfully.
     </div>
-    <% } %>
+    <% } else if ("classEdited".equals(message)) { %>
+    <div class="success-message">
+      Class edited successfully.
+    </div>
+    <% } else if ("createError".equals(message)) { %>
+    <div class="error-message">
+      An error occurred while creating the class. Please try again.
+    </div>
+    <% } else if ("editError".equals(message)) { %>
+    <div class="error-message">
+      An error occurred while editing the class. Please try again.
+    </div>
+    <% } else { %>
+    <div class="info-message">
+      <%= message %>
+    </div>
+    <% }
+    } %>
 
     <% if ("dashboard".equals(action)) { %>
     <!-- Dashboard View -->
@@ -95,7 +111,9 @@
 
     <!-- Action Links -->
     <div class="action-links">
-      <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=createClass" class="action-btn"><i class="fas fa-plus"></i> Create New Class</a>
+      <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=createClass" class="action-btn">
+        <i class="fas fa-plus"></i> Create New Class
+      </a>
     </div>
 
     <!-- Classes List -->
@@ -107,7 +125,12 @@
         <div class="class-card">
           <h3><%= classEntity.getName() %></h3>
           <div class="class-actions">
-            <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=classDetails&classId=<%= classEntity.getId() %>"><i class="fas fa-eye"></i> View</a>
+            <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=classDetails&classId=<%= classEntity.getId() %>">
+              <i class="fas fa-eye"></i> View
+            </a>
+            <a href="<%= request.getContextPath() %>/EditClassServlet?classId=<%= classEntity.getId() %>" class="edit-btn">
+              <i class="fas fa-edit"></i> Edit
+            </a>
           </div>
         </div>
         <% } %>
@@ -119,7 +142,21 @@
     <% } else if ("classDetails".equals(action)) { %>
     <!-- Class Details View -->
     <%
-      int classId = Integer.parseInt(request.getParameter("classId"));
+      String classIdStr = request.getParameter("classId");
+      if (classIdStr == null || classIdStr.trim().isEmpty()) {
+        out.println("<p>Class ID is missing.</p>");
+        return;
+      }
+
+      int classId;
+      try {
+        classId = Integer.parseInt(classIdStr);
+      } catch (NumberFormatException e) {
+        e.printStackTrace();
+        out.println("<p>Invalid Class ID.</p>");
+        return;
+      }
+
       classs classEntity = classDAO.getClassById(classId);
       if (classEntity != null && classEntity.getTeacher_id() == currentUser.getId()) {
         UsersDAO usersDAO = new UsersDAO();
@@ -138,12 +175,20 @@
 
     <!-- Action Links -->
     <div class="action-links">
-      <a href="<%= request.getContextPath() %>/EditClassServlet?classId=<%= classEntity.getId() %>" class="action-btn"><i class="fas fa-edit"></i> Edit Class</a>
-      <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=assignQuiz&classId=<%= classEntity.getId() %>" class="action-btn"><i class="fas fa-clipboard-list"></i> Assign Quiz</a>
-      <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=enrollStudents&classId=<%= classEntity.getId() %>" class="action-btn"><i class="fas fa-user-plus"></i> Enroll Students</a>
+      <a href="<%= request.getContextPath() %>/EditClassServlet?classId=<%= classEntity.getId() %>" class="action-btn">
+        <i class="fas fa-edit"></i> Edit Class
+      </a>
+      <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=assignQuiz&classId=<%= classEntity.getId() %>" class="action-btn">
+        <i class="fas fa-clipboard-list"></i> Assign Quiz
+      </a>
+      <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=enrollStudents&classId=<%= classEntity.getId() %>" class="action-btn">
+        <i class="fas fa-user-plus"></i> Enroll Students
+      </a>
       <form action="<%=request.getContextPath()%>/DeleteClassServlet" method="post" onsubmit="return confirm('Are you sure you want to delete this class?');" style="display:inline;">
         <input type="hidden" name="classId" value="<%= classEntity.getId() %>">
-        <button type="submit" class="delete-button"><i class="fas fa-trash"></i> Delete Class</button>
+        <button type="submit" class="delete-button">
+          <i class="fas fa-trash"></i> Delete Class
+        </button>
       </form>
     </div>
 
@@ -172,16 +217,30 @@
     <% } %>
 
     <!-- Back to Dashboard Link -->
-    <a href="<%= request.getContextPath() %>/jsp/teacher.jsp" class="action-btn back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
-    <%
-      } else {
-        out.println("<p>Class not found or access denied.</p>");
-      }
-    %>
+    <a href="<%= request.getContextPath() %>/jsp/teacher.jsp" class="action-btn back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+    <% } else { %>
+    <p>Class not found or access denied.</p>
+    <% } %>
     <% } else if ("assignQuiz".equals(action)) { %>
     <!-- Assign Quiz View -->
     <%
-      int classId = Integer.parseInt(request.getParameter("classId"));
+      String classIdStr = request.getParameter("classId");
+      if (classIdStr == null || classIdStr.trim().isEmpty()) {
+        out.println("<p>Class ID is missing.</p>");
+        return;
+      }
+
+      int classId;
+      try {
+        classId = Integer.parseInt(classIdStr);
+      } catch (NumberFormatException e) {
+        e.printStackTrace();
+        out.println("<p>Invalid Class ID.</p>");
+        return;
+      }
+
       classs classEntity = classDAO.getClassById(classId);
       if (classEntity != null && classEntity.getTeacher_id() == currentUser.getId()) {
         // Get quizzes
@@ -199,23 +258,39 @@
         <% } %>
       </select>
 
-      <button type="submit" class="submit-btn"><i class="fas fa-clipboard-list"></i> Assign Quiz</button>
+      <button type="submit" class="submit-btn">
+        <i class="fas fa-clipboard-list"></i> Assign Quiz
+      </button>
     </form>
-    <% if (request.getAttribute("errorMessage") != null) { %>
-    <p class="error-message"><%= request.getAttribute("errorMessage") %></p>
+    <% if ("assignError".equals(message)) { %>
+    <p class="error-message">An error occurred while assigning the quiz. Please try again.</p>
     <% } %>
 
     <!-- Back to Class Details Link -->
-    <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=classDetails&classId=<%= classEntity.getId() %>" class="action-btn back-btn"><i class="fas fa-arrow-left"></i> Back to Class Details</a>
-    <%
-      } else {
-        out.println("<p>Class not found or access denied.</p>");
-      }
-    %>
+    <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=classDetails&classId=<%= classEntity.getId() %>" class="action-btn back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Class Details
+    </a>
+    <% } else { %>
+    <p>Class not found or access denied.</p>
+    <% } %>
     <% } else if ("enrollStudents".equals(action)) { %>
     <!-- Enroll Students View -->
     <%
-      int classId = Integer.parseInt(request.getParameter("classId"));
+      String classIdStr = request.getParameter("classId");
+      if (classIdStr == null || classIdStr.trim().isEmpty()) {
+        out.println("<p>Class ID is missing.</p>");
+        return;
+      }
+
+      int classId;
+      try {
+        classId = Integer.parseInt(classIdStr);
+      } catch (NumberFormatException e) {
+        e.printStackTrace();
+        out.println("<p>Invalid Class ID.</p>");
+        return;
+      }
+
       classs classEntity = classDAO.getClassById(classId);
       if (classEntity != null && classEntity.getTeacher_id() == currentUser.getId()) {
         // Get students not enrolled
@@ -232,19 +307,21 @@
         <% } %>
       </select>
 
-      <button type="submit" class="submit-btn"><i class="fas fa-user-plus"></i> Enroll Student</button>
+      <button type="submit" class="submit-btn">
+        <i class="fas fa-user-plus"></i> Enroll Student
+      </button>
     </form>
-    <% if (request.getAttribute("errorMessage") != null) { %>
-    <p class="error-message"><%= request.getAttribute("errorMessage") %></p>
+    <% if ("enrollError".equals(message)) { %>
+    <p class="error-message">An error occurred while enrolling the student. Please try again.</p>
     <% } %>
 
     <!-- Back to Class Details Link -->
-    <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=classDetails&classId=<%= classEntity.getId() %>" class="action-btn back-btn"><i class="fas fa-arrow-left"></i> Back to Class Details</a>
-    <%
-      } else {
-        out.println("<p>Class not found or access denied.</p>");
-      }
-    %>
+    <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=classDetails&classId=<%= classEntity.getId() %>" class="action-btn back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Class Details
+    </a>
+    <% } else { %>
+    <p>Class not found or access denied.</p>
+    <% } %>
     <% } else if ("createClass".equals(action)) { %>
     <!-- Create Class View -->
     <h1>Create New Class</h1>
@@ -255,19 +332,25 @@
       <label for="description">Description:</label>
       <textarea id="description" name="description"></textarea>
 
-      <button type="submit" class="submit-btn"><i class="fas fa-plus"></i> Create Class</button>
+      <button type="submit" class="submit-btn">
+        <i class="fas fa-plus"></i> Create Class
+      </button>
     </form>
-    <% if (request.getAttribute("errorMessage") != null) { %>
-    <p class="error-message"><%= request.getAttribute("errorMessage") %></p>
+    <% if ("createError".equals(message)) { %>
+    <p class="error-message">An error occurred while creating the class. Please try again.</p>
     <% } %>
 
     <!-- Back to Dashboard Link -->
-    <a href="<%= request.getContextPath() %>/jsp/teacher.jsp" class="action-btn back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    <a href="<%= request.getContextPath() %>/jsp/teacher.jsp" class="action-btn back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
     <% } else { %>
     <!-- Default or Unknown Action -->
     <p>Invalid action specified.</p>
     <!-- Optionally redirect to dashboard -->
-    <a href="<%= request.getContextPath() %>/jsp/teacher.jsp" class="action-btn back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    <a href="<%= request.getContextPath() %>/jsp/teacher.jsp" class="action-btn back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
     <% } %>
   </div>
 </main>
