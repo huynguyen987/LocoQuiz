@@ -23,7 +23,6 @@
 
         <button type="submit">Save Changes</button>
     </form>
-    <a href="<%= request.getContextPath() %>/ClassDetailsServlet?classId=<%= classEntity.getId() %>">Back to Class Details</a>
 </div>
 </body>
 </html>

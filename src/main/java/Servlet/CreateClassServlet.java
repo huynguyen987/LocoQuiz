@@ -15,7 +15,7 @@ public class CreateClassServlet extends HttpServlet {
 
     // Method to generate a unique class key
     private String generateClassKey() {
-        return UUID.randomUUID().toString();
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 6);
     }
 
     @Override
