@@ -1,10 +1,12 @@
+// File: src/main/webapp/js/quiz.js
+
 // Quiz Class Definition
 class Quiz {
-    constructor(quizData, totalQuestions = 30, timeLimit = 15 * 60) { // timeLimit in seconds
-        this.quizData = quizData; // Array of question objects
-        this.totalQuestions = totalQuestions;
-        this.timeLimit = timeLimit;
-        this.timeLeft = timeLimit;
+    constructor(quizData) { // nhận đối tượng quizData
+        this.quizData = quizData.questions; // Array of question objects
+        this.totalQuestions = quizData.totalQuestions;
+        this.timeLimit = quizData.timeLimit; // timeLimit in seconds
+        this.timeLeft = this.timeLimit;
         this.currentQuestionIndex = 0; // 0-based index
         this.userAnswers = {}; // { questionIndex: selectedOption }
         this.timerId = null;
@@ -33,6 +35,7 @@ class Quiz {
         this.totalCount.textContent = this.totalQuestions;
         this.createQuestionSelector();
         this.renderQuestion();
+        this.updateProgressBar();
         this.startTimer();
     }
 
@@ -111,7 +114,10 @@ class Quiz {
         for (let i = 0; i < this.totalQuestions; i++) {
             const btn = document.createElement('button');
             btn.textContent = i + 1;
-            btn.onclick = () => this.goToQuestion(i);
+            btn.onclick = (e) => {
+                e.preventDefault(); // Ngăn chặn hành vi mặc định của button
+                this.goToQuestion(i);
+            };
             this.questionSelector.appendChild(btn);
         }
     }
@@ -151,6 +157,7 @@ class Quiz {
 
     // Start Countdown Timer
     startTimer() {
+        this.updateTimerDisplay();
         this.timerId = setInterval(() => this.countdown(), 1000);
     }
 
@@ -160,12 +167,17 @@ class Quiz {
             clearInterval(this.timerId);
             this.submitQuiz();
         } else {
-            let minutes = Math.floor(this.timeLeft / 60);
-            let seconds = this.timeLeft % 60;
-            if (seconds < 10) seconds = '0' + seconds;
-            this.countdownTimer.textContent = `Time left: ${minutes}:${seconds}`;
             this.timeLeft--;
+            this.updateTimerDisplay();
         }
+    }
+
+    // Update Timer Display
+    updateTimerDisplay() {
+        let minutes = Math.floor(this.timeLeft / 60);
+        let seconds = this.timeLeft % 60;
+        if (seconds < 10) seconds = '0' + seconds;
+        this.countdownTimer.textContent = `Time left: ${minutes}:${seconds}`;
     }
 
     // Update Progress Bar
@@ -179,14 +191,37 @@ class Quiz {
     // Submit Quiz and Show Results
     submitQuiz() {
         clearInterval(this.timerId);
-        let score = 0;
-        this.quizData.forEach((q, index) => {
-            if (this.userAnswers[index] === q.answer) {
-                score++;
-            }
-        });
-        this.resultText.textContent = `You scored ${score} out of ${this.totalQuestions}.`;
-        this.resultModal.style.display = 'block';
+        // Gửi dữ liệu bài kiểm tra tới server để chấm điểm
+        fetch(`${contextPath}/SubmitQuizServlet`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                quizId: quizId,
+                userAnswers: this.userAnswers
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error || 'Failed to submit quiz.'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    alert(`Error: ${data.error}`);
+                } else {
+                    const score = data.score;
+                    const total = data.total;
+                    this.resultText.textContent = `You scored ${score} out of ${total}.`;
+                    this.resultModal.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting quiz:', error);
+                alert('There was an error submitting your quiz.');
+            });
     }
 
     // Close Modal
@@ -215,178 +250,92 @@ class Quiz {
 
     // Jump to Section (Optional for 30 questions)
     jumpToSection(sectionNumber) {
-        // For 30 questions, you can divide into 3 sections of 10
-        const questionsPerSection = 10;
+        // Tính số câu hỏi mỗi phần
+        const sections = 3;
+        const questionsPerSection = Math.ceil(this.totalQuestions / sections);
         const targetIndex = (sectionNumber - 1) * questionsPerSection;
         if (targetIndex >= 0 && targetIndex < this.totalQuestions) {
             this.currentQuestionIndex = targetIndex;
             this.renderQuestion();
         }
     }
+
+    // Exit Quiz
+    exitQuiz() {
+        window.location.href = `${contextPath}/jsp/student.jsp`;
+    }
 }
 
-// Sample Quiz Data (30 Questions)
-const sampleQuizData = [
-    {
-        question: "What is the capital of France?",
-        options: ["A. Paris", "B. London", "C. Berlin", "D. Rome"],
-        answer: "A. Paris"
-    },
-    {
-        question: "Which planet is known as the Red Planet?",
-        options: ["A. Earth", "B. Mars", "C. Jupiter", "D. Saturn"],
-        answer: "B. Mars"
-    },
-    {
-        question: "Who wrote 'To be, or not to be'?",
-        options: ["A. Charles Dickens", "B. William Shakespeare", "C. Mark Twain", "D. Jane Austen"],
-        answer: "B. William Shakespeare"
-    },
-    {
-        question: "What is the largest ocean on Earth?",
-        options: ["A. Atlantic Ocean", "B. Indian Ocean", "C. Arctic Ocean", "D. Pacific Ocean"],
-        answer: "D. Pacific Ocean"
-    },
-    {
-        question: "What is the process by which plants make their food?",
-        options: ["A. Respiration", "B. Transpiration", "C. Photosynthesis", "D. Digestion"],
-        answer: "C. Photosynthesis"
-    },
-    {
-        question: "Which gas is most abundant in the Earth's atmosphere?",
-        options: ["A. Oxygen", "B. Nitrogen", "C. Carbon Dioxide", "D. Hydrogen"],
-        answer: "B. Nitrogen"
-    },
-    {
-        question: "What is the hardest natural substance on Earth?",
-        options: ["A. Gold", "B. Iron", "C. Diamond", "D. Silver"],
-        answer: "C. Diamond"
-    },
-    {
-        question: "Who painted the Mona Lisa?",
-        options: ["A. Vincent Van Gogh", "B. Pablo Picasso", "C. Leonardo da Vinci", "D. Claude Monet"],
-        answer: "C. Leonardo da Vinci"
-    },
-    {
-        question: "What is the smallest prime number?",
-        options: ["A. 0", "B. 1", "C. 2", "D. 3"],
-        answer: "C. 2"
-    },
-    {
-        question: "Which element has the chemical symbol 'O'?",
-        options: ["A. Gold", "B. Oxygen", "C. Osmium", "D. Silver"],
-        answer: "B. Oxygen"
-    },
-    // Add 20 more questions similarly...
-    {
-        question: "What is the boiling point of water at sea level?",
-        options: ["A. 90°C", "B. 100°C", "C. 110°C", "D. 120°C"],
-        answer: "B. 100°C"
-    },
-    {
-        question: "Who is known as the Father of Computers?",
-        options: ["A. Alan Turing", "B. Charles Babbage", "C. Bill Gates", "D. Steve Jobs"],
-        answer: "B. Charles Babbage"
-    },
-    {
-        question: "Which language is used to style web pages?",
-        options: ["A. HTML", "B. Python", "C. CSS", "D. Java"],
-        answer: "C. CSS"
-    },
-    {
-        question: "What does HTTP stand for?",
-        options: ["A. HyperText Transfer Protocol", "B. HighText Transfer Protocol", "C. HyperText Transmission Protocol", "D. HighText Transmission Protocol"],
-        answer: "A. HyperText Transfer Protocol"
-    },
-    {
-        question: "What is the currency of Japan?",
-        options: ["A. Yen", "B. Won", "C. Dollar", "D. Euro"],
-        answer: "A. Yen"
-    },
-    {
-        question: "Which organ is responsible for pumping blood?",
-        options: ["A. Liver", "B. Brain", "C. Heart", "D. Lungs"],
-        answer: "C. Heart"
-    },
-    {
-        question: "What is the largest planet in our Solar System?",
-        options: ["A. Earth", "B. Jupiter", "C. Saturn", "D. Mars"],
-        answer: "B. Jupiter"
-    },
-    {
-        question: "Who discovered penicillin?",
-        options: ["A. Marie Curie", "B. Alexander Fleming", "C. Isaac Newton", "D. Albert Einstein"],
-        answer: "B. Alexander Fleming"
-    },
-    {
-        question: "What is the chemical formula for water?",
-        options: ["A. CO2", "B. H2O", "C. O2", "D. NaCl"],
-        answer: "B. H2O"
-    },
-    {
-        question: "Which country hosted the 2016 Summer Olympics?",
-        options: ["A. China", "B. Brazil", "C. UK", "D. Russia"],
-        answer: "B. Brazil"
-    },
-    {
-        question: "What is the tallest mountain in the world?",
-        options: ["A. K2", "B. Kangchenjunga", "C. Mount Everest", "D. Lhotse"],
-        answer: "C. Mount Everest"
-    },
-    {
-        question: "Who developed the theory of relativity?",
-        options: ["A. Isaac Newton", "B. Galileo Galilei", "C. Albert Einstein", "D. Nikola Tesla"],
-        answer: "C. Albert Einstein"
-    },
-    {
-        question: "Which ocean is the largest?",
-        options: ["A. Atlantic", "B. Indian", "C. Arctic", "D. Pacific"],
-        answer: "D. Pacific"
-    },
-    {
-        question: "What is the capital city of Australia?",
-        options: ["A. Sydney", "B. Melbourne", "C. Canberra", "D. Brisbane"],
-        answer: "C. Canberra"
-    },
-    {
-        question: "What is the main gas found in the air we breathe?",
-        options: ["A. Oxygen", "B. Nitrogen", "C. Carbon Dioxide", "D. Hydrogen"],
-        answer: "B. Nitrogen"
-    },
-    {
-        question: "Which planet has the most moons?",
-        options: ["A. Earth", "B. Mars", "C. Jupiter", "D. Saturn"],
-        answer: "C. Jupiter"
-    },
-    {
-        question: "Who is the author of '1984'?",
-        options: ["A. George Orwell", "B. Aldous Huxley", "C. Mark Twain", "D. J.K. Rowling"],
-        answer: "A. George Orwell"
-    },
-    {
-        question: "What is the hardest natural substance?",
-        options: ["A. Gold", "B. Iron", "C. Diamond", "D. Platinum"],
-        answer: "C. Diamond"
-    },
-    {
-        question: "Which element is represented by the symbol 'Fe'?",
-        options: ["A. Fluorine", "B. Iron", "C. Francium", "D. Fermium"],
-        answer: "B. Iron"
-    },
-    {
-        question: "What is the largest mammal?",
-        options: ["A. Elephant", "B. Blue Whale", "C. Giraffe", "D. Hippopotamus"],
-        answer: "B. Blue Whale"
-    },
-    {
-        question: "Who painted the Sistine Chapel ceiling?",
-        options: ["A. Leonardo da Vinci", "B. Michelangelo", "C. Raphael", "D. Donatello"],
-        answer: "B. Michelangelo"
-    }
-    // Total of 30 questions
-];
+// Hàm để lấy dữ liệu quiz từ server
+function fetchQuizData(quizId, timeLimit) {
+    return fetch(`${contextPath}/TakeQuizServlet?service=loadQuiz&id=${quizId}&time=${timeLimit}`)
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw new Error(err.error || 'Failed to load quiz data.'); });
+            }
+            return response.json();
+        });
+}
 
-// Initialize Quiz on Page Load and Attach to Window
+// Hàm để bắt đầu quiz sau khi chọn thời gian
+function startQuiz() {
+    const timeSelect = document.getElementById('time-select');
+    const selectedValue = timeSelect.value;
+    let selectedTime;
+
+    if (selectedValue === 'custom') {
+        const customTimeInput = document.getElementById('custom-time');
+        selectedTime = parseInt(customTimeInput.value, 10);
+
+        if (isNaN(selectedTime)) {
+            alert('Please enter a valid custom time.');
+            return;
+        }
+
+        // Validate custom time (min: 300 seconds, max: 3600 seconds)
+        if (selectedTime < 300 || selectedTime > 3600) {
+            alert('Please enter a time between 5 and 60 minutes.');
+            return;
+        }
+    } else {
+        selectedTime = parseInt(selectedValue, 10);
+    }
+
+    // Ẩn modal chọn thời gian
+    const timeModal = document.getElementById('time-modal');
+    timeModal.style.display = 'none';
+
+    // Hiển thị phần quiz
+    const quizContainer = document.querySelector('.quiz-container');
+    quizContainer.style.display = 'block';
+
+    // Gọi hàm fetchQuizData với thời gian đã chọn
+    fetchQuizData(quizId, selectedTime).then(quizData => {
+        window.quiz = new Quiz(quizData);
+    }).catch(error => {
+        console.error('Error loading quiz data:', error);
+        document.getElementById('question-text').textContent = 'Không thể tải dữ liệu bài kiểm tra.';
+    });
+}
+
+// Hàm để hiển thị/ẩn trường nhập thời gian tùy chỉnh
+function toggleCustomTimeInput(value) {
+    const customTimeInput = document.getElementById('custom-time');
+    if (value === 'custom') {
+        customTimeInput.style.display = 'block';
+        customTimeInput.focus();
+    } else {
+        customTimeInput.style.display = 'none';
+    }
+}
+
+// Khởi tạo quiz khi trang đã tải hoàn toàn
 document.addEventListener('DOMContentLoaded', () => {
-    window.quiz = new Quiz(sampleQuizData, 30, 15 * 60); // 15 minutes
+    // Ẩn quiz container ban đầu
+    const quizContainer = document.querySelector('.quiz-container');
+    quizContainer.style.display = 'none';
+
+    // Hiển thị modal chọn thời gian
+    const timeModal = document.getElementById('time-modal');
+    timeModal.style.display = 'block';
 });
