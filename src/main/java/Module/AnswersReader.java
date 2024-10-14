@@ -1,8 +1,7 @@
 package Module;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -23,6 +22,8 @@ public class AnswersReader {
     }
 
     // Getters and Setters
+
+    @JsonIgnore // Exclude 'correct' from serialization
     @JsonProperty("correct")
     public String getCorrect() {
         return correct;
@@ -68,38 +69,5 @@ public class AnswersReader {
                 ", options=" + options +
                 ", question='" + question + '\'' +
                 '}';
-    }
-
-    public List<AnswersReader> getAnswersList(String jsonArray) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            // Deserialize JSON array to List<AnswersReader>
-            List<AnswersReader> answersList = mapper.readValue(jsonArray, new TypeReference<List<AnswersReader>>() {});
-            return answersList;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    // Test
-    public static void main(String[] args) {
-        String jsonArray = "[{\"sequence\": 1, \"correct\": \"4\", \"options\": [\"3\", \"4\", \"5\", \"6\"], \"question\": \"What is 2+2?\"}, {\"sequence\": 2, \"correct\": \"5\", \"options\": [\"3\", \"5\", \"10\", \"15\"], \"question\": \"Solve for x: x + 5 = 10.\"}]";
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            List<AnswersReader> answersList = mapper.readValue(jsonArray, new TypeReference<List<AnswersReader>>() {});
-//            giải thích các tham số của hàm readValue
-//            jsonArray: chuỗi JSON cần chuyển đổi
-//            new TypeReference<List<AnswersReader>>() {}: đối tượng TypeReference chứa thông tin về kiểu dữ liệu cần chuyển đổi
-//            List<AnswersReader>: kiểu dữ liệu cần chuyển đổi
-//            {} là cú pháp khởi tạo đối tượng TypeReference
-
-            for (AnswersReader answer : answersList) {
-                System.out.println(answer.getQuestion()+": "+answer.getOptions());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
