@@ -73,8 +73,6 @@ public class QuizDAO {
     }
 
 
-
-
     // Method to increment the views count of a quiz
     private void incrementQuizViews(int quizId, Connection connection) throws SQLException {
         String updateViewsSql = "UPDATE quiz SET views = views + 1 WHERE id = ?";
@@ -150,16 +148,6 @@ public class QuizDAO {
         return false;
     }
 
-    //main method
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        QuizDAO dao = new QuizDAO();
-        System.out.println(dao.getAllQuiz());
-        System.out.println(dao.getQuizById(1));
-        System.out.println(dao.insertQuiz(new quiz("name", "description", "created_at", "updated_at", 1, 1, "answer")));
-        System.out.println(dao.updateQuiz(new quiz(1, "name", "description", "created_at", "updated_at", 1, 1, "answer", true,1)));
-        System.out.println(dao.deleteQuiz(1));
-    }
-
     // Method to retrieve the latest 10 quizzes
     public List<quiz> getLatestQuizzes() throws SQLException, ClassNotFoundException {
         List<quiz> latestQuizzes = new ArrayList<>();
@@ -190,7 +178,6 @@ public class QuizDAO {
         conn.close();
         return popularQuizzes;
     }
-
 
 
     // Method to retrieve all quizzes with pagination
@@ -225,7 +212,6 @@ public class QuizDAO {
     }
 
 
-
     // Helper method to extract quiz from ResultSet
     private quiz extractQuizFromResultSet(ResultSet rs) throws SQLException {
         quiz q = new quiz();
@@ -241,7 +227,6 @@ public class QuizDAO {
         q.setViews(rs.getInt("views")); // Include 'views'
         return q;
     }
-
 
 
     //    get answer by id
@@ -262,6 +247,7 @@ public class QuizDAO {
         return answer;
 
     }
+
     public List<quiz> getQuizzesByUserId(int userId) throws SQLException, ClassNotFoundException {
         String sql = "SELECT * FROM quiz WHERE user_id = ?";
         List<quiz> quizzes = new ArrayList<>();
@@ -300,6 +286,33 @@ public class QuizDAO {
         stmt.close();
         conn.close();
         return tags;
+    }
+
+    //getAvailableQuizzesForStudent
+    public List<quiz> getAvailableQuizzesForStudent(int userId) throws SQLException, ClassNotFoundException {
+        List<quiz> availableQuizzes = new ArrayList<>();
+        Connection conn = new DBConnect().getConnection();
+        String sql = "SELECT q.id, q.name, q.description, q.created_at " +
+                "FROM quiz q " +
+                "JOIN class_quiz cq ON q.id = cq.quiz_id " +
+                "JOIN class c ON cq.class_id = c.id " +
+                "JOIN class_user cu ON c.id = cu.class_id " +
+                "WHERE cu.user_id = ? AND q.status = 1";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, userId);
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            quiz quiz = extractQuizFromResultSet(rs);
+            availableQuizzes.add(quiz);
+        }
+        conn.close();
+        return availableQuizzes;
+    }
+
+    //main method testing getAvailableQuizzesForStudent
+    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+        QuizDAO dao = new QuizDAO();
+        System.out.println(dao.getAvailableQuizzesForStudent(1));
     }
 
 }
