@@ -191,12 +191,15 @@ class Quiz {
     // Submit Quiz and Show Results
     submitQuiz() {
         clearInterval(this.timerId);
+        const data = JSON.stringify(this.userAnswers);
         // Gửi dữ liệu bài kiểm tra tới server để chấm điểm
         fetch(`${contextPath}/SubmitQuizServlet`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
+            // {quizId: "quizId", userAnswers: "this.userAnswers"}
+            // HashMap<String, data> map = new HashMap<>();
             body: JSON.stringify({
                 quizId: quizId,
                 userAnswers: this.userAnswers

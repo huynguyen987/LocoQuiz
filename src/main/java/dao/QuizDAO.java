@@ -1,13 +1,18 @@
 package dao;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import entity.Tag;
 import entity.quiz;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import Module.DBConnect;
+import Module.AnswersReader;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 
@@ -210,7 +215,44 @@ public class QuizDAO {
         return allQuizzes;
     }
 
-    // Method to get total quiz count
+    public List<AnswersReader> getCorrectbyId(int id) {
+        List<AnswersReader> correctAnswers = new ArrayList<>();
+        Connection connection = null;
+        try {
+            connection = new DBConnect().getConnection();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        String sql = "SELECT answer FROM quiz WHERE id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            ObjectMapper mapper = new ObjectMapper(); // Sử dụng Jackson ObjectMapper
+            if (rs.next()) { // Chỉ lấy một bản ghi
+                String answers = rs.getString("answer");
+                JsonNode rootNode = mapper.readTree(answers);
+                for (Iterator<String> it = rootNode.fieldNames(); it.hasNext(); ) {
+                    String key = it.next();
+                    JsonNode obj = rootNode.get(key);
+                    String correct = obj.get("correct").asText();
+                    List<String> options = new ArrayList<>();
+                    for (JsonNode optionNode : obj.get("options")) {
+                        options.add(optionNode.asText());
+                    }
+                    String question = obj.get("question").asText();
+                    correctAnswers.add(new AnswersReader(Integer.parseInt(key), correct, options, question));
+                }
+            }
+            ps.close();
+            connection.close();
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+        return correctAnswers;
+    }
+
+
     public int getTotalQuizCount() throws SQLException, ClassNotFoundException {
         int totalQuizzes = 0;
         Connection conn = new DBConnect().getConnection();
@@ -220,11 +262,11 @@ public class QuizDAO {
         if (rs.next()) {
             totalQuizzes = rs.getInt("total");
         }
+        rs.close();
+        stmt.close();
         conn.close();
         return totalQuizzes;
     }
-
-
 
     // Helper method to extract quiz from ResultSet
     private quiz extractQuizFromResultSet(ResultSet rs) throws SQLException {
@@ -241,7 +283,6 @@ public class QuizDAO {
         q.setViews(rs.getInt("views")); // Include 'views'
         return q;
     }
-
 
 
     //    get answer by id

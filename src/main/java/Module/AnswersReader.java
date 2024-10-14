@@ -23,8 +23,7 @@ public class AnswersReader {
     }
 
     // Getters and Setters
-
-    @JsonIgnore // Exclude 'correct' from serialization
+    
     @JsonProperty("correct")
     public String getCorrect() {
         return correct;
@@ -60,6 +59,8 @@ public class AnswersReader {
     public void setSequence(int sequence) {
         this.sequence = sequence;
     }
+
+//    get list of correct answers
 
     // toString
     @Override

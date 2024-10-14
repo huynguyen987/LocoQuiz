@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "TakeQuizServlet", value = "/TakeQuizServlet")
 public class TakeQuizServlet extends HttpServlet {
@@ -91,7 +92,22 @@ public class TakeQuizServlet extends HttpServlet {
             List<AnswersReader> allQuestions = null;
             try {
                 String answerJson = quizData.getAnswer();
-                allQuestions = mapper.readValue(answerJson, mapper.getTypeFactory().constructCollectionType(List.class, AnswersReader.class));
+                System.out.println("Answer JSON: " + answerJson); // Thêm dòng này để log
+
+                // Kiểm tra nếu 'answerJson' là mảng
+                try {
+                    allQuestions = mapper.readValue(answerJson, mapper.getTypeFactory().constructCollectionType(List.class, AnswersReader.class));
+                    for (AnswersReader q : allQuestions) {
+                        System.out.println("if array: "+q); // Thêm dòng này để log
+                    }
+                } catch (IOException e) {
+                    // Nếu không phải mảng, thử deserialized thành Map và lấy giá trị
+                    Map<String, AnswersReader> answerMap = mapper.readValue(answerJson, mapper.getTypeFactory().constructMapType(Map.class, String.class, AnswersReader.class));
+                    allQuestions = new ArrayList<>(answerMap.values());
+                    for (AnswersReader q : allQuestions) {
+                        System.out.println("if deserialized: "+q); // Thêm dòng này để log
+                    }
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -107,16 +123,18 @@ public class TakeQuizServlet extends HttpServlet {
 
             // Lưu trữ đáp án đúng vào session
             session.setAttribute("correctAnswers", allQuestions);
+            System.out.println("correctAnswers saved to session: " + allQuestions); // Thêm dòng này để log
 
             // Chuẩn bị dữ liệu gửi tới client (không bao gồm đáp án đúng)
             List<AnswersReader> questionsForClient = new ArrayList<>();
             for (AnswersReader q : allQuestions) {
-                // Tạo một bản sao của câu hỏi mà không bao gồm trường 'correct' (do @JsonIgnore)
+                // Tạo một bản sao của câu hỏi mà không bao gồm trường 'correct'
                 AnswersReader clientQuestion = new AnswersReader();
                 clientQuestion.setSequence(q.getSequence());
                 clientQuestion.setQuestion(q.getQuestion());
                 clientQuestion.setOptions(q.getOptions());
-                // 'correct' được loại bỏ nhờ @JsonIgnore
+                clientQuestion.setCorrect(q.getCorrect());
+                // 'correct' được loại bỏ nhờ không set giá trị
                 questionsForClient.add(clientQuestion);
             }
 
@@ -130,9 +148,13 @@ public class TakeQuizServlet extends HttpServlet {
             quizResponse.setQuestions(questionsForClient);
 
             // Convert to JSON and send response
+//            doan nay dung de in ra json cua quizResponse
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
             String jsonQuiz = mapper.writeValueAsString(quizResponse);
             response.getWriter().write(jsonQuiz);
+            for (AnswersReader q : questionsForClient) {
+                System.out.println("Answers: " + q.getCorrect()); // Thêm dòng này để log
+            }
         }
     }
 

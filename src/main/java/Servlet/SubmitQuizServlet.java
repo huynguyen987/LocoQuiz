@@ -2,6 +2,7 @@
 package Servlet;
 
 import Module.AnswersReader;
+import dao.QuizDAO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.servlet.ServletException;
@@ -29,7 +30,7 @@ public class SubmitQuizServlet extends HttpServlet {
         StringBuilder sb = new StringBuilder();
         try (BufferedReader reader = request.getReader()) {
             String line;
-            while ( (line = reader.readLine()) != null ) {
+            while ((line = reader.readLine()) != null) {
                 sb.append(line);
             }
         } catch (Exception e) {
@@ -42,10 +43,10 @@ public class SubmitQuizServlet extends HttpServlet {
         String requestBody = sb.toString();
         ObjectMapper mapper = new ObjectMapper();
 
-        // Parse JSON thành Map
-        Map<String, Object> requestData;
+        // Parse JSON thành đối tượng QuizSubmission
+        QuizSubmission submission;
         try {
-            requestData = mapper.readValue(requestBody, Map.class);
+            submission = mapper.readValue(requestBody, QuizSubmission.class);
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -53,37 +54,38 @@ public class SubmitQuizServlet extends HttpServlet {
             return;
         }
 
-        // Lấy quizId và userAnswers từ requestData
-        String quizIdStr = (String) requestData.get("quizId");
-        Map<String, String> userAnswers = (Map<String, String>) requestData.get("userAnswers");
+        int quizId = submission.getQuizId();
+        Map<String, String> userAnswers = submission.getUserAnswers();
 
-        if (quizIdStr == null || quizIdStr.isEmpty() || userAnswers == null) {
+        // Logging
+        System.out.println("Quiz ID: " + quizId);
+        System.out.println("User Answers: " + userAnswers);
+
+        if (userAnswers == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("{\"error\":\"Missing quizId or userAnswers.\"}");
+            response.getWriter().write("{\"error\":\"Missing userAnswers.\"}");
             return;
         }
 
-        int quizId;
+        // Sử dụng QuizDAO để lấy correctAnswers từ cơ sở dữ liệu
+        QuizDAO quizDAO = new QuizDAO();
+        List<AnswersReader> correctAnswers;
         try {
-            quizId = Integer.parseInt(quizIdStr);
-        } catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("{\"error\":\"Invalid quizId.\"}");
+//            correctAnswers = quizDAO.getCorrectbyId(quizId);
+//            System.out.println("Fetched correctAnswers from database: " + correctAnswers);
+//            get correct answers from session
+            correctAnswers = (List<AnswersReader>) request.getSession().getAttribute("correctAnswers");
+//            System.out.println("Fetched correctAnswers from session: " + correctAnswers);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"error\":\"Failed to retrieve correct answers.\"}");
             return;
         }
 
-        // Lấy correctAnswers từ session
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("{\"error\":\"Session not found.\"}");
-            return;
-        }
-
-        List<AnswersReader> correctAnswers = (List<AnswersReader>) session.getAttribute("correctAnswers");
         if (correctAnswers == null || correctAnswers.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("{\"error\":\"No correct answers found in session.\"}");
+            response.getWriter().write("{\"error\":\"No correct answers found for the given quizId.\"}");
             return;
         }
 
@@ -95,6 +97,9 @@ public class SubmitQuizServlet extends HttpServlet {
             String correctAnswer = correctAnswers.get(i).getCorrect();
             if (correctAnswer != null && correctAnswer.equals(userAnswer)) {
                 score++;
+                System.out.println("Correct: " + correctAnswer + " User: " + userAnswer);
+            } else {
+                System.out.println("Correct: " + correctAnswer + " User: " + userAnswer);
             }
         }
 

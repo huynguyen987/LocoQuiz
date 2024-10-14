@@ -1,10 +1,16 @@
+<%@ page import="java.util.List" %>
+<%@ page import="Module.AnswersReader" %>
 <!-- File: src/main/webapp/jsp/quiz.jsp -->
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
 <%
     String quizId = (String) request.getAttribute("quizId");
     if (quizId == null || quizId.isEmpty()) {
         quizId = "1"; // Giá trị mặc định nếu không có
     }
+    session.setAttribute("quizId", quizId); // Lưu quizId vào session
+
+
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -117,8 +123,11 @@
             <option value="1500">25 Minutes</option>
             <option value="custom">Custom</option>
         </select>
+        <!-- đoạn này cho phép sửa time nếu chọn custom -->
         <br>
-        <input type="number" id="custom-time" min="300" max="3600" step="60" placeholder="Enter time in seconds">
+        <div style="text-align: center;">
+            <input type="number" id="custom-time" min="300" max="3600" step="60" placeholder="Enter time in seconds" style="text-align: center;">
+        </div>
         <br>
         <button onclick="startQuiz()">Start Quiz</button>
     </div>
