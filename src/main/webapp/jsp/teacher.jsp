@@ -62,6 +62,9 @@
   <ul>
     <li><a href="<%= request.getContextPath() %>/jsp/teacher.jsp"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
     <li><a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=createClass"><i class="fas fa-plus"></i> Create Class</a></li>
+    <li><a href="<%= request.getContextPath() %>/jsp/quiz-creator.jsp"><i class="fas fa-plus-circle"></i> Create Quiz</a></li>
+    <li><a href="<%= request.getContextPath() %>/jsp/my-quizzes.jsp"><i class="fas fa-question-circle"></i> My Quizzes</a></li>
+    <li><a href="<%= request.getContextPath() %>/jsp/my-classes.jsp"><i class="fas fa-chalkboard"></i> My Classes</a></li>
     <!-- Add other sidebar items as needed -->
   </ul>
 </aside>
