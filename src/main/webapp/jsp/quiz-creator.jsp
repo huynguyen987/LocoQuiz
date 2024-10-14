@@ -29,7 +29,7 @@
 
 <div class="container">
     <!-- Back to Home Button -->
-    <a href="${pageContext.request.contextPath}/index.jsp" class="back-to-home-btn">Back to Home</a>
+    <a href="${pageContext.request.contextPath}/jsp/teacher.jsp" class="back-to-home-btn">Back to Home</a>
 
     <h1>Create a New Quiz</h1>
 
