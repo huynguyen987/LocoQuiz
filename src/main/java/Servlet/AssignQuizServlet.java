@@ -16,9 +16,8 @@ import java.util.List; // Add this import
 @WebServlet(name = "AssignQuizServlet", urlPatterns = {"/AssignQuizServlet"})
 public class AssignQuizServlet extends HttpServlet {
 
-    // Handle GET requests to display the assign quiz form
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Check permissions and retrieve necessary data
+        // Check permissions
         HttpSession session = request.getSession();
         Users currentUser = (Users) session.getAttribute("user");
         if (currentUser == null || (currentUser.getRole_id() != Users.ROLE_TEACHER && currentUser.getRole_id() != Users.ROLE_ADMIN)) {

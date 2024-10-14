@@ -1,13 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package Servlet;
 
 import dao.UsersDAO;
 import entity.Users;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,17 +10,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebServlet("/EditProfileServlet") // Đảm bảo rằng đường dẫn này trùng khớp với form action
+@WebServlet("/EditProfileServlet")
 public class EditProfileServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Lấy session hiện tại, không tạo session mới nếu không tồn tại
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("username") == null) {
-            response.sendRedirect(request.getContextPath()+ "jsp/login.jsp");
+        if (session == null || session.getAttribute("user") == null) {
+            response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");
             return;
         }
 
-        String currentUsername = (String) session.getAttribute("username");
+        Users currentUser = (Users) session.getAttribute("user");
 
         // Lấy các thông tin mới từ form
         String newUsername = request.getParameter("username");
@@ -35,7 +30,7 @@ public class EditProfileServlet extends HttpServlet {
         UsersDAO userDAO = new UsersDAO();
         try {
             // Lấy người dùng hiện tại từ cơ sở dữ liệu
-            Users user = userDAO.getUserByUsername(currentUsername);
+            Users user = userDAO.getUserByUsername(currentUser.getUsername());
 
             if (user != null) {
                 // Cập nhật thông tin người dùng
@@ -49,10 +44,9 @@ public class EditProfileServlet extends HttpServlet {
                 boolean isUpdated = userDAO.updateUser(user);
 
                 if (isUpdated) {
-                    // Nếu username đã thay đổi, cập nhật lại trong session
-                    if (!currentUsername.equals(newUsername)) {
-                        session.setAttribute("username", newUsername);
-                    }
+                    // Cập nhật lại đối tượng user trong session
+                    session.setAttribute("user", user);
+
                     // Thiết lập thông báo thành công
                     request.setAttribute("success", "Profile updated successfully.");
                 } else {
@@ -70,11 +64,18 @@ public class EditProfileServlet extends HttpServlet {
         }
 
         // Chuyển tiếp lại trang edit-profile.jsp để hiển thị thông báo và cập nhật thông tin
-        request.getRequestDispatcher(request.getContextPath()+ "jsp/edit-profile.jsp").forward(request, response);
+        request.getRequestDispatcher("/jsp/edit-profile.jsp").forward(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Nếu cần hỗ trợ GET, có thể triển khai tại đây hoặc chuyển hướng tới POST
-        response.sendRedirect(request.getContextPath()+"edit-profile.jsp");
+        // Kiểm tra session và người dùng
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user") == null) {
+            response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");
+            return;
+        }
+
+        // Chuyển hướng đến trang edit-profile.jsp
+        response.sendRedirect(request.getContextPath() + "/jsp/edit-profile.jsp");
     }
 }

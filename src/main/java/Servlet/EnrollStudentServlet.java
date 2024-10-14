@@ -42,8 +42,8 @@ public class EnrollStudentServlet extends   HttpServlet {
         // Check user authentication and authorization
         HttpSession session = request.getSession();
         Users currentUser = (Users) session.getAttribute("user");
-
-        if (currentUser == null || (!currentUser.hasRole("teacher") && !currentUser.hasRole("admin"))) {
+        // Check if the user is not logged in or is not a teacher or admin
+        if (currentUser == null || (currentUser.getRole_id() != Users.ROLE_TEACHER && currentUser.getRole_id() != Users.ROLE_ADMIN)) {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
@@ -51,28 +51,30 @@ public class EnrollStudentServlet extends   HttpServlet {
         // Get classId from the request parameter
         int classId = Integer.parseInt(request.getParameter("classId"));
 
+        // Get class details
         try {
             ClassDAO classDAO = new ClassDAO();
             classs classEntity = classDAO.getClassById(classId);
 
+            // Check if the class exists
             if (classEntity == null) {
                 request.setAttribute("errorMessage", "Class not found.");
                 request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
                 return;
             }
 
-            // Ensure the current user is the teacher of the class or an admin
+            // Check if the current user is the teacher of the class or an admin
             if (classEntity.getTeacher_id() != currentUser.getId() && !currentUser.hasRole("admin")) {
                 request.setAttribute("errorMessage", "You do not have permission to enroll students in this class.");
                 request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
                 return;
             }
 
-            // Get the list of students not yet enrolled in the class
+            // Get all students not in the class
             UsersDAO usersDAO = new UsersDAO();
             List<Users> students = usersDAO.getAllStudentsNotInClass(classId);
 
-            // Set attributes for the JSP page
+            // Set attributes and forward to the enrollment JSP page
             request.setAttribute("classEntity", classEntity);
             request.setAttribute("students", students);
 
