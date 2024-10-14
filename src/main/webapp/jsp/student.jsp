@@ -1,17 +1,31 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.*" %>
-
-<!DOCTYPE html>
+<%@ page import="entity.Users, dao.UsersDAO" %>
+<%@ page import="java.sql.SQLException" %>
 
 <%
-    // Check if user is student
-    session = request.getSession();
-    entity.Users currentUser = (entity.Users) session.getAttribute("user");
-    if (currentUser == null || !"student".equals(currentUser.getRoleName())) {
+    // Kiểm tra nếu user không phải là student
+    session = request.getSession(false);
+    Users currentUser = null;
+    if (session != null) {
+        currentUser = (Users) session.getAttribute("user");
+    }
+    if (currentUser == null || !"student".equalsIgnoreCase(currentUser.getRoleName())) {
         response.sendRedirect(request.getContextPath() + "/unauthorized.jsp");
         return;
     }
+
+    // Lấy thông tin người dùng hiện tại từ cơ sở dữ liệu để đảm bảo thông tin mới nhất
+    Users user = null;
+    try {
+        user = new UsersDAO().getUserById(currentUser.getId());
+    } catch (SQLException | ClassNotFoundException e) {
+        throw new ServletException(e);
+    }
+
+    // Lấy tham số message từ URL để hiển thị thông báo
+    String message = request.getParameter("message");
 %>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -39,12 +53,6 @@
                 <a href="<%= request.getContextPath() %>/jsp/my-classes.jsp">
                     <i class="fas fa-chalkboard"></i>
                     <span>My Classes</span>
-                </a>
-            </li>
-            <li>
-                <a href="<%= request.getContextPath() %>/jsp/recent-quizzes.jsp">
-                    <i class="fas fa-pencil-alt"></i>
-                    <span>Recent Quizzes</span>
                 </a>
             </li>
             <li>
@@ -91,7 +99,7 @@
             </div>
             <div class="user-profile">
                 <i class="fas fa-user-circle"></i>
-                <span class="username"><%= currentUser.getUsername() %></span>
+                <span class="username"><%= user.getUsername() %></span>
                 <ul class="profile-menu">
                     <li><a href="<%= request.getContextPath() %>/jsp/user-profile.jsp">Profile</a></li>
                     <li><a href="<%= request.getContextPath() %>/LogoutServlet">Logout</a></li>
@@ -112,7 +120,10 @@
 <main>
     <!-- Student Dashboard -->
     <section id="dashboard" class="dashboard">
-        <h1>Welcome, <%= currentUser.getUsername() %>!</h1>
+        <% if (message != null) { %>
+        <div class="success-message"><%= message %></div>
+        <% } %>
+        <h1>Welcome, <%= user.getUsername() %>!</h1>
         <p>Access your classes, quizzes, and track your progress all in one place.</p>
 
         <!-- Grid of Cards -->

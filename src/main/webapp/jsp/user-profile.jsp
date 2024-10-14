@@ -4,30 +4,22 @@
 <%@ page import="java.util.Base64" %>
 
 <%
-    // Kiểm tra nếu người dùng đã đăng nhập
-    String username = (String) session.getAttribute("username");
-    if (username == null) {
-        // Chuyển hướng đến trang đăng nhập nếu chưa đăng nhập
-        response.sendRedirect("login.jsp");
+    // Kiểm tra nếu người dùng đã đăng nhập cho 3 role (admin, teacher, student)
+    session = request.getSession();
+    Users currentUser = (Users) session.getAttribute("user");
+    if (currentUser == null
+            || (currentUser.getRole_id() != Users.ROLE_STUDENT
+            && currentUser.getRole_id() != Users.ROLE_TEACHER
+            && currentUser.getRole_id() != Users.ROLE_ADMIN)) {
+        response.sendRedirect(request.getContextPath() + "/unauthorized.jsp");
         return;
     }
 
     // Tạo một instance của UsersDAO
     UsersDAO userDAO = new UsersDAO();
-
-    // Lấy thông tin người dùng từ cơ sở dữ liệu bằng username
-    Users user = null;
-    try {
-        user = userDAO.getUserByUsername(username);
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-
-    if (user == null) {
-        // Xử lý trường hợp không tìm thấy người dùng
-        out.println("<p>User not found.</p>");
-        return;
-    }
+    Users user = userDAO.getUserById(currentUser.getId());
+%>
+}
 %>
 <!DOCTYPE html>
 <html lang="en">

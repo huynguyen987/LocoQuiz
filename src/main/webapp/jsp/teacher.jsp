@@ -3,15 +3,18 @@
 <%@ page import="java.util.List" %>
 <%@ page import="entity.quiz" %>
 <%
-  // Session and user authentication
-  session = request.getSession();
-  Users currentUser = (Users) session.getAttribute("user");
-  if (currentUser == null || currentUser.getRole_id() != Users.ROLE_TEACHER) {
+  // Session và xác thực người dùng
+  session = request.getSession(false);
+  Users currentUser = null;
+  if (session != null) {
+    currentUser = (Users) session.getAttribute("user");
+  }
+  if (currentUser == null || !"teacher".equalsIgnoreCase(currentUser.getRoleName())) {
     response.sendRedirect(request.getContextPath() + "/unauthorized.jsp");
     return;
   }
 
-  // Fetch the list of classes taught by the current teacher
+  // Lấy danh sách lớp học của giáo viên hiện tại
   ClassDAO classDAO = new ClassDAO();
   List<classs> classes = null;
   try {
@@ -20,13 +23,13 @@
     e.printStackTrace();
   }
 
-  // Get the action parameter to determine which section to display
+  // Lấy tham số 'action' để xác định phần nội dung hiển thị
   String action = request.getParameter("action");
   if (action == null) {
-    action = "dashboard"; // Default action
+    action = "dashboard"; // Mặc định
   }
 
-  // Get the message parameter to display success or error messages
+  // Lấy tham số 'message' để hiển thị thông báo
   String message = request.getParameter("message");
 %>
 <!DOCTYPE html>
@@ -43,16 +46,10 @@
 <header>
   <div class="container">
     <a href="<%= request.getContextPath() %>/jsp/teacher.jsp" class="logo">QuizLoco</a>
-    <nav>
-      <ul>
-        <li><a href="<%= request.getContextPath() %>/jsp/teacher.jsp">Dashboard</a></li>
-        <li><a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=createClass">Create Class</a></li>
-        <!-- Add other nav items as needed -->
-      </ul>
-    </nav>
     <div class="user-info">
       <span>Welcome, <%= currentUser.getUsername() %></span>
       <a href="<%= request.getContextPath() %>/LogoutServlet" class="logout-btn">Logout</a>
+      <a href="<%= request.getContextPath() %>/jsp/edit-profile.jsp" class="dashboard-link">Profile</a>
     </div>
   </div>
 </header>
@@ -62,7 +59,9 @@
   <ul>
     <li><a href="<%= request.getContextPath() %>/jsp/teacher.jsp"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
     <li><a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=createClass"><i class="fas fa-plus"></i> Create Class</a></li>
-    <!-- Add other sidebar items as needed -->
+    <li><a href="<%= request.getContextPath() %>/QuizController"><i class="fas fa-plus"></i> Create Quiz</a></li>
+    <li><a href="<%= request.getContextPath() %>/AllQuizzesServlet"><i class="button"></i>View Quiz</a>
+    </li>
   </ul>
 </aside>
 
