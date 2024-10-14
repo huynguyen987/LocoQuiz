@@ -1,4 +1,11 @@
+<!-- File: src/main/webapp/jsp/quiz.jsp -->
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+    String quizId = (String) request.getAttribute("quizId");
+    if (quizId == null || quizId.isEmpty()) {
+        quizId = "1"; // Giá trị mặc định nếu không có
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +13,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Practice - 30 Questions</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/quiz.css">
+    <style>
+        /* Thêm một số kiểu cơ bản cho modal */
+        .modal {
+            display: none; /* Ẩn mặc định */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .modal-content select, .modal-content button, .modal-content input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .modal-content input {
+            display: none; /* Ẩn input tùy chỉnh mặc định */
+        }
+    </style>
 </head>
 <body>
 <div class="quiz-container">
@@ -58,14 +97,39 @@
 </div>
 
 <!-- Result Modal -->
-<div id="result-modal" class="modal">
+<div id="result-modal" class="modal" style="display: none;">
     <div class="modal-content">
         <span class="close-button" onclick="quiz.closeModal()">&times;</span>
         <h2>Your Results</h2>
         <p id="result-text">You scored X out of Y.</p>
         <button onclick="quiz.restartQuiz()">Restart Quiz</button>
+        <button onclick="quiz.exitQuiz()">Exit Quiz</button>
     </div>
 </div>
+
+<!-- Time Selection Modal -->
+<div id="time-modal" class="modal">
+    <div class="modal-content">
+        <h2>Select Time for Quiz</h2>
+        <select id="time-select" onchange="toggleCustomTimeInput(this.value)">
+            <option value="900">15 Minutes</option>
+            <option value="1200">20 Minutes</option>
+            <option value="1500">25 Minutes</option>
+            <option value="custom">Custom</option>
+        </select>
+        <br>
+        <input type="number" id="custom-time" min="300" max="3600" step="60" placeholder="Enter time in seconds">
+        <br>
+        <button onclick="startQuiz()">Start Quiz</button>
+    </div>
+</div>
+
+<!-- Thêm biến JavaScript để truyền quizId và contextPath -->
+<script>
+    // Truyền quizId và contextPath từ server sang client
+    var quizId = '<%= quizId %>';
+    var contextPath = '<%= request.getContextPath() %>';
+</script>
 
 <!-- External JavaScript file -->
 <script src="${pageContext.request.contextPath}/js/quiz.js"></script>
