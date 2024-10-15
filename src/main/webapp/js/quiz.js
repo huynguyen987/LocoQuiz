@@ -2,7 +2,7 @@
 
 // Quiz Class Definition
 class Quiz {
-    constructor(quizData) { // nhận đối tượng quizData
+    constructor(quizData) {
         this.quizData = quizData.questions; // Array of question objects
         this.totalQuestions = quizData.totalQuestions;
         this.timeLimit = quizData.timeLimit; // timeLimit in seconds
@@ -191,14 +191,12 @@ class Quiz {
     // Submit Quiz and Show Results
     submitQuiz() {
         clearInterval(this.timerId);
-        const data = JSON.stringify(this.userAnswers);
         // Send quiz data to server for grading
         fetch(`${contextPath}/SubmitQuizServlet`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            // {quizId: "quizId", userAnswers: "this.userAnswers"}
             body: JSON.stringify({
                 quizId: quizId,
                 userAnswers: this.userAnswers
@@ -217,7 +215,7 @@ class Quiz {
                     const score = data.score;
                     const total = data.total;
                     this.resultText.textContent = `You scored ${score} out of ${total}.`;
-                    this.resultModal.style.display = 'block';
+                    this.resultModal.style.display = 'flex';
                 }
             })
             .catch(error => {
@@ -250,7 +248,7 @@ class Quiz {
         this.startTimer();
     }
 
-    // Jump to Section (Optional for 30 questions)
+    // Jump to Section
     jumpToSection(sectionNumber) {
         // Calculate questions per section
         const sections = 3;
@@ -284,64 +282,36 @@ function startQuiz() {
     // Time selection
     const timeSelect = document.getElementById('time-select');
     const selectedTimeValue = timeSelect.value;
-    let selectedTime;
+    let selectedTime = selectedTimeValue === 'custom'
+        ? parseInt(document.getElementById('custom-time').value, 10)
+        : parseInt(selectedTimeValue, 10);
 
-    if (selectedTimeValue === 'custom') {
-        const customTimeInput = document.getElementById('custom-time');
-        selectedTime = parseInt(customTimeInput.value, 10);
-
-        if (isNaN(selectedTime)) {
-            alert('Please enter a valid custom time.');
-            return;
-        }
-
-        // Validate custom time (min: 300 seconds, max: 3600 seconds)
-        if (selectedTime < 300 || selectedTime > 3600) {
-            alert('Please enter a time between 5 and 60 minutes.');
-            return;
-        }
-    } else {
-        selectedTime = parseInt(selectedTimeValue, 10);
+    // Validate time
+    if (isNaN(selectedTime) || selectedTime < 300 || selectedTime > 3600) {
+        alert('Please enter a valid time between 300 and 3600 seconds.');
+        return;
     }
 
     // Number of questions selection
     const questionCountSelect = document.getElementById('question-count-select');
     const questionCountValue = questionCountSelect.value;
-    let selectedQuestionCount;
+    let selectedQuestionCount = questionCountValue === 'custom'
+        ? parseInt(document.getElementById('custom-question-count').value, 10)
+        : parseInt(questionCountValue, 10);
 
-    if (questionCountValue === 'custom') {
-        const customQuestionCountInput = document.getElementById('custom-question-count');
-        selectedQuestionCount = parseInt(customQuestionCountInput.value, 10);
-
-        if (isNaN(selectedQuestionCount)) {
-            alert('Please enter a valid number of questions.');
-            return;
-        }
-
-        // Validate selectedQuestionCount between 1 and maxQuestionCount
-        if (selectedQuestionCount < 1 || selectedQuestionCount > maxQuestionCount) {
-            alert(`Please enter a number between 1 and ${maxQuestionCount}.`);
-            return;
-        }
-    } else {
-        selectedQuestionCount = parseInt(questionCountValue, 10);
+    // Validate question count
+    if (isNaN(selectedQuestionCount) || selectedQuestionCount < 1 || selectedQuestionCount > maxQuestionCount) {
+        alert(`Please enter a valid number of questions between 1 and ${maxQuestionCount}.`);
+        return;
     }
 
     // Shuffle option
     const shuffleSelect = document.getElementById('shuffle-select');
-    const shuffleValue = shuffleSelect.value;
-    let shuffleQuestions;
-    if (shuffleValue === 'true') {
-        shuffleQuestions = true;
-    } else {
-        shuffleQuestions = false;
-    }
+    const shuffleQuestions = shuffleSelect.checked;
 
     // Hide the modal and show the quiz container
-    const timeModal = document.getElementById('time-modal');
-    timeModal.style.display = 'none';
-    const quizContainer = document.querySelector('.quiz-container');
-    quizContainer.style.display = 'block';
+    document.getElementById('quiz-settings-modal').style.display = 'none';
+    document.querySelector('.quiz-container').style.display = 'block';
 
     // Fetch quiz data with selected parameters
     fetchQuizData(quizId, selectedTime, selectedQuestionCount, shuffleQuestions)
@@ -357,23 +327,13 @@ function startQuiz() {
 // Function to toggle custom time input visibility
 function toggleCustomTimeInput(value) {
     const customTimeInput = document.getElementById('custom-time');
-    if (value === 'custom') {
-        customTimeInput.style.display = 'block';
-        customTimeInput.focus();
-    } else {
-        customTimeInput.style.display = 'none';
-    }
+    customTimeInput.style.display = (value === 'custom') ? 'block' : 'none';
 }
 
 // Function to toggle custom question count input visibility
 function toggleCustomQuestionCountInput(value) {
     const customQuestionCountInput = document.getElementById('custom-question-count');
-    if (value === 'custom') {
-        customQuestionCountInput.style.display = 'block';
-        customQuestionCountInput.focus();
-    } else {
-        customQuestionCountInput.style.display = 'none';
-    }
+    customQuestionCountInput.style.display = (value === 'custom') ? 'block' : 'none';
 }
 
 // Initialize quiz when the page has fully loaded
@@ -383,8 +343,8 @@ document.addEventListener('DOMContentLoaded', () => {
     quizContainer.style.display = 'none';
 
     // Show modal to select quiz settings
-    const timeModal = document.getElementById('time-modal');
-    timeModal.style.display = 'block';
+    const quizSettingsModal = document.getElementById('quiz-settings-modal');
+    quizSettingsModal.style.display = 'flex';
 
     // Optional: Validate custom-question-count input on manual entry
     const customQuestionCountInput = document.getElementById('custom-question-count');
@@ -394,6 +354,17 @@ document.addEventListener('DOMContentLoaded', () => {
             this.value = 1;
         } else if (value > maxQuestionCount) {
             this.value = maxQuestionCount;
+        }
+    });
+
+    // Optional: Validate custom-time input on manual entry
+    const customTimeInput = document.getElementById('custom-time');
+    customTimeInput.addEventListener('input', function() {
+        let value = parseInt(this.value, 10);
+        if (isNaN(value) || value < 300) {
+            this.value = 300;
+        } else if (value > 3600) {
+            this.value = 3600;
         }
     });
 });
