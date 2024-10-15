@@ -4,6 +4,7 @@ package Module;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AnswersReader {
@@ -60,7 +61,15 @@ public class AnswersReader {
         this.sequence = sequence;
     }
 
-//    get list of correct answers
+//  shuffle options
+    public void shuffleOptions() {
+        for (int i = 0; i < options.size(); i++) {
+            int randomIndex = (int) (Math.random() * options.size());
+            String temp = options.get(i);
+            options.set(i, options.get(randomIndex));
+            options.set(randomIndex, temp);
+        }
+    }
 
     // toString
     @Override
@@ -71,5 +80,12 @@ public class AnswersReader {
                 ", options=" + options +
                 ", question='" + question + '\'' +
                 '}';
+    }
+
+//    test shuffleOptions
+    public static void main(String[] args) {
+        AnswersReader answersReader = new AnswersReader(1, "A", new ArrayList<>(List.of("A", "B", "C", "D")), "What is the capital of Vietnam?");
+        answersReader.shuffleOptions();
+        System.out.println(answersReader);
     }
 }

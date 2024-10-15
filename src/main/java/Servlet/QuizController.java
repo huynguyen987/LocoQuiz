@@ -88,6 +88,7 @@ public class QuizController extends HttpServlet {
                     String correctAnswer = request.getParameter("correctAnswer" + i);
 
                     // Build the question JSON object
+                    questionObj.put("sequence", i);
                     questionObj.put("question", questionContent);
                     questionObj.put("options", Arrays.asList(answers));
                     questionObj.put("correct", correctAnswer);
@@ -136,7 +137,11 @@ public class QuizController extends HttpServlet {
                 userQuizDAO userQuizDAO = new userQuizDAO();
                 for (String tagIdStr : quizTagIds) {
                     int tagId = Integer.parseInt(tagIdStr);
+                    // Insert into quiz_tag table
+                    quizDAO.insertQuizTag(quizId, tagId);
+                    // Insert into user_quiz table
                     userQuizDAO.insertUserQuiz(userId, quizId, tagId);
+
                 }
 
                 // Redirect to a success page
