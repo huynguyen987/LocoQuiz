@@ -11,6 +11,7 @@ import jakarta.servlet.http.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -92,6 +93,9 @@ public class SubmitQuizServlet extends HttpServlet {
         // Tính điểm
         int score = 0;
         int total = correctAnswers.size();
+//        sort by sequence
+        correctAnswers.sort(Comparator.comparing(AnswersReader::getSequence));
+
         for (int i = 0; i < total; i++) {
             String userAnswer = userAnswers.get(String.valueOf(i));
             String correctAnswer = correctAnswers.get(i).getCorrect();

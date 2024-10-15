@@ -88,6 +88,7 @@ public class QuizController extends HttpServlet {
                     String correctAnswer = request.getParameter("correctAnswer" + i);
 
                     // Build the question JSON object
+                    questionObj.put("sequence", i);
                     questionObj.put("question", questionContent);
                     questionObj.put("options", Arrays.asList(answers));
                     questionObj.put("correct", correctAnswer);
