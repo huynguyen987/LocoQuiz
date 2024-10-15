@@ -1,28 +1,35 @@
+<!-- File: src/main/webapp/jsp/quiz.jsp -->
 <%@ page import="java.util.List" %>
 <%@ page import="Module.AnswersReader" %>
-<!-- File: src/main/webapp/jsp/quiz.jsp -->
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%
     String quizId = (String) request.getAttribute("quizId");
-    if (quizId == null || quizId.isEmpty()) {
-        quizId = "1"; // Giá trị mặc định nếu không có
+    Object maxQuestionCountObj = request.getAttribute("maxQuestionCount");
+    int maxQuestionCount = 0;
+    if (maxQuestionCountObj != null) {
+        try {
+            maxQuestionCount = Integer.parseInt(maxQuestionCountObj.toString());
+        } catch (NumberFormatException e) {
+            maxQuestionCount = 0; // Handle invalid number
+        }
     }
-    session.setAttribute("quizId", quizId); // Lưu quizId vào session
-
-
+    if (quizId == null || quizId.isEmpty()) {
+        quizId = "1"; // Default value if not present
+    }
+    session.setAttribute("quizId", quizId); // Store quizId in session
 %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Practice - 30 Questions</title>
+    <title>Quiz Practice</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/quiz.css">
     <style>
-        /* Thêm một số kiểu cơ bản cho modal */
+        /* Basic styles for modal */
         .modal {
-            display: none; /* Ẩn mặc định */
+            display: none; /* Hidden by default */
             position: fixed;
             z-index: 1000;
             left: 0;
@@ -34,10 +41,10 @@
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 10% auto;
+            margin: 5% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 300px;
+            width: 350px;
             text-align: center;
             border-radius: 5px;
         }
@@ -48,7 +55,44 @@
             font-size: 16px;
         }
         .modal-content input {
-            display: none; /* Ẩn input tùy chỉnh mặc định */
+            display: none; /* Hide custom inputs by default */
+        }
+        .active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .answered {
+            background-color: #2196F3;
+            color: white;
+        }
+        /* Styles for number input with spinner */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        .number-input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .number-input-container input[type=number] {
+            width: 60%;
+            text-align: center;
+        }
+        .number-input-container .spinner-button {
+            width: 20%;
+            padding: 10px;
+            background-color: #ddd;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .number-input-container .spinner-button:active {
+            background-color: #ccc;
         }
     </style>
 </head>
@@ -56,13 +100,13 @@
 <div class="quiz-container">
     <!-- Quiz Header with Timer and Progress Bar -->
     <div class="quiz-header">
-        <div class="countdown-timer" id="countdown-timer">Time left: 15:00</div>
+        <div class="countdown-timer" id="countdown-timer">Time left: <span id="time-left"></span></div>
         <div class="progress-container">
             <div class="progress-bar">
                 <div class="progress" id="progress"></div>
             </div>
             <div class="progress-details">
-                <span id="answered-count">0</span> / <span id="total-count">30</span> Answered
+                <span id="answered-count">0</span> / <span id="total-count"></span> Answered
             </div>
         </div>
     </div>
@@ -113,34 +157,76 @@
     </div>
 </div>
 
-<!-- Time Selection Modal -->
+<!-- Time and Quiz Settings Modal -->
 <div id="time-modal" class="modal">
     <div class="modal-content">
-        <h2>Select Time for Quiz</h2>
+        <h2>Quiz Settings</h2>
+
+        <!-- Time Selection -->
+        <label for="time-select">Select Time for Quiz:</label>
         <select id="time-select" onchange="toggleCustomTimeInput(this.value)">
             <option value="900">15 Minutes</option>
             <option value="1200">20 Minutes</option>
             <option value="1500">25 Minutes</option>
             <option value="custom">Custom</option>
         </select>
-        <!-- đoạn này cho phép sửa time nếu chọn custom -->
-        <br>
         <div style="text-align: center;">
-            <input type="number" id="custom-time" min="300" max="3600" step="60" placeholder="Enter time in seconds" style="text-align: center;">
+            <input type="number" id="custom-time" min="300" max="3600" step="60" placeholder="Enter time in seconds" style="text-align: center; display: none;">
         </div>
+
+        <!-- Number of Questions Selection -->
+        <label for="question-count-select">Select Number of Questions:</label>
+        <select id="question-count-select" onchange="toggleCustomQuestionCountInput(this.value)">
+            <option value="10">10 Questions</option>
+            <option value="20">20 Questions</option>
+            <option value="30">30 Questions</option>
+            <option value="custom">Custom</option>
+        </select>
+        <div class="number-input-container" style="text-align: center; margin-top: 10px;">
+            <button type="button" class="spinner-button" onclick="decrementQuestionCount()">&#8722;</button>
+            <input type="number" id="custom-question-count" min="1" max="<%= maxQuestionCount %>" step="1" placeholder="Enter number of questions" style="text-align: center; display: none;">
+            <button type="button" class="spinner-button" onclick="incrementQuestionCount()">&#43;</button>
+        </div>
+
+        <!-- Shuffle Questions Option -->
+        <label for="shuffle-select">Shuffle Questions:</label>
+        <select id="shuffle-select">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select>
+
         <br>
         <button onclick="startQuiz()">Start Quiz</button>
     </div>
 </div>
 
-<!-- Thêm biến JavaScript để truyền quizId và contextPath -->
+<!-- JavaScript variables -->
 <script>
-    // Truyền quizId và contextPath từ server sang client
+    // Pass quizId, contextPath, and maxQuestionCount to JavaScript
     var quizId = '<%= quizId %>';
     var contextPath = '<%= request.getContextPath() %>';
+    var maxQuestionCount = <%= maxQuestionCount %>;
 </script>
 
 <!-- External JavaScript file -->
 <script src="${pageContext.request.contextPath}/js/quiz.js"></script>
+<script>
+    // Functions to increment and decrement question count
+    function incrementQuestionCount() {
+        const input = document.getElementById('custom-question-count');
+        let currentValue = parseInt(input.value, 10) || 0;
+        if (currentValue < maxQuestionCount) {
+            input.value = currentValue + 1;
+        }
+    }
+
+    function decrementQuestionCount() {
+        const input = document.getElementById('custom-question-count');
+        let currentValue = parseInt(input.value, 10) || 0;
+        if (currentValue > 1) {
+            input.value = currentValue - 1;
+        }
+    }
+</script>
 </body>
 </html>

@@ -105,6 +105,37 @@ body {
     margin-bottom: 20px;
 }
 
+
+/* Styles for number input with spinner */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+}
+.number-input-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.number-input-container input[type=number] {
+    width: 60%;
+    text-align: center;
+}
+.number-input-container .spinner-button {
+    width: 20%;
+    padding: 10px;
+    background-color: #ddd;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+.number-input-container .spinner-button:active {
+    background-color: #ccc;
+}
+
 .navigation-buttons button {
     padding: 10px 20px;
     font-size: 1em;

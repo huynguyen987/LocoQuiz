@@ -1,8 +1,6 @@
-// File: src/main/java/Servlet/SubmitQuizServlet.java
 package Servlet;
 
 import Module.AnswersReader;
-import dao.QuizDAO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.servlet.ServletException;
@@ -11,23 +9,21 @@ import jakarta.servlet.http.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-@WebServlet(name = "SubmitQuizServlet", value = "/SubmitQuizServlet")
-public class SubmitQuizServlet extends HttpServlet {
+@WebServlet(name = "SubmitMatchQuizServlet", value = "/SubmitMatchQuizServlet")
+public class SubmitMatchQuizServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Chỉ cho phép phương thức POST
+        // Only allow POST method
         if (!"POST".equalsIgnoreCase(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
             response.getWriter().write("{\"error\":\"Only POST method is allowed.\"}");
             return;
         }
 
-        // Đọc dữ liệu JSON từ request body
+        // Read JSON data from request body
         StringBuilder sb = new StringBuilder();
         try (BufferedReader reader = request.getReader()) {
             String line;
@@ -44,7 +40,7 @@ public class SubmitQuizServlet extends HttpServlet {
         String requestBody = sb.toString();
         ObjectMapper mapper = new ObjectMapper();
 
-        // Parse JSON thành đối tượng QuizSubmission
+        // Parse JSON into QuizSubmission object
         QuizSubmission submission;
         try {
             submission = mapper.readValue(requestBody, QuizSubmission.class);
@@ -68,11 +64,9 @@ public class SubmitQuizServlet extends HttpServlet {
             return;
         }
 
-        // Sử dụng QuizDAO để lấy correctAnswers từ session
-        QuizDAO quizDAO = new QuizDAO();
+        // Retrieve correctAnswers from session
         List<AnswersReader> correctAnswers;
         try {
-            // Lấy correctAnswers từ session đã lưu trữ trong TakeQuizServlet
             correctAnswers = (List<AnswersReader>) request.getSession().getAttribute("correctAnswers");
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,15 +81,20 @@ public class SubmitQuizServlet extends HttpServlet {
             return;
         }
 
-        // Tính điểm
-        int score = 0;
-        int total = correctAnswers.size();
-        // sort by sequence to ensure consistency
-//        correctAnswers.sort(Comparator.comparing(AnswersReader::getSequence));
+        // Build a map from sequence to correct answer
+        Map<String, String> correctAnswerMap = new HashMap<>();
+        for (AnswersReader ar : correctAnswers) {
+            correctAnswerMap.put(String.valueOf(ar.getSequence()), ar.getCorrect());
+        }
 
-        for (int i = 0; i < total; i++) {
-            String userAnswer = userAnswers.get(String.valueOf(i));
-            String correctAnswer = correctAnswers.get(i).getCorrect();
+        // Calculate score
+        int score = 0;
+        int total = correctAnswerMap.size();
+
+        for (String sequence : correctAnswerMap.keySet()) {
+            String correctAnswer = correctAnswerMap.get(sequence);
+            String userAnswer = userAnswers.get(sequence);
+
             if (correctAnswer != null && correctAnswer.equals(userAnswer)) {
                 score++;
                 System.out.println("Correct: " + correctAnswer + " User: " + userAnswer);
@@ -104,13 +103,13 @@ public class SubmitQuizServlet extends HttpServlet {
             }
         }
 
-        // Tạo đối tượng kết quả
+        // Create result object
         Map<String, Object> result = Map.of(
                 "score", score,
                 "total", total
         );
 
-        // Chuyển đổi đối tượng thành JSON và gửi phản hồi
+        // Convert object to JSON and send response
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         String jsonResult = mapper.writeValueAsString(result);
         response.setContentType("application/json;charset=UTF-8");
@@ -123,7 +122,7 @@ public class SubmitQuizServlet extends HttpServlet {
         processRequest(request, response);
     }
 
-    // Inner class để đại diện cho dữ liệu submission
+    // Inner class representing submission data
     public static class QuizSubmission {
         private int quizId;
         private Map<String, String> userAnswers;

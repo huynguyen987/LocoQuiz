@@ -1,4 +1,3 @@
-// File: src/main/java/Servlet/TakeQuizServlet.java
 package Servlet;
 
 import Module.AnswersReader;
@@ -12,25 +11,98 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @WebServlet(name = "TakeQuizServlet", value = "/TakeQuizServlet")
 public class TakeQuizServlet extends HttpServlet {
+
+    public void shuffleList(List<AnswersReader> list) {
+        Collections.shuffle(list);
+    }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String service = request.getParameter("service");
 
         if (service == null || service.isEmpty()) {
-            // Forward to quiz.jsp
+            // Forward to appropriate JSP based on quiz type
             String id = request.getParameter("id");
+            if (id == null || id.isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("Missing quizId parameter.");
+                return;
+            }
+
+            int quizId;
+            try {
+                quizId = Integer.parseInt(id);
+            } catch (NumberFormatException e) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("Invalid quizId parameter.");
+                return;
+            }
+
+            // Retrieve quiz data
+            QuizDAO quizDAO = new QuizDAO();
+            quiz quizData = null;
+            try {
+                quizData = quizDAO.getQuizById(quizId);
+            } catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().write("Database error.");
+                return;
+            }
+
+            if (quizData == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().write("Quiz not found.");
+                return;
+            }
+
+            // Parse answerJson to get total number of questions
+            ObjectMapper mapper = new ObjectMapper();
+            List<AnswersReader> allQuestions = null;
+            try {
+                String answerJson = quizData.getAnswer();
+                try {
+                    allQuestions = mapper.readValue(answerJson, mapper.getTypeFactory().constructCollectionType(List.class, AnswersReader.class));
+                } catch (IOException e) {
+                    // If not a list, try as a map
+                    Map<String, AnswersReader> answerMap = mapper.readValue(answerJson, mapper.getTypeFactory().constructMapType(Map.class, String.class, AnswersReader.class));
+                    allQuestions = new ArrayList<>(answerMap.values());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().write("Error parsing quiz data.");
+                return;
+            }
+
+            int maxQuestionCount = (allQuestions != null) ? allQuestions.size() : 0;
+
+            // Set attributes for JSP
             request.setAttribute("quizId", id);
-            request.getRequestDispatcher("jsp/quiz.jsp").forward(request, response);
+            request.setAttribute("maxQuestionCount", maxQuestionCount);
+
+            // Check the type_id
+            int typeId = quizData.getType_id();
+
+            if (typeId == 2) {
+                // If type_id == 2, forward to match-quiz.jsp
+                request.getRequestDispatcher("jsp/match-quiz.jsp").forward(request, response);
+            } else if (typeId == 1) {
+                // If type_id == 1, forward to quiz.jsp
+                request.getRequestDispatcher("jsp/quiz.jsp").forward(request, response);
+            } else {
+                // Unsupported type_id
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("Unsupported quiz type.");
+            }
             return;
         }
 
+        // Handle "loadQuiz" service
         response.setContentType("application/json;charset=UTF-8");
         HttpSession session = request.getSession(true);
 
@@ -51,24 +123,41 @@ public class TakeQuizServlet extends HttpServlet {
                 return;
             }
 
-            // Đọc tham số 'time' từ yêu cầu để cấu hình thời gian làm bài (tính bằng giây)
+            // Read 'time' parameter
             String timeStr = request.getParameter("time");
             int timeLimit;
             if (timeStr != null && !timeStr.isEmpty()) {
                 try {
                     timeLimit = Integer.parseInt(timeStr);
-                    // Giới hạn thời gian làm bài tối đa (ví dụ: 60 phút)
                     if (timeLimit > 3600) {
-                        timeLimit = 3600; // Giới hạn tối đa là 60 phút
+                        timeLimit = 3600;
                     }
                 } catch (NumberFormatException e) {
-                    timeLimit = 15 * 60; // Mặc định 15 phút nếu tham số 'time' không hợp lệ
+                    timeLimit = 15 * 60; // Default 15 minutes
                 }
             } else {
-                timeLimit = 15 * 60; // Mặc định 15 phút nếu không có tham số 'time'
+                timeLimit = 15 * 60; // Default 15 minutes
             }
 
-            // Truy xuất dữ liệu quiz từ cơ sở dữ liệu sử dụng QuizDAO
+            // Read 'questionCount' parameter
+            String questionCountStr = request.getParameter("questionCount");
+            int questionCount = -1; // Default to all questions
+            if (questionCountStr != null && !questionCountStr.isEmpty()) {
+                try {
+                    questionCount = Integer.parseInt(questionCountStr);
+                } catch (NumberFormatException e) {
+                    questionCount = -1; // Invalid, use all questions
+                }
+            }
+
+            // Read 'shuffle' parameter
+            String shuffleStr = request.getParameter("shuffle");
+            boolean shuffleQuestions = false; // Default no shuffle
+            if (shuffleStr != null && !shuffleStr.isEmpty()) {
+                shuffleQuestions = Boolean.parseBoolean(shuffleStr);
+            }
+
+            // Retrieve quiz data
             QuizDAO quizDAO = new QuizDAO();
             quiz quizData = null;
             try {
@@ -81,32 +170,22 @@ public class TakeQuizServlet extends HttpServlet {
             }
 
             if (quizData == null) {
-                // Không tìm thấy quiz
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 response.getWriter().write("{\"error\":\"Quiz not found.\"}");
                 return;
             }
 
-            // Giả sử quizData.getAnswer() chứa chuỗi JSON của các câu hỏi với các lựa chọn và đáp án đúng
+            // Parse answerJson to get all questions
             ObjectMapper mapper = new ObjectMapper();
             List<AnswersReader> allQuestions = null;
             try {
                 String answerJson = quizData.getAnswer();
-                System.out.println("Answer JSON: " + answerJson); // Thêm dòng này để log
-
-                // Kiểm tra nếu 'answerJson' là mảng
                 try {
                     allQuestions = mapper.readValue(answerJson, mapper.getTypeFactory().constructCollectionType(List.class, AnswersReader.class));
-                    for (AnswersReader q : allQuestions) {
-                        System.out.println("if array: "+q); // Thêm dòng này để log
-                    }
                 } catch (IOException e) {
-                    // Nếu không phải mảng, thử deserialized thành Map và lấy giá trị
+                    // If not a list, try as a map
                     Map<String, AnswersReader> answerMap = mapper.readValue(answerJson, mapper.getTypeFactory().constructMapType(Map.class, String.class, AnswersReader.class));
                     allQuestions = new ArrayList<>(answerMap.values());
-                    for (AnswersReader q : allQuestions) {
-                        System.out.println("if deserialized: "+q); // Thêm dòng này để log
-                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -121,41 +200,60 @@ public class TakeQuizServlet extends HttpServlet {
                 return;
             }
 
-            // Lưu trữ đáp án đúng vào session
-            session.setAttribute("correctAnswers", allQuestions);
-            System.out.println("correctAnswers saved to session: " + allQuestions); // Thêm dòng này để log
-
-            // Chuẩn bị dữ liệu gửi tới client (không bao gồm đáp án đúng)
-            List<AnswersReader> questionsForClient = new ArrayList<>();
-            for (AnswersReader q : allQuestions) {
-                // Tạo một bản sao của câu hỏi mà không bao gồm trường 'correct'
-                AnswersReader clientQuestion = new AnswersReader();
-                clientQuestion.setSequence(q.getSequence());
-                clientQuestion.setQuestion(q.getQuestion());
-                clientQuestion.setOptions(q.getOptions());
-                clientQuestion.setCorrect(q.getCorrect());
-                // 'correct' được loại bỏ nhờ không set giá trị
-                questionsForClient.add(clientQuestion);
+            // Shuffle if required
+            if (shuffleQuestions) {
+                shuffleList(allQuestions);
             }
 
-            // Sắp xếp các câu hỏi theo thứ tự sequence nếu cần thiết
-            questionsForClient.sort((q1, q2) -> Integer.compare(q1.getSequence(), q2.getSequence()));
+//            shuffleOptions(allQuestions);
+            for (AnswersReader question : allQuestions) {
+                question.shuffleOptions();
+            }
 
-            // Tạo đối tượng QuizResponse
+            // Validate and limit questionCount
+            int totalAvailableQuestions = allQuestions.size();
+            if (questionCount < 1 || questionCount > totalAvailableQuestions) {
+                questionCount = totalAvailableQuestions;
+            }
+
+            // Limit the number of questions
+            if (questionCount > 0 && questionCount < allQuestions.size()) {
+                allQuestions = allQuestions.subList(0, questionCount);
+            }
+
+            int totalQuestions = allQuestions.size();
+
+            // Store correct answers in session
+            session.setAttribute("correctAnswers", allQuestions);
+
+            // Prepare data to send to client
             QuizResponse quizResponse = new QuizResponse();
-            quizResponse.setTimeLimit(timeLimit); // Thiết lập thời gian làm bài từ tham số hoặc mặc định
-            quizResponse.setTotalQuestions(questionsForClient.size());
-            quizResponse.setQuestions(questionsForClient);
+//            quizResponse.setTitle(quizData.getTitle());
+            quizResponse.setTimeLimit(timeLimit);
+            quizResponse.setTotalQuestions(totalQuestions);
+            quizResponse.setQuestions(allQuestions);
 
             // Convert to JSON and send response
-//            doan nay dung de in ra json cua quizResponse
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
             String jsonQuiz = mapper.writeValueAsString(quizResponse);
             response.getWriter().write(jsonQuiz);
-            for (AnswersReader q : questionsForClient) {
-                System.out.println("Answers: " + q.getCorrect()); // Thêm dòng này để log
+        }
+    }
+
+    private List<AnswersReader> parseAnswerJson(String answerJson) {
+        ObjectMapper mapper = new ObjectMapper();
+        List<AnswersReader> allQuestions = null;
+        try {
+            allQuestions = mapper.readValue(answerJson, mapper.getTypeFactory().constructCollectionType(List.class, AnswersReader.class));
+        } catch (IOException e) {
+            try {
+                Map<String, AnswersReader> answerMap = mapper.readValue(answerJson, mapper.getTypeFactory().constructMapType(Map.class, String.class, AnswersReader.class));
+                allQuestions = new ArrayList<>(answerMap.values());
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
         }
+        return allQuestions;
     }
 
     @Override
@@ -164,20 +262,29 @@ public class TakeQuizServlet extends HttpServlet {
         processRequest(request, response);
     }
 
-    // Nếu cần xử lý POST thì có thể thêm doPost
+    // If needed, handle POST
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    // Lớp DTO để gửi dữ liệu tới client
+    // DTO class to send data to client
     public static class QuizResponse {
-        private int timeLimit; // thời gian làm bài tính bằng giây
+        private String title;
+        private int timeLimit; // time in seconds
         private int totalQuestions;
         private List<AnswersReader> questions;
 
         // Getters and Setters
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
         public int getTimeLimit() {
             return timeLimit;
         }

@@ -115,7 +115,7 @@ class Quiz {
             const btn = document.createElement('button');
             btn.textContent = i + 1;
             btn.onclick = (e) => {
-                e.preventDefault(); // Ngăn chặn hành vi mặc định của button
+                e.preventDefault(); // Prevent default button behavior
                 this.goToQuestion(i);
             };
             this.questionSelector.appendChild(btn);
@@ -177,7 +177,7 @@ class Quiz {
         let minutes = Math.floor(this.timeLeft / 60);
         let seconds = this.timeLeft % 60;
         if (seconds < 10) seconds = '0' + seconds;
-        this.countdownTimer.textContent = `Time left: ${minutes}:${seconds}`;
+        this.countdownTimer.innerHTML = `Time left: ${minutes}:${seconds}`;
     }
 
     // Update Progress Bar
@@ -192,14 +192,13 @@ class Quiz {
     submitQuiz() {
         clearInterval(this.timerId);
         const data = JSON.stringify(this.userAnswers);
-        // Gửi dữ liệu bài kiểm tra tới server để chấm điểm
+        // Send quiz data to server for grading
         fetch(`${contextPath}/SubmitQuizServlet`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             // {quizId: "quizId", userAnswers: "this.userAnswers"}
-            // HashMap<String, data> map = new HashMap<>();
             body: JSON.stringify({
                 quizId: quizId,
                 userAnswers: this.userAnswers
@@ -253,7 +252,7 @@ class Quiz {
 
     // Jump to Section (Optional for 30 questions)
     jumpToSection(sectionNumber) {
-        // Tính số câu hỏi mỗi phần
+        // Calculate questions per section
         const sections = 3;
         const questionsPerSection = Math.ceil(this.totalQuestions / sections);
         const targetIndex = (sectionNumber - 1) * questionsPerSection;
@@ -269,9 +268,9 @@ class Quiz {
     }
 }
 
-// Hàm để lấy dữ liệu quiz từ server
-function fetchQuizData(quizId, timeLimit) {
-    return fetch(`${contextPath}/TakeQuizServlet?service=loadQuiz&id=${quizId}&time=${timeLimit}`)
+// Function to fetch quiz data from server
+function fetchQuizData(quizId, timeLimit, questionCount, shuffleQuestions) {
+    return fetch(`${contextPath}/TakeQuizServlet?service=loadQuiz&id=${quizId}&time=${timeLimit}&questionCount=${questionCount}&shuffle=${shuffleQuestions}`)
         .then(response => {
             if (!response.ok) {
                 return response.json().then(err => { throw new Error(err.error || 'Failed to load quiz data.'); });
@@ -280,13 +279,14 @@ function fetchQuizData(quizId, timeLimit) {
         });
 }
 
-// Hàm để bắt đầu quiz sau khi chọn thời gian
+// Function to start quiz after selecting settings
 function startQuiz() {
+    // Time selection
     const timeSelect = document.getElementById('time-select');
-    const selectedValue = timeSelect.value;
+    const selectedTimeValue = timeSelect.value;
     let selectedTime;
 
-    if (selectedValue === 'custom') {
+    if (selectedTimeValue === 'custom') {
         const customTimeInput = document.getElementById('custom-time');
         selectedTime = parseInt(customTimeInput.value, 10);
 
@@ -301,27 +301,60 @@ function startQuiz() {
             return;
         }
     } else {
-        selectedTime = parseInt(selectedValue, 10);
+        selectedTime = parseInt(selectedTimeValue, 10);
     }
 
-    // Ẩn modal chọn thời gian
+    // Number of questions selection
+    const questionCountSelect = document.getElementById('question-count-select');
+    const questionCountValue = questionCountSelect.value;
+    let selectedQuestionCount;
+
+    if (questionCountValue === 'custom') {
+        const customQuestionCountInput = document.getElementById('custom-question-count');
+        selectedQuestionCount = parseInt(customQuestionCountInput.value, 10);
+
+        if (isNaN(selectedQuestionCount)) {
+            alert('Please enter a valid number of questions.');
+            return;
+        }
+
+        // Validate selectedQuestionCount between 1 and maxQuestionCount
+        if (selectedQuestionCount < 1 || selectedQuestionCount > maxQuestionCount) {
+            alert(`Please enter a number between 1 and ${maxQuestionCount}.`);
+            return;
+        }
+    } else {
+        selectedQuestionCount = parseInt(questionCountValue, 10);
+    }
+
+    // Shuffle option
+    const shuffleSelect = document.getElementById('shuffle-select');
+    const shuffleValue = shuffleSelect.value;
+    let shuffleQuestions;
+    if (shuffleValue === 'true') {
+        shuffleQuestions = true;
+    } else {
+        shuffleQuestions = false;
+    }
+
+    // Hide the modal and show the quiz container
     const timeModal = document.getElementById('time-modal');
     timeModal.style.display = 'none';
-
-    // Hiển thị phần quiz
     const quizContainer = document.querySelector('.quiz-container');
     quizContainer.style.display = 'block';
 
-    // Gọi hàm fetchQuizData với thời gian đã chọn
-    fetchQuizData(quizId, selectedTime).then(quizData => {
-        window.quiz = new Quiz(quizData);
-    }).catch(error => {
-        console.error('Error loading quiz data:', error);
-        document.getElementById('question-text').textContent = 'Không thể tải dữ liệu bài kiểm tra.';
-    });
+    // Fetch quiz data with selected parameters
+    fetchQuizData(quizId, selectedTime, selectedQuestionCount, shuffleQuestions)
+        .then(quizData => {
+            window.quiz = new Quiz(quizData);
+        })
+        .catch(error => {
+            console.error('Error loading quiz data:', error);
+            document.getElementById('question-text').textContent = 'Cannot load quiz data.';
+        });
 }
 
-// Hàm để hiển thị/ẩn trường nhập thời gian tùy chỉnh
+// Function to toggle custom time input visibility
 function toggleCustomTimeInput(value) {
     const customTimeInput = document.getElementById('custom-time');
     if (value === 'custom') {
@@ -332,13 +365,35 @@ function toggleCustomTimeInput(value) {
     }
 }
 
-// Khởi tạo quiz khi trang đã tải hoàn toàn
+// Function to toggle custom question count input visibility
+function toggleCustomQuestionCountInput(value) {
+    const customQuestionCountInput = document.getElementById('custom-question-count');
+    if (value === 'custom') {
+        customQuestionCountInput.style.display = 'block';
+        customQuestionCountInput.focus();
+    } else {
+        customQuestionCountInput.style.display = 'none';
+    }
+}
+
+// Initialize quiz when the page has fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Ẩn quiz container ban đầu
+    // Hide quiz container initially
     const quizContainer = document.querySelector('.quiz-container');
     quizContainer.style.display = 'none';
 
-    // Hiển thị modal chọn thời gian
+    // Show modal to select quiz settings
     const timeModal = document.getElementById('time-modal');
     timeModal.style.display = 'block';
+
+    // Optional: Validate custom-question-count input on manual entry
+    const customQuestionCountInput = document.getElementById('custom-question-count');
+    customQuestionCountInput.addEventListener('input', function() {
+        let value = parseInt(this.value, 10);
+        if (isNaN(value) || value < 1) {
+            this.value = 1;
+        } else if (value > maxQuestionCount) {
+            this.value = maxQuestionCount;
+        }
+    });
 });
