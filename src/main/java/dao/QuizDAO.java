@@ -343,4 +343,17 @@ public class QuizDAO {
         return tags;
     }
 
+    public boolean insertQuizTag(int quizId, int tagId) throws SQLException, ClassNotFoundException {
+        Connection conn = new DBConnect().getConnection();
+        String sql = "INSERT INTO quiz_tag(quiz_id, tag_id) VALUES(?, ?)";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, quizId);
+        stmt.setInt(2, tagId);
+        int affectedRows = stmt.executeUpdate();
+        stmt.close();
+        conn.close();
+        return affectedRows == 1;
+    }
+
+
 }
