@@ -17,18 +17,19 @@ import java.util.List; // Add this import
 public class AssignQuizServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Check permissions
+        // Kiểm tra nếu không phải là giáo viên hoặc admin thì chuyển hướng về trang login
         HttpSession session = request.getSession();
         Users currentUser = (Users) session.getAttribute("user");
         if (currentUser == null || (currentUser.getRole_id() != Users.ROLE_TEACHER && currentUser.getRole_id() != Users.ROLE_ADMIN)) {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
-
+           //Lấy id của lớp và quiz từ request
         int classId = Integer.parseInt(request.getParameter("classId"));
         classs classEntity = null;
         List<quiz> quizzes = null;
-
+                 
+        // Kiểm tra quyền truy cập
         try {
             ClassDAO classDAO = new ClassDAO();
             classEntity = classDAO.getClassById(classId);
@@ -38,11 +39,11 @@ public class AssignQuizServlet extends HttpServlet {
                 return;
             }
 
-            // Get list of quizzes created by the teacher
+            // Lấy danh sách quiz
             QuizDAO quizDAO = new QuizDAO();
             quizzes = quizDAO.getQuizzesByUserId(currentUser.getId());
 
-            // Set attributes and forward to JSP
+            // Chuyển hướng sang trang giao diện assignQuiz.jsp
             request.setAttribute("classEntity", classEntity);
             request.setAttribute("quizzes", quizzes);
             request.getRequestDispatcher("/jsp/assignQuiz.jsp").forward(request, response);
@@ -56,7 +57,7 @@ public class AssignQuizServlet extends HttpServlet {
 
     // Handle POST requests to assign the quiz to the class
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Check permissions
+        // Kiểm tra nếu không phải là giáo viên hoặc admin thì chuyển hướng về trang login
         HttpSession session = request.getSession();
         Users currentUser = (Users) session.getAttribute("user");
         if (currentUser == null || (currentUser.getRole_id() != Users.ROLE_TEACHER && currentUser.getRole_id() != Users.ROLE_ADMIN)) {
@@ -64,17 +65,17 @@ public class AssignQuizServlet extends HttpServlet {
             return;
         }
 
-        // Get data from form
+        // Lấy id của lớp và quiz từ request
         int classId = Integer.parseInt(request.getParameter("classId"));
         int quizId = Integer.parseInt(request.getParameter("quizId"));
 
         try {
-            // Assign quiz to class
+            // lấy thông tin lớp học
             ClassQuizDAO classQuizDAO = new ClassQuizDAO();
             boolean isAssigned = classQuizDAO.assignQuizToClass(classId, quizId);
 
             if (isAssigned) {
-                // Redirect to class details page
+                // Chuyển hướng về trang chi tiết lớp học
                 response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?action=classDetails&classId=" + classId);
             } else {
                 request.setAttribute("errorMessage", "Failed to assign quiz.");
