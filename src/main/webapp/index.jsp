@@ -145,31 +145,7 @@
         </div>
     </section>
 
-    <!-- Subjects Section -->
-    <section id="subjects" class="subjects">
-        <div class="container">
-            <h2>Popular Subjects</h2>
-            <div class="subject-grid">
-                <a href="${pageContext.request.contextPath}/jsp/subject.jsp?id=math" class="subject-card">
-                    <img src="${pageContext.request.contextPath}/img/math.jpg" alt="Mathematics" loading="lazy">
-                    <h3>Mathematics</h3>
-                </a>
-                <a href="${pageContext.request.contextPath}/jsp/subject.jsp?id=science" class="subject-card">
-                    <img src="${pageContext.request.contextPath}/img/science.jpg" alt="Science" loading="lazy">
-                    <h3>Science</h3>
-                </a>
-                <a href="${pageContext.request.contextPath}/jsp/subject.jsp?id=history" class="subject-card">
-                    <img src="${pageContext.request.contextPath}/img/history.jpg" alt="History" loading="lazy">
-                    <h3>History</h3>
-                </a>
-                <a href="${pageContext.request.contextPath}/jsp/subject.jsp?id=literature" class="subject-card">
-                    <img src="${pageContext.request.contextPath}/img/literature.jpg" alt="Literature" loading="lazy">
-                    <h3>Literature</h3>
-                </a>
-            </div>
-            <a href="${pageContext.request.contextPath}/jsp/all-subjects.jsp" class="btn-view-all">View All Subjects</a>
-        </div>
-    </section>
+
 
     <!-- Latest Quizzes Section -->
     <section id="latest-quizzes" class="latest-quizzes">
@@ -247,18 +223,7 @@
         </div>
     </section>
 
-    <!-- Create Quiz Section -->
-    <section id="create-quiz" class="create-quiz">
-        <div class="container">
-            <h2>Create Your Own Quiz</h2>
-            <p>Share your knowledge and challenge others by creating your own quizzes!</p>
-            <div class="quiz-creator-preview fade-in">
-                <img src="${pageContext.request.contextPath}/img/quiz-create.jpg" alt="Quiz Creator Interface"
-                     loading="lazy">
-            </div>
-            <a href="${pageContext.request.contextPath}/jsp/quiz-creator.jsp" class="cta-button">Start Creating</a>
-        </div>
-    </section>
+
 
     <section id="test-link" class="test-link">
         <div class="container">
@@ -398,23 +363,6 @@
                 <p>Email: support@quizloco.com</p>
                 <p>Phone: (123) 456-7890</p>
                 <p>Address: 123 Quiz Street, Knowledge City</p>
-            </div>
-            <div class="footer-section">
-                <h3>Follow Us</h3>
-                <div class="social-icons">
-                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                </div>
-            </div>
-            <div class="footer-section">
-                <h3>Subscribe to Our Newsletter</h3>
-                <form action="${pageContext.request.contextPath}/SubscribeFooterServlet" method="POST"
-                      class="footer-newsletter-form">
-                    <input type="email" name="email" placeholder="Your email" required aria-label="Email Address">
-                    <button type="submit"><i class="fas fa-paper-plane"></i></button>
-                </form>
             </div>
         </div>
         <p class="copyright">&copy; 2024 QuizLoco. All rights reserved.</p>
