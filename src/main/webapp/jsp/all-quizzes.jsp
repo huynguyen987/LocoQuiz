@@ -15,15 +15,13 @@
   <meta charset="UTF-8">
   <title>All Quizzes - QuizLoco</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/all-quizzes.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
   <!-- Include any additional CSS or JS here -->
 </head>
 <body>
-<!-- Include header or navigation if necessary -->
-<header>
-  <!-- Header content -->
-</header>
 
 <main class="container">
   <!-- Latest Quizzes Section -->
@@ -70,45 +68,43 @@
       <div class="quiz-card">
         <h3><%= q.getName() %></h3>
         <p><%= q.getDescription() %></p>
-        <p><strong>Views:</strong> <%= q.getViews() %></p> <!-- Display views -->
+        <p><strong>Views:</strong> <%= q.getViews() %></p>
         <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=<%= q.getId() %>" class="btn-quiz">View Detail</a>
       </div>
       <% } %>
     </div>
-    <% if (currentPage < totalPages) { %>
-    <form action="AllQuizzesServlet" method="get">
-      <input type="hidden" name="page" value="<%= currentPage + 1 %>">
-      <button type="submit" class="btn-load-more">Show More</button>
-    </form>
-    <% } else { %>
-    <p>No more quizzes to load.</p>
-    <% } %>
-  </section>
-</main>
 
-<!-- Include footer if necessary -->
-<footer>
-  <!-- Footer content -->
-</footer>
+    <!-- Pagination Controls -->
+    <div class="pagination">
+      <% if (currentPage > 1) { %>
+      <a href="AllQuizzesServlet?page=<%= currentPage - 1 %>" class="page-link">&laquo; Previous</a>
+      <% } %>
+
+      <% for (int i = 1; i <= totalPages; i++) { %>
+      <a href="AllQuizzesServlet?page=<%= i %>" class="page-link <% if (i == currentPage) { %>active<% } %>"><%= i %></a>
+      <% } %>
+
+      <% if (currentPage < totalPages) { %>
+      <a href="AllQuizzesServlet?page=<%= currentPage + 1 %>" class="page-link">Next &raquo;</a>
+      <% } %>
+    </div>
+  </section>
+
+</main>
 
 <!-- Include any necessary JavaScript -->
 <script>
   function scrollCarousel(section, direction) {
-    var carousel = document.getElementById(section + '-carousel');
-    var scrollAmount = 0;
-    var slideTimer = setInterval(function () {
-      if (direction === 1) {
-        carousel.scrollLeft += 20;
-      } else {
-        carousel.scrollLeft -= 20;
-      }
-      scrollAmount += 20;
-      if (scrollAmount >= 200) {
-        window.clearInterval(slideTimer);
-      }
-    }, 25);
+    const carousel = document.getElementById(section + '-carousel');
+    const scrollWidth = carousel.offsetWidth;
+    carousel.scrollBy({
+      top: 0,
+      left: direction * scrollWidth,
+      behavior: 'smooth'
+    });
   }
 </script>
+
 
 <style>
   /* Add necessary styles */

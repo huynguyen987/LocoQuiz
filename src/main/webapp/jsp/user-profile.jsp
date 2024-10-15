@@ -37,7 +37,7 @@
         <h1><a href="${pageContext.request.contextPath}/index.jsp" class="logo">QuizLoco</a></h1>
 
         <div class="auth-links">
-            <a href="logout.jsp" class="btn-logout">Logout</a>
+            <a href="${pageContext.request.contextPath}/jsp/logout.jsp" class="btn-logout">Logout</a>
         </div>
     </div>
 </header>

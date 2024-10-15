@@ -25,9 +25,11 @@ public class AllQuizzesServlet extends HttpServlet {
 
             // Fetch All Quizzes with Pagination
             int page = 1;
-            int recordsPerPage = 10;
-            if (request.getParameter("page") != null)
-                page = Integer.parseInt(request.getParameter("page"));
+            int recordsPerPage = 9; // Adjusted for better grid display
+            String pageParam = request.getParameter("page");
+            if (pageParam != null && !pageParam.isEmpty()) {
+                page = Integer.parseInt(pageParam);
+            }
             int offset = (page - 1) * recordsPerPage;
             List<quiz> allQuizzes = quizDAO.getAllQuizzes(offset, recordsPerPage);
             int totalQuizzes = quizDAO.getTotalQuizCount();
