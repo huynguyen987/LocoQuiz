@@ -20,13 +20,13 @@ public class EditClassServlet extends HttpServlet {
         // Check user authentication and authorization
         HttpSession session = request.getSession();
         Users currentUser = (Users) session.getAttribute("user");
-
         if (currentUser == null || (!currentUser.hasRole("teacher") && !currentUser.hasRole("admin"))) {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
 
-        // Get classId from the request parameter
+        //Lấy tham số classId từ yêu cầu.
+        //Kiểm tra xem classId có hợp lệ hay không; nếu không, chuyển hướng với thông báo lỗi.
         String classIdStr = request.getParameter("classId");
         if (classIdStr == null || classIdStr.trim().isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=editError");

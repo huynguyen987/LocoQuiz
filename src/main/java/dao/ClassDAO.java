@@ -125,13 +125,60 @@ public class ClassDAO {
         }
     }
 
-    public boolean deleteClass(int classId) throws SQLException, ClassNotFoundException {
-        String sql = "DELETE FROM class WHERE id = ?";
-        try (Connection connection = new DBConnect().getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, classId);
-            int affectedRows = ps.executeUpdate();
-            return affectedRows > 0;
+    public boolean deleteClass(int classId) throws SQLException {
+        String deleteClassUserSql = "DELETE FROM class_user WHERE class_id = ?";
+        String deleteClassQuizSql = "DELETE FROM class_quiz WHERE class_id = ?";
+        String deleteClassSql = "DELETE FROM class WHERE id = ?";
+
+        // Bắt đầu transaction
+        Connection connection = null;
+        try {
+            connection = new DBConnect().getConnection();
+            connection.setAutoCommit(false);
+
+            // Step 1: Xóa tất cả các bản ghi liên quan trong bảng class_user
+            try (PreparedStatement deleteClassUserStmt = connection.prepareStatement(deleteClassUserSql)) {
+                deleteClassUserStmt.setInt(1, classId);
+                deleteClassUserStmt.executeUpdate();
+            }
+
+            // Step 2: Xóa tất cả các bản ghi liên quan trong bảng class_quiz
+            try (PreparedStatement deleteClassQuizStmt = connection.prepareStatement(deleteClassQuizSql)) {
+                deleteClassQuizStmt.setInt(1, classId);
+                deleteClassQuizStmt.executeUpdate();
+            }
+
+            // Step 3: Xóa lớp học từ bảng class
+            int affectedRows;
+            try (PreparedStatement deleteClassStmt = connection.prepareStatement(deleteClassSql)) {
+                deleteClassStmt.setInt(1, classId);
+                affectedRows = deleteClassStmt.executeUpdate();
+            }
+
+            // Nếu tất cả các thao tác đều thành công, commit transaction
+            connection.commit();
+
+            return affectedRows > 0; // Trả về true nếu xóa lớp học thành công
+        } catch (SQLException | ClassNotFoundException e) {
+            // Nếu có lỗi, rollback transaction
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException rollbackEx) {
+                    rollbackEx.printStackTrace();
+                }
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            // Đặt lại chế độ tự động commit
+            if (connection != null) {
+                try {
+                    connection.setAutoCommit(true);
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
     }
 
