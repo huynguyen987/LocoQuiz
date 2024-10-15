@@ -437,6 +437,14 @@ function resetQuiz() {
     interact('.draggable').draggable(true);
 }
 
+function exitQuiz() {
+    // Clear Timer
+    clearInterval(timerInterval);
+
+    // Redirect to Dashboard
+     window.location.href = `${contextPath}/jsp/student.jsp`;
+
+}
 // Close modal when clicking outside of it
 window.onclick = function(event) {
     let resultModal = document.getElementById('result-modal');

@@ -128,6 +128,7 @@
     <h2>Your Results</h2>
     <p id="result-text">You scored X out of Y.</p>
     <button onclick="resetQuiz()">Retry Quiz</button>
+    <button onclick="exitQuiz()">Exit</button>
   </div>
 </div>
 
