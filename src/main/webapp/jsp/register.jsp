@@ -19,8 +19,8 @@
     </select>
     <select name="role_id" required>
       <option value="" disabled selected>Role</option>
-      <option value="1">User</option>
-      <option value="2">Teacher</option>
+      <option value="2">User</option>
+      <option value="1">Teacher</option>
     </select>
     <input type="submit" value="Register">
   </form>

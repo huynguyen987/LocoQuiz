@@ -19,25 +19,7 @@
 <body>
 <!-- Header Section -->
 <header>
-    <div class="container">
-        <h1><a href="${pageContext.request.contextPath}/index.jsp" class="logo">QuizLoco</a></h1>
-        <nav>
-            <ul>
-                <li><a href="${pageContext.request.contextPath}/index.jsp">Trang Chủ</a></li>
-                <li><a href="${pageContext.request.contextPath}/jsp/login.jsp">Đăng Nhập</a></li>
-                <li><a href="${pageContext.request.contextPath}/jsp/register.jsp">Đăng Ký</a></li>
-                <li><a href="${pageContext.request.contextPath}/index.jsp#contact">Liên Hệ</a></li>
-            </ul>
-        </nav>
-        <!-- Theme Toggle (Optional) -->
-        <div class="theme-toggle">
-            <input type="checkbox" id="dark-mode-toggle" aria-label="Toggle dark mode">
-            <label for="dark-mode-toggle">
-                <i class="fas fa-moon"></i>
-                <i class="fas fa-sun"></i>
-            </label>
-        </div>
-    </div>
+    <!-- (Giữ nguyên phần header của bạn) -->
 </header>
 
 <!-- Main Content -->
@@ -51,11 +33,11 @@
                 String error = (String) session.getAttribute("error");
                 if (error != null) {
             %>
-            <div class="error-message">
-                <%= error %>
-            </div>
+            <script type="text/javascript">
+                alert("<%= error %>");
+            </script>
             <%
-                    session.removeAttribute("error");  // Clear error after displaying it
+                    session.removeAttribute("error");  // Xóa thông báo lỗi sau khi hiển thị
                 }
             %>
 
@@ -72,34 +54,15 @@
 
 <!-- Footer Section -->
 <footer>
-    <div class="container">
-        <p>&copy; 2024 QuizLoco. All rights reserved.</p>
-    </div>
+    <!-- (Giữ nguyên phần footer của bạn) -->
+
 </footer>
 
 <!-- External JavaScript -->
 <script src="${pageContext.request.contextPath}/js/script.js"></script>
 <!-- Dark Mode Script (if implementing dark mode) -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const toggleSwitch = document.getElementById('dark-mode-toggle');
-        const currentTheme = localStorage.getItem('theme');
-
-        if (currentTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-            toggleSwitch.checked = true;
-        }
-
-        toggleSwitch.addEventListener('change', () => {
-            if (toggleSwitch.checked) {
-                document.body.classList.add('dark-mode');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                document.body.classList.remove('dark-mode');
-                localStorage.setItem('theme', 'light');
-            }
-        });
-    });
+    // (Giữ nguyên phần script của bạn)
 </script>
 </body>
 </html>
