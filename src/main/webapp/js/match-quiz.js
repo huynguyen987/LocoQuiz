@@ -1,7 +1,7 @@
-// Variables
 let quizData;
 let userMatches = {};
 let timeLimit = 900; // default time limit in seconds (15 minutes)
+let timeLeft = timeLimit; // Initialize timeLeft as a global variable
 let timerInterval;
 let selectedQuestionCount = 5;
 let shuffleQuestions = false;
@@ -100,9 +100,10 @@ function initializeQuiz() {
     const shuffleValue = shuffleSelect.value;
     shuffleQuestions = (shuffleValue === 'true');
 
-    // Assign to global variable
+    // Assign to global variables
     timeLimit = selectedTime;
     selectedQuestionCount = selectedQuestionCountLocal;
+    timeLeft = timeLimit; // Reset timeLeft
 
     // Hide the settings modal and show the quiz container
     const settingsModal = document.getElementById('settings-modal');
@@ -141,7 +142,7 @@ function renderQuiz() {
     document.getElementById('quiz-title').textContent = quizData.title || 'Match the Items';
 
     // Update Timer Display
-    document.getElementById('time-left').textContent = formatTime(timeLimit);
+    document.getElementById('time-left').textContent = formatTime(timeLeft);
 
     // Get containers
     const questionsContainer = document.getElementById('questions');
@@ -300,7 +301,7 @@ function initializeDragAndDrop() {
 // Function to Start Timer
 function startTimer() {
     const countdownTimer = document.getElementById('time-left');
-    let timeLeft = timeLimit;
+    timeLeft = timeLimit; // Reset timeLeft to timeLimit when the quiz starts
 
     // Initialize Timer Display
     updateTimerDisplay(countdownTimer, timeLeft);
@@ -318,9 +319,9 @@ function startTimer() {
 }
 
 // Function to Update Timer Display
-function updateTimerDisplay(element, timeLeft) {
-    let minutes = Math.floor(timeLeft / 60);
-    let seconds = timeLeft % 60;
+function updateTimerDisplay(element, timeLeftParam) {
+    let minutes = Math.floor(timeLeftParam / 60);
+    let seconds = timeLeftParam % 60;
     if (seconds < 10) seconds = '0' + seconds;
     element.textContent = `${minutes}:${seconds}`;
 }
@@ -330,12 +331,15 @@ function formatTime(seconds) {
     let mins = Math.floor(seconds / 60);
     let secs = seconds % 60;
     if (secs < 10) secs = '0' + secs;
-    return `${mins}:${secs}`;
+    return `${mins} minutes ${secs} seconds`;
 }
 
 function submitQuiz() {
     // Disable further dragging
     interact('.draggable').draggable(false);
+
+    // Calculate time taken
+    const timeTaken = timeLimit - timeLeft;
 
     // Prepare userAnswers
     let userAnswers = {};
@@ -346,7 +350,8 @@ function submitQuiz() {
     // Prepare data to send to server
     const submissionData = {
         quizId: parseInt(quizId),
-        userAnswers: userAnswers
+        userAnswers: userAnswers,
+        timeTaken: timeTaken // Include timeTaken if server needs it
     };
 
     // Send POST request to SubmitMatchQuizServlet
@@ -357,14 +362,56 @@ function submitQuiz() {
         },
         body: JSON.stringify(submissionData)
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.error) {
                 alert(`Error: ${data.error}`);
             } else {
                 const score = data.score;
                 const total = data.total;
+                const incorrectAnswers = data.incorrectAnswers; // Retrieve incorrect answers
+
+                // Update Result Modal Content
                 document.getElementById('result-text').textContent = `You scored ${score} out of ${total}.`;
+                document.getElementById('time-total').textContent = `Time taken: ${formatTime(timeTaken)}`;
+
+                // Populate Detailed Answers
+                let viewAnswers = document.getElementById('view-answers');
+                viewAnswers.innerHTML = ''; // Clear previous answers if any
+
+                if (incorrectAnswers && incorrectAnswers.length > 0) {
+                    // Create a table to display incorrect answers
+                    let table = document.createElement('table');
+                    table.innerHTML = `
+                    <tr>
+                        <th>Question</th>
+                        <th>Your Answer</th>
+                        <th>Correct Answer</th>
+                    </tr>
+                `;
+                    incorrectAnswers.forEach(qr => {
+                        let row = document.createElement('tr');
+                        row.classList.add(qr.isCorrect ? 'correct' : 'incorrect');
+                        row.innerHTML = `
+                        <td>${qr.questionText}</td>
+                        <td>${qr.userAnswer ? qr.userAnswer : "No Answer"}</td>
+                        <td>${qr.correctAnswer}</td>
+                    `;
+                        table.appendChild(row);
+                    });
+                    viewAnswers.appendChild(table);
+                } else {
+                    let message = document.createElement('p');
+                    message.textContent = "Congratulations! You answered all questions correctly.";
+                    viewAnswers.appendChild(message);
+                }
+
+                // Show the result modal
                 document.getElementById('result-modal').style.display = 'block';
             }
         })
@@ -376,7 +423,6 @@ function submitQuiz() {
     // Clear Timer
     clearInterval(timerInterval);
 }
-
 
 // Function to Update Progress Bar
 function updateProgress() {
@@ -442,9 +488,9 @@ function exitQuiz() {
     clearInterval(timerInterval);
 
     // Redirect to Dashboard
-     window.location.href = `${contextPath}/jsp/student.jsp`;
-
+    window.location.href = `${contextPath}/jsp/student.jsp`;
 }
+
 // Close modal when clicking outside of it
 window.onclick = function(event) {
     let resultModal = document.getElementById('result-modal');

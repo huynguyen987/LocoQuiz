@@ -188,10 +188,10 @@ class Quiz {
         this.answeredCount.textContent = answered;
     }
 
-    // Submit Quiz and Show Results
+    // Submit Quiz and Redirect to Result Page
     submitQuiz() {
         clearInterval(this.timerId);
-        // Send quiz data to server for grading
+        // Gửi quiz data đến server để chấm điểm
         fetch(`${contextPath}/SubmitQuizServlet`, {
             method: 'POST',
             headers: {
@@ -199,7 +199,8 @@ class Quiz {
             },
             body: JSON.stringify({
                 quizId: quizId,
-                userAnswers: this.userAnswers
+                userAnswers: this.userAnswers,
+                timeTaken: this.timeLeft < this.timeLimit ? (this.timeLimit - this.timeLeft) : this.timeLimit // Tính thời gian làm bài
             })
         })
             .then(response => {
@@ -212,10 +213,8 @@ class Quiz {
                 if (data.error) {
                     alert(`Error: ${data.error}`);
                 } else {
-                    const score = data.score;
-                    const total = data.total;
-                    this.resultText.textContent = `You scored ${score} out of ${total}.`;
-                    this.resultModal.style.display = 'flex';
+                    // Chuyển hướng đến trang kết quả
+                    window.location.href = data.redirectUrl;
                 }
             })
             .catch(error => {

@@ -1,3 +1,4 @@
+// File: src/main/java/Servlet/SubmitMatchQuizServlet.java
 package Servlet;
 
 import Module.AnswersReader;
@@ -53,10 +54,12 @@ public class SubmitMatchQuizServlet extends HttpServlet {
 
         int quizId = submission.getQuizId();
         Map<String, String> userAnswers = submission.getUserAnswers();
+        int timeTaken = submission.getTimeTaken();
 
         // Logging
         System.out.println("Quiz ID: " + quizId);
         System.out.println("User Answers: " + userAnswers);
+        System.out.println("Time Taken: " + timeTaken + " seconds");
 
         if (userAnswers == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -81,37 +84,56 @@ public class SubmitMatchQuizServlet extends HttpServlet {
             return;
         }
 
-        // Build a map from sequence to correct answer
-        Map<String, String> correctAnswerMap = new HashMap<>();
-        for (AnswersReader ar : correctAnswers) {
-            correctAnswerMap.put(String.valueOf(ar.getSequence()), ar.getCorrect());
-        }
-
-        // Calculate score
+        // Calculate score and prepare detailed results
         int score = 0;
-        int total = correctAnswerMap.size();
+        int total = correctAnswers.size();
 
-        for (String sequence : correctAnswerMap.keySet()) {
-            String correctAnswer = correctAnswerMap.get(sequence);
+        List<QuestionResult> questionResults = new ArrayList<>();
+        List<QuestionResult> incorrectAnswers = new ArrayList<>();
+
+        for (AnswersReader question : correctAnswers) {
+            String sequence = String.valueOf(question.getSequence());
+            String correctAnswer = question.getCorrect();
             String userAnswer = userAnswers.get(sequence);
 
-            if (correctAnswer != null && correctAnswer.equals(userAnswer)) {
+            boolean isCorrect = correctAnswer != null && correctAnswer.equals(userAnswer);
+            if (isCorrect) {
                 score++;
-                System.out.println("Correct: " + correctAnswer + " User: " + userAnswer);
             } else {
-                System.out.println("Correct: " + correctAnswer + " User: " + userAnswer);
+                // Only add incorrect answers to the list
+                QuestionResult incorrect = new QuestionResult();
+                incorrect.setQuestionText(question.getQuestion());
+                incorrect.setCorrectAnswer(correctAnswer);
+                incorrect.setUserAnswer(userAnswer);
+                incorrect.setCorrect(isCorrect);
+                incorrectAnswers.add(incorrect);
             }
+
+            // Prepare question result
+            QuestionResult questionResult = new QuestionResult();
+            questionResult.setQuestionText(question.getQuestion());
+            questionResult.setCorrectAnswer(correctAnswer);
+            questionResult.setUserAnswer(userAnswer);
+            questionResult.setCorrect(isCorrect);
+
+            questionResults.add(questionResult);
         }
 
-        // Create result object
-        Map<String, Object> result = Map.of(
-                "score", score,
-                "total", total
-        );
+        // Store detailed results in session
+        HttpSession session = request.getSession();
+        session.setAttribute("quizResult", questionResults);
+        session.setAttribute("timeTaken", timeTaken); // Store timeTaken in session
+
+        // Prepare result data with incorrect answers
+        Map<String, Object> resultData = new HashMap<>();
+        resultData.put("score", score);
+        resultData.put("total", total);
+        resultData.put("incorrectAnswers", incorrectAnswers); // Add incorrect answers
+        resultData.put("redirectUrl", request.getContextPath() + "/match-quiz-result.jsp");
 
         // Convert object to JSON and send response
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        String jsonResult = mapper.writeValueAsString(result);
+        String jsonResult = mapper.writeValueAsString(resultData);
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(jsonResult);
     }
@@ -126,6 +148,7 @@ public class SubmitMatchQuizServlet extends HttpServlet {
     public static class QuizSubmission {
         private int quizId;
         private Map<String, String> userAnswers;
+        private int timeTaken; // Add timeTaken field
 
         // Getters and Setters
         public int getQuizId() {
@@ -142,6 +165,55 @@ public class SubmitMatchQuizServlet extends HttpServlet {
 
         public void setUserAnswers(Map<String, String> userAnswers) {
             this.userAnswers = userAnswers;
+        }
+
+        public int getTimeTaken() {
+            return timeTaken;
+        }
+
+        public void setTimeTaken(int timeTaken) {
+            this.timeTaken = timeTaken;
+        }
+    }
+
+    // Inner class representing question result
+    public static class QuestionResult implements java.io.Serializable {
+        private String questionText;
+        private String correctAnswer;
+        private String userAnswer;
+        private boolean isCorrect;
+
+        // Getters and Setters
+        public String getQuestionText() {
+            return questionText;
+        }
+
+        public void setQuestionText(String questionText) {
+            this.questionText = questionText;
+        }
+
+        public String getCorrectAnswer() {
+            return correctAnswer;
+        }
+
+        public void setCorrectAnswer(String correctAnswer) {
+            this.correctAnswer = correctAnswer;
+        }
+
+        public String getUserAnswer() {
+            return userAnswer;
+        }
+
+        public void setUserAnswer(String userAnswer) {
+            this.userAnswer = userAnswer;
+        }
+
+        public boolean isCorrect() {
+            return isCorrect;
+        }
+
+        public void setCorrect(boolean correct) {
+            isCorrect = correct;
         }
     }
 }

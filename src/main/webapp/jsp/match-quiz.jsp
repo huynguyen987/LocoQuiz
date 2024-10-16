@@ -42,6 +42,45 @@
     }
     /* Rest of the styles */
     /* ... */
+    /* Example styles for the result modal */
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+    .close-button {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close-button:hover,
+    .close-button:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #333;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    .correct {
+      background-color: #ccffcc;
+    }
+    .incorrect {
+      background-color: #ffcccc;
+    }
   </style>
 </head>
 <body>
@@ -127,8 +166,14 @@
     <span class="close-button" onclick="closeModal('result-modal')">&times;</span>
     <h2>Your Results</h2>
     <p id="result-text">You scored X out of Y.</p>
-    <button onclick="resetQuiz()">Retry Quiz</button>
-    <button onclick="exitQuiz()">Exit</button>
+    <p id="time-total">Time taken: 0 minutes 0 seconds.</p>
+    <div id="view-answers">
+      <!-- Detailed answers will be populated here -->
+    </div>
+    <div class="button-container">
+      <button onclick="resetQuiz()">Retry Quiz</button>
+      <button onclick="exitQuiz()">Exit</button>
+    </div>
   </div>
 </div>
 
