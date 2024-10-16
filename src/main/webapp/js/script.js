@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     div.classList.add('search-result-item');
                     div.textContent = result.name; // Use 'name' as returned by the servlet
                     div.addEventListener('click', () => {
-                        window.location.href = `${contextPath}/jsp/quiz-detail.jsp?id=${result.id}`;
+                        window.location.href = `${contextPath}/jsp/quiz-details.jsp?id=${result.id}`;
                     });
                     searchResults.appendChild(div);
                 });
