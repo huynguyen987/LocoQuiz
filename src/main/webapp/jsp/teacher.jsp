@@ -54,10 +54,34 @@
         <div class="success-message">Class created successfully.</div>
         <% } else if ("classEdited".equals(message)) { %>
         <div class="success-message">Class edited successfully.</div>
+        <% } else if ("quizAssigned".equals(message)) { %>
+        <!-- Popup Modal for Quiz Assignment Success -->
+        <div id="quizAssignedModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <i class="fas fa-check-circle modal-icon success-icon"></i>
+                <h2>Quiz Assigned Successfully!</h2>
+                <p>The quiz has been successfully assigned to the class.</p>
+            </div>
+        </div>
+        <% } else if ("studentEnrolled".equals(message)) { %>
+        <!-- Popup Modal for Student Enrollment Success -->
+        <div id="studentEnrolledModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <i class="fas fa-user-plus modal-icon success-icon"></i>
+                <h2>Student Enrolled Successfully!</h2>
+                <p>The student has been successfully enrolled in the class.</p>
+            </div>
+        </div>
         <% } else if ("createError".equals(message)) { %>
         <div class="error-message">An error occurred while creating the class. Please try again.</div>
         <% } else if ("editError".equals(message)) { %>
         <div class="error-message">An error occurred while editing the class. Please try again.</div>
+        <% } else if ("assignError".equals(message)) { %>
+        <div class="error-message">An error occurred while assigning the quiz. Please try again.</div>
+        <% } else if ("enrollError".equals(message)) { %>
+        <div class="error-message">An error occurred while enrolling the student. Please try again.</div>
         <% } else { %>
         <div class="info-message"><%= message %></div>
         <% } %>
@@ -166,54 +190,62 @@
                 List<quiz> quizzes = classQuizDAO.getQuizzesByClassId(classId);
         %>
         <h1>Class Details: <%= classEntity.getName() %></h1>
-        <div class="class-info">
-            <p><strong>Description:</strong> <%= classEntity.getDescription() %></p>
-            <p><strong>Class Code:</strong> <%= classEntity.getClass_key() %></p>
-            <p><strong>Teacher:</strong> <%= teacher.getUsername() %></p>
+        <div class="class-details-container">
+            <!-- Class Information Card -->
+            <div class="card">
+                <h2>Class Information</h2>
+                <p><strong>Description:</strong> <%= classEntity.getDescription() %></p>
+                <p><strong>Class Code:</strong> <%= classEntity.getClass_key() %></p>
+                <p><strong>Teacher:</strong> <%= teacher.getUsername() %></p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="<%= request.getContextPath() %>/EditClassServlet?classId=<%= classEntity.getId() %>" class="button">
+                    <i class="fas fa-edit"></i> Edit Class
+                </a>
+                <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=assignQuiz&classId=<%= classEntity.getId() %>" class="button">
+                    <i class="fas fa-clipboard-list"></i> Assign Quiz
+                </a>
+                <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=enrollStudents&classId=<%= classEntity.getId() %>" class="button">
+                    <i class="fas fa-user-plus"></i> Enroll Students
+                </a>
+                <form action="<%=request.getContextPath()%>/DeleteClassServlet" method="post" class="delete-form">
+                    <input type="hidden" name="classId" value="<%= classEntity.getId() %>">
+                    <button type="submit" class="delete-button">
+                        <i class="fas fa-trash"></i> Delete Class
+                    </button>
+                </form>
+            </div>
+
+            <!-- Students Section -->
+            <div class="card">
+                <h2>Enrolled Students</h2>
+                <% if (students != null && !students.isEmpty()) { %>
+                <ul class="list">
+                    <% for (Users student : students) { %>
+                    <li><%= student.getUsername() %> (<%= student.getEmail() %>)</li>
+                    <% } %>
+                </ul>
+                <% } else { %>
+                <p>No students enrolled in this class yet.</p>
+                <% } %>
+            </div>
+
+            <!-- Quizzes Section -->
+            <div class="card">
+                <h2>Assigned Quizzes</h2>
+                <% if (quizzes != null && !quizzes.isEmpty()) { %>
+                <ul class="list">
+                    <% for (quiz quiz : quizzes) { %>
+                    <li><%= quiz.getName() %></li>
+                    <% } %>
+                </ul>
+                <% } else { %>
+                <p>No quizzes assigned to this class yet.</p>
+                <% } %>
+            </div>
         </div>
-
-        <!-- Action Links -->
-        <div class="action-links">
-            <a href="<%= request.getContextPath() %>/EditClassServlet?classId=<%= classEntity.getId() %>" class="action-btn">
-                <i class="fas fa-edit"></i> Edit Class
-            </a>
-            <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=assignQuiz&classId=<%= classEntity.getId() %>" class="action-btn">
-                <i class="fas fa-clipboard-list"></i> Assign Quiz
-            </a>
-            <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=enrollStudents&classId=<%= classEntity.getId() %>" class="action-btn">
-                <i class="fas fa-user-plus"></i> Enroll Students
-            </a>
-            <form action="<%=request.getContextPath()%>/DeleteClassServlet" method="post" onsubmit="return confirm('Are you sure you want to delete this class?');" style="display:inline;">
-                <input type="hidden" name="classId" value="<%= classEntity.getId() %>">
-                <button type="submit" class="delete-button">
-                    <i class="fas fa-trash"></i> Delete Class
-                </button>
-            </form>
-        </div>
-
-        <!-- Students Section -->
-        <h2>Enrolled Students</h2>
-        <% if (students != null && !students.isEmpty()) { %>
-        <ul>
-            <% for (Users student : students) { %>
-            <li><%= student.getUsername() %> (<%= student.getEmail() %>)</li>
-            <% } %>
-        </ul>
-        <% } else { %>
-        <p>No students enrolled in this class yet.</p>
-        <% } %>
-
-        <!-- Quizzes Section -->
-        <h2>Assigned Quizzes</h2>
-        <% if (quizzes != null && !quizzes.isEmpty()) { %>
-        <ul>
-            <% for (quiz quiz : quizzes) { %>
-            <li><%= quiz.getName() %></li>
-            <% } %>
-        </ul>
-        <% } else { %>
-        <p>No quizzes assigned to this class yet.</p>
-        <% } %>
 
         <!-- Back to Dashboard Link -->
         <a href="<%= request.getContextPath() %>/jsp/teacher.jsp" class="action-btn back-btn">
@@ -321,6 +353,17 @@
         <% if ("enrollError".equals(message)) { %>
         <p class="error-message">An error occurred while enrolling the student. Please try again.</p>
         <% } %>
+        <% if ("studentEnrolled".equals(message)) { %>
+        <!-- Popup Modal for Student Enrollment Success -->
+        <div id="studentEnrolledModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <i class="fas fa-user-plus modal-icon success-icon"></i>
+                <h2>Student Enrolled Successfully!</h2>
+                <p>The student has been successfully enrolled in the class.</p>
+            </div>
+        </div>
+        <% } %>
 
         <!-- Back to Class Details Link -->
         <a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=classDetails&classId=<%= classEntity.getId() %>" class="action-btn back-btn">
@@ -369,6 +412,5 @@
 
 <!-- JavaScript -->
 <script src="<%= request.getContextPath() %>/js/common.js"></script>
-<script src="<%= request.getContextPath() %>/js/teacher.js"></script>
 </body>
 </html>

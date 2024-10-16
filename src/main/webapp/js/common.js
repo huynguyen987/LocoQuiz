@@ -108,4 +108,39 @@ document.addEventListener('DOMContentLoaded', () => {
             sidebar.classList.toggle('active');
         });
     }
+
+    // Function to handle modal display based on modal ID
+    function handleModal(modalId) {
+        const modal = document.getElementById(modalId);
+        const closeButton = modal.querySelector('.close-button');
+
+        if (modal) {
+            // Display the modal
+            modal.style.display = 'flex';
+
+            // Close the modal when the close button is clicked
+            closeButton.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            // Close the modal when clicking outside the modal content
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+    }
+
+    // Handle Quiz Assigned Modal
+    const quizAssignedModal = document.getElementById('quizAssignedModal');
+    if (quizAssignedModal) {
+        handleModal('quizAssignedModal');
+    }
+
+    // Handle Student Enrolled Modal
+    const studentEnrolledModal = document.getElementById('studentEnrolledModal');
+    if (studentEnrolledModal) {
+        handleModal('studentEnrolledModal');
+    }
 });

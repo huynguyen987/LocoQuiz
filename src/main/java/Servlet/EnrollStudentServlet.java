@@ -14,28 +14,51 @@ import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet(name = "EnrollStudentServlet", value = "/EnrollStudentServlet")
-public class EnrollStudentServlet extends   HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+public class EnrollStudentServlet extends HttpServlet {
 
-        int classId = Integer.parseInt(request.getParameter("classId"));
-        int studentId = Integer.parseInt(request.getParameter("studentId"));
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Retrieve and validate classId and studentId from request parameters
+        String classIdStr = request.getParameter("classId");
+        String studentIdStr = request.getParameter("studentId");
+
+        if (classIdStr == null || studentIdStr == null || classIdStr.trim().isEmpty() || studentIdStr.trim().isEmpty()) {
+            // Missing parameters; redirect with enrollError message
+            response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?action=enrollStudents&classId=" + classIdStr + "&message=enrollError");
+            return;
+        }
+
+        int classId;
+        int studentId;
+        try {
+            classId = Integer.parseInt(classIdStr);
+            studentId = Integer.parseInt(studentIdStr);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            // Invalid parameters; redirect with enrollError message
+            response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?action=enrollStudents&classId=" + classIdStr + "&message=enrollError");
+            return;
+        }
 
         ClassUserDAO classUserDAO = new ClassUserDAO();
 
         try {
+            // Attempt to enroll the student to the class
             boolean isEnrolled = classUserDAO.enrollStudentToClass(classId, studentId);
             if (isEnrolled) {
-                response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?action=classDetails&classId=" + classId);
+                // **SUCCESS**: Redirect with message=studentEnrolled to trigger popup
+                response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?action=classDetails&classId=" + classId + "&message=studentEnrolled");
             } else {
-                request.setAttribute("errorMessage", "Không thể ghi danh học sinh.");
-                request.getRequestDispatcher("/jsp/teacher.jsp?action=enrollStudents&classId=" + classId).forward(request, response);
+                // **FAILURE**: Redirect with message=enrollError
+                response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?action=enrollStudents&classId=" + classId + "&message=enrollError");
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "Đã xảy ra lỗi: " + e.getMessage());
-            request.getRequestDispatcher("enrollStudent.jsp").forward(request, response);
+            // **EXCEPTION**: Redirect with message=enrollError
+            response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?action=enrollStudents&classId=" + classId + "&message=enrollError");
         }
     }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -49,7 +72,22 @@ public class EnrollStudentServlet extends   HttpServlet {
         }
 
         // Get classId from the request parameter
-        int classId = Integer.parseInt(request.getParameter("classId"));
+        String classIdStr = request.getParameter("classId");
+        if (classIdStr == null || classIdStr.trim().isEmpty()) {
+            request.setAttribute("errorMessage", "Class ID is missing.");
+            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+            return;
+        }
+
+        int classId;
+        try {
+            classId = Integer.parseInt(classIdStr);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "Invalid Class ID.");
+            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+            return;
+        }
 
         // Get class details
         try {
@@ -83,7 +121,7 @@ public class EnrollStudentServlet extends   HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "An error occurred: " + e.getMessage());
+            request.setAttribute("errorMessage", "Đã xảy ra lỗi: " + e.getMessage());
             request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
         }
     }
