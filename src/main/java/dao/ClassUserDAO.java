@@ -184,16 +184,15 @@ public class ClassUserDAO {
     }
     //enroll student to class
     public boolean enrollStudentToClass(int classId, int studentId) throws SQLException, ClassNotFoundException {
-        String sql = "INSERT INTO class_user (class_id, user_id) VALUES (?, ?)";
+        String sql = "INSERT INTO class_user(class_id, user_id) VALUES(?, ?)";
         try (Connection connection = new DBConnect().getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, classId);
             ps.setInt(2, studentId);
-
-            int affectedRows = ps.executeUpdate();
-            return affectedRows > 0;
+            return ps.executeUpdate() == 1;
         }
     }
+
     //is user enrolled in class
     public boolean isUserEnrolledInClass(int userId, int classId) throws SQLException, ClassNotFoundException {
         String sql = "SELECT * FROM class_user WHERE user_id = ? AND class_id = ?";
