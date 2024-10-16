@@ -1,15 +1,14 @@
 package Servlet;
 
 import Module.ReturnMail;
+import dao.UsersDAO;
+import entity.Users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
 
 import java.io.IOException;
-
+import java.sql.SQLException;
 
 @WebServlet(name = "forgetPass", value = "/forgetPass")
 public class forgetPass extends HttpServlet {
@@ -22,21 +21,35 @@ public class forgetPass extends HttpServlet {
             service = "forgetPass";
         }
         if (service.equals("forgetPass")) {
-            ReturnMail mail = new ReturnMail();
             String email = request.getParameter("email");
-            String capcha = mail.generateVerificationCode();
-            mail.sendMail(email , capcha);
-            session.setAttribute("email", email);
-            session.setAttribute("capcha", capcha);
-            response.sendRedirect(request.getContextPath() + "/jsp/verify.jsp");
-            // send email and capcha to resetPassController.java via session.setAttribute to get email and capcha in verify.jsp
-            // o day email va capcha qua session.setattribute de lay email va capcha o trang verify.jsp
-            // neu chuyen sang trang verifyController thi can phai truyen email va capcha qua request.getparameter
+
+            // Kiểm tra xem email có tồn tại trong cơ sở dữ liệu không
+            UsersDAO usersDAO = new UsersDAO();
+            Users user = null;
+            try {
+                user = usersDAO.getUserByEmail(email);
+            } catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
+                // Xử lý ngoại lệ nếu cần thiết
+            }
+
+            if (user == null) {
+                // Email không tồn tại
+                session.setAttribute("error", "Email không tồn tại trong hệ thống.");
+                response.sendRedirect(request.getContextPath() + "/jsp/lostpass.jsp");
+            } else {
+                // Email tồn tại, tiếp tục gửi mã xác thực
+                ReturnMail mail = new ReturnMail();
+                String capcha = mail.generateVerificationCode();
+                mail.sendMail(email , capcha);
+                session.setAttribute("email", email);
+                session.setAttribute("capcha", capcha);
+                response.sendRedirect(request.getContextPath() + "/jsp/verify.jsp");
+            }
         }
     }
 
-    protected void doGet
-            (HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
@@ -46,10 +59,5 @@ public class forgetPass extends HttpServlet {
             (HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
-    }
-
-    @Override
-    public String getServletInfo() {
-        return "Short description";
     }
 }
