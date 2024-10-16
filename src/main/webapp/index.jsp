@@ -225,16 +225,6 @@
 
 
 
-    <section id="test-link" class="test-link">
-        <div class="container">
-            <h2>Take a Quiz Test</h2>
-            <p>Are you ready to test your knowledge? Click the link below to start the quiz.</p>
-            <a href="${pageContext.request.contextPath}/jsp/quiz.jsp" class="btn-quiz">Start Test Multiple Choice
-                Quiz</a>
-            <a href="${pageContext.request.contextPath}/jsp/match-quiz.jsp" class="btn-quiz">Start Test Match Quiz</a>
-        </div>
-    </section>
-
     <!-- Featured Quizzes Carousel -->
     <section id="featured-quizzes" class="featured-quizzes">
         <div class="container">
