@@ -347,22 +347,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getMatchingQuestionHTML(num) {
         return `
-          <h3>Question ${num} (Matching)</h3>
-          <!-- Remove Question Button -->
-          <button type="button" class="remove-btn" data-num="${num}">Remove Question</button>
-          <!-- Instructions -->
-          <p class="matching-instructions">Enter the items for Column A and Column B. The answers will be matched in the order you enter them.</p>
-          <div class="matching-pair-header">
-            <div class="pair-number">#</div>
-            <div class="column-a">Column A</div>
-            <div class="column-b">Column B</div>
-            <div class="actions">Actions</div>
-          </div>
-          <div id="matchingPairs${num}" class="matching-pair-container">
-            ${getMatchingPairHTML(num, 1)}
-          </div>
-          <button type="button" class="add-pair-btn" data-question="${num}">Add Matching Pair</button>
-        `;
+      <h3>Question ${num} (Matching)</h3>
+      <!-- Remove Question Button -->
+      <button type="button" class="remove-btn" data-num="${num}">Remove Question</button>
+      <!-- Question Content -->
+      <label for="questionContent${num}">Instructions (optional):</label>
+      <textarea id="questionContent${num}" name="questionContent${num}" placeholder="Enter any instructions or leave blank."></textarea>
+      <!-- Instructions -->
+      <p class="matching-instructions">Enter the items for Column A and Column B. The answers will be matched in the order you enter them.</p>
+      <div class="matching-pair-header">
+        <div class="pair-number">#</div>
+        <div class="column-a">Column A</div>
+        <div class="column-b">Column B</div>
+        <div class="actions">Actions</div>
+      </div>
+      <div id="matchingPairs${num}" class="matching-pair-container">
+        ${getMatchingPairHTML(num, 1)}
+      </div>
+      <button type="button" class="add-pair-btn" data-question="${num}">Add Matching Pair</button>
+    `;
     }
 
     function getMatchingPairHTML(questionNum, pairNum) {
