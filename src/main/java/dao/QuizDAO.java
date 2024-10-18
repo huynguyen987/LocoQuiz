@@ -18,6 +18,27 @@ import jakarta.json.JsonObject;
 
 public class QuizDAO {
 
+    //getAssignedQuizzesByClassId
+    public List<quiz> getAssignedQuizzesByClassId(int classId) throws SQLException, ClassNotFoundException {
+        List<quiz> quizzes = new ArrayList<>();
+        Connection connection = new DBConnect().getConnection();
+        String sql = "SELECT q.* FROM quiz q " +
+                "INNER JOIN class_quiz cq ON q.id = cq.quiz_id " +
+                "WHERE cq.class_id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, classId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                quiz q = extractQuizFromResultSet(rs);
+                quizzes.add(q);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return quizzes;
+    }
+
     //get all quiz
     public List<quiz> getAllQuiz() throws SQLException, ClassNotFoundException {
         List<quiz> quizs = new ArrayList<>();

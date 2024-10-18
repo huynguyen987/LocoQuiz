@@ -71,7 +71,6 @@
           <h2><%= c.getName() %></h2>
           <p><%= c.getDescription() %></p>
             <a href="<%= request.getContextPath() %>/ViewClassDetailsServlet?classId=<%= c.getId() %>" class="button">Xem chi tiết</a>
-          <a href="<%= request.getContextPath() %>/ViewAssignedQuizzesServlet?classId=<%= c.getId() %>" class="button">Xem Quiz được giao</a>
         </div>
         <% } %>
       </div>
