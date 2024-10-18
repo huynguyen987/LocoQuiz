@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectedQuizTypeDiv = document.getElementById('selectedQuizType');
     const chosenQuizTypeSpan = document.getElementById('chosenQuizType');
     const quizTypeSelection = document.getElementById('quizTypeSelection');
+    const quizFileInput = document.getElementById('quizFile');
 
     // Pagination Elements
     const prevPageBtn = document.getElementById('prevPageBtn');
@@ -95,13 +96,30 @@ document.addEventListener('DOMContentLoaded', function () {
             chosenQuizTypeSpan.textContent = formatQuizType(quizType);
             selectedQuizTypeDiv.style.display = 'block';
 
-            // Show the quiz creator container
-            quizCreatorContainer.style.display = 'flex';
+            // Check if a file is uploaded
+            if (quizFileInput.files.length > 0) {
+                // Hide manual question creation UI
+                quizCreatorContainer.style.display = 'none';
+            } else {
+                // Show manual question creation UI
+                quizCreatorContainer.style.display = 'flex';
 
-            // Initialize the quiz creator
-            initializeQuizCreator();
+                // Initialize the quiz creator
+                initializeQuizCreator();
+            }
         } else {
             alert('Please select a quiz type before starting.');
+        }
+    });
+
+    // Event listener for file input change
+    quizFileInput.addEventListener('change', function () {
+        if (quizFileInput.files.length > 0) {
+            // Hide manual question creation UI
+            quizCreatorContainer.style.display = 'none';
+        } else {
+            // Show manual question creation UI
+            quizCreatorContainer.style.display = 'flex';
         }
     });
 

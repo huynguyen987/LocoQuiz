@@ -2,9 +2,8 @@
 <%@ page import="java.util.*, entity.Tag" %>
 <%@ page import="dao.TagDAO" %>
 <%
-    Integer userId = (Integer) session.getAttribute("userId"); // Lấy userId từ session
+    Integer userId = (Integer) session.getAttribute("userId"); // Get userId from session
     if (userId == null) {
-        // Nếu userId không có trong session (người dùng chưa đăng nhập), chuyển hướng về trang đăng nhập
         response.sendRedirect("login.jsp");
         return;
     }
@@ -44,7 +43,7 @@
     <% } %>
 
 
-    <form action="${pageContext.request.contextPath}/QuizController" method="post" id="quizForm">
+    <form action="${pageContext.request.contextPath}/QuizController" method="post" id="quizForm" enctype="multipart/form-data">
         <!-- Quiz Name -->
         <label for="quizName">Quiz Name:</label>
         <input type="text" id="quizName" name="quizName" required aria-required="true">
@@ -83,6 +82,10 @@
                 <input type="radio" name="quizTypeRadio" value="matching"> Matching
             </label>
         </div>
+
+        <!-- File Upload -->
+        <label for="quizFile">Import Quiz from File:</label>
+        <input type="file" id="quizFile" name="quizFile" accept=".docx,.xlsx">
 
         <!-- Hidden input to store selected quiz type -->
         <input type="hidden" id="quizType" name="quizType" value="">
@@ -126,8 +129,6 @@
         <!-- Submit Button -->
         <input type="submit" value="Create Quiz">
     </form>
-
-
 
 </div>
 
