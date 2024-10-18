@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="entity.Users" %>
 <%
   Users currentUser = (Users) session.getAttribute("user");
 %>

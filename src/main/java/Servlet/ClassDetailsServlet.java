@@ -1,74 +1,66 @@
 package Servlet;
 
 import dao.ClassDAO;
-import dao.ClassQuizDAO;
 import dao.ClassUserDAO;
-import dao.UsersDAO;
 import entity.Users;
 import entity.classs;
-import entity.quiz;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
-import java.util.List;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 
-@WebServlet(name = "ClassDetailsServlet", urlPatterns = {"/ClassDetailsServlet"})
+@WebServlet(name = "ClassDetailsServlet", value = "/ClassDetailsServlet")
 public class ClassDetailsServlet extends HttpServlet {
+
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Get the current user from the session
+
+        // Kiểm tra phiên đăng nhập
         HttpSession session = request.getSession();
         Users currentUser = (Users) session.getAttribute("user");
-        if (currentUser == null) {
-            response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");
+        if (currentUser == null || currentUser.getRole_id() != Users.ROLE_STUDENT) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
 
-        // Get classId from the request parameter
-        int classId = Integer.parseInt(request.getParameter("classId"));
+        String classIdStr = request.getParameter("classId");
+        if (classIdStr == null || classIdStr.trim().isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/myClass.jsp?message=" + URLEncoder.encode("Không tìm thấy lớp học.", StandardCharsets.UTF_8));
+            return;
+        }
+
+        int classId = Integer.parseInt(classIdStr);
+
+        ClassDAO classDAO = new ClassDAO();
+        classs classEntity = null;
 
         try {
-            ClassDAO classDAO = new ClassDAO();
-            UsersDAO usersDAO = new UsersDAO();
-            ClassUserDAO classUserDAO = new ClassUserDAO();
-            ClassQuizDAO classQuizDAO = new ClassQuizDAO();
+            // Lấy thông tin lớp học
+            classEntity = classDAO.getClassById(classId);
 
-            classs classEntity = classDAO.getClassById(classId);
             if (classEntity == null) {
-                request.setAttribute("errorMessage", "Class not found.");
-                request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/myClass.jsp?message=" + URLEncoder.encode("Lớp học không tồn tại.", StandardCharsets.UTF_8));
                 return;
             }
 
-            // Access control
-            if (currentUser.getRole_id() != Users.ROLE_ADMIN && currentUser.getRole_id() != Users.ROLE_TEACHER) {
-                boolean isEnrolled = classUserDAO.isUserEnrolledInClass(currentUser.getId(), classId);
-                if (!isEnrolled) {
-                    request.setAttribute("errorMessage", "You do not have access to this class.");
-                    request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
-                    return;
-                }
+            // Kiểm tra xem sinh viên có tham gia lớp này không
+            ClassUserDAO classUserDAO = new ClassUserDAO();
+            if (!classUserDAO.isUserEnrolledInClass(classId, currentUser.getId())) {
+                response.sendRedirect(request.getContextPath() + "/myClass.jsp?message=" + URLEncoder.encode("Bạn không có quyền truy cập lớp học này.", "UTF-8"));
+                return;
             }
 
-            Users teacher = usersDAO.getUserById(classEntity.getTeacher_id());
-            List<Users> students = classUserDAO.getUsersByClassId(classId);
-            List<quiz> quizzes = classQuizDAO.getQuizzesByClassId(classId);
-
-            // Set attributes for the JSP page
+            // Đặt thuộc tính và chuyển tiếp đến trang chi tiết lớp học
             request.setAttribute("classEntity", classEntity);
-            request.setAttribute("teacher", teacher);
-            request.setAttribute("students", students);
-            request.setAttribute("quizzes", quizzes);
+            request.getRequestDispatcher("/jsp/class-details.jsp").forward(request, response);
 
-            // Forward to the JSP page
-            request.getRequestDispatcher("/jsp/classDetails.jsp").forward(request, response);
-
-        } catch (Exception e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "An error occurred: " + e.getMessage());
-            request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/myClass.jsp?message=" + URLEncoder.encode("Có lỗi xảy ra.", StandardCharsets.UTF_8));
         }
     }
 }
-

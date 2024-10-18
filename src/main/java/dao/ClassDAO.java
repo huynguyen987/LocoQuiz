@@ -9,6 +9,64 @@ import Module.DBConnect;
 
 public class ClassDAO {
 
+       //getClassDetailsById
+    public classs getClassDetailsById(int classId) throws SQLException, ClassNotFoundException {
+        String sql = "SELECT * FROM class WHERE id = ?";
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, classId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    classs classEntity = new classs();
+                    classEntity.setId(rs.getInt("id"));
+                    classEntity.setName(rs.getString("name"));
+                    classEntity.setClass_key(rs.getString("class_key"));
+                    classEntity.setDescription(rs.getString("description"));
+                    classEntity.setCreated_at(rs.getString("created_at"));
+                    classEntity.setUpdated_at(rs.getString("updated_at"));
+                    classEntity.setTeacher_id(rs.getInt("teacher_id"));
+                    return classEntity;
+                }
+            }
+        }
+        return null;
+    }
+
+    //getClassesByStudentId
+    public List<classs> getClassesByStudentId(int studentId) throws SQLException, ClassNotFoundException {
+        List<classs> classes = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = new DBConnect().getConnection();
+            String sql = "SELECT c.*, u.username AS teacherName FROM class c " +
+                    "JOIN class_user cu ON c.id = cu.class_id " +
+                    "JOIN users u ON c.teacher_id = u.id " +
+                    "WHERE cu.user_id = ? AND cu.status = 'approved'";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, studentId);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                classs cls = new classs();
+                cls.setId(rs.getInt("id"));
+                cls.setName(rs.getString("name"));
+                cls.setDescription(rs.getString("description"));
+                cls.setClass_key(rs.getString("class_key"));
+                cls.setTeacher_id(rs.getInt("teacher_id"));
+                classes.add(cls);
+            }
+        } finally {
+            if (rs != null) rs.close();
+            if (pstmt != null) pstmt.close();
+            if (conn != null) conn.close();
+        }
+
+        return classes;
+    }
+
     //createClass
     public boolean createClass(classs newClass) throws SQLException, ClassNotFoundException {
         Connection connection = null;
@@ -96,21 +154,6 @@ public class ClassDAO {
         return null;
     }
 
-    //insert class
-    public boolean insertClass(classs c) throws SQLException, ClassNotFoundException {
-        Connection connection = new DBConnect().getConnection();
-        String sql = "INSERT INTO class(name, description, teacher_id) VALUES(?, ?, ?)";
-        try {
-            PreparedStatement ps = connection.prepareCall(sql);
-            ps.setString(1, c.getName());
-            ps.setString(2, c.getDescription());
-            ps.setInt(3, c.getTeacher_id());
-            return ps.executeUpdate() == 1;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
        //update class
     public boolean updateClass(classs classEntity) throws SQLException, ClassNotFoundException {
         String sql = "UPDATE class SET name = ?, description = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
@@ -207,28 +250,6 @@ public class ClassDAO {
         return classs;
     }
 
-    //get class by name
-    public classs getClassByName(String name) throws SQLException, ClassNotFoundException {
-        Connection connection = new DBConnect().getConnection();
-        String sql = "SELECT * FROM class WHERE name = ?";
-        classs c = new classs();
-        try {
-            PreparedStatement ps = connection.prepareCall(sql);
-            ps.setString(1, name);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                c.setId(rs.getInt("id"));
-                c.setName(rs.getString("name"));
-                c.setDescription(rs.getString("description"));
-                c.setCreated_at(rs.getTimestamp("created_at").toString());
-                c.setUpdated_at(rs.getTimestamp("updated_at").toString());
-                c.setTeacher_id(rs.getInt("teacher_id"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return c;
-    }
 
     public List<classs> searchClasses(String keyword) throws SQLException, ClassNotFoundException {
         String sql = "SELECT * FROM class WHERE name LIKE ?";
@@ -251,6 +272,29 @@ public class ClassDAO {
             }
         }
         return classes;
+    }
+
+    //getClassByClassKey
+    public classs getClassByClassKey(String classKey) throws SQLException, ClassNotFoundException {
+        String sql = "SELECT * FROM class WHERE class_key = ?";
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, classKey);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    classs classEntity = new classs();
+                    classEntity.setId(rs.getInt("id"));
+                    classEntity.setName(rs.getString("name"));
+                    classEntity.setClass_key(rs.getString("class_key"));
+                    classEntity.setDescription(rs.getString("description"));
+                    classEntity.setCreated_at(rs.getString("created_at"));
+                    classEntity.setUpdated_at(rs.getString("updated_at"));
+                    classEntity.setTeacher_id(rs.getInt("teacher_id"));
+                    return classEntity;
+                }
+            }
+        }
+        return null;
     }
 
 }
