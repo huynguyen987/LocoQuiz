@@ -2,15 +2,20 @@
 package Module;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AnswersReader {
-    private int sequence;
+    @JsonProperty("sequence")
+    private Integer sequence;
+    @JsonProperty("correct")
     private String correct;
+    @JsonProperty("options")
     private List<String> options;
+    @JsonProperty("question")
     private String question;
 
     // Constructors
