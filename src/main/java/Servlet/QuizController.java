@@ -80,19 +80,39 @@ public class QuizController extends HttpServlet {
                 JSONObject questionObj = new JSONObject();
 
                 if (quizType.equals("multiple-choice")) {
-                    // Handle multiple choice questions
-                    String[] answers = new String[4];
-                    for (int j = 1; j <= 4; j++) {
-                        answers[j - 1] = request.getParameter("answer" + i + "_" + j);
+                    // Get the question content
+                    questionContent = request.getParameter("questionContent" + i);
+
+                    // Collect all answer options
+                    List<String> answerList = new ArrayList<>();
+                    int j = 1;
+                    while (true) {
+                        String answer = request.getParameter("answer" + i + "_" + j);
+                        if (answer == null || answer.trim().isEmpty()) {
+                            break;
+                        }
+                        answerList.add(answer);
+                        j++;
                     }
-                    String correctAnswer = request.getParameter("correctAnswer" + i);
+                    String[] answers = answerList.toArray(new String[0]);
+
+                    // Get the index of the correct answer
+                    String correctAnswerIndexStr = request.getParameter("correctAnswer" + i);
+                    int correctAnswerIndex = Integer.parseInt(correctAnswerIndexStr);
+
+                    // Map the index to the correct answer text
+                    String correctAnswerText = answers[correctAnswerIndex - 1]; // Adjust for zero-based index
 
                     // Build the question JSON object
                     questionObj.put("sequence", i);
                     questionObj.put("question", questionContent);
                     questionObj.put("options", Arrays.asList(answers));
-                    questionObj.put("correct", correctAnswer);
-                } else if (quizType.equals("fill-in-the-blank")) {
+                    questionObj.put("correct", correctAnswerText);
+
+                    // Add the question object to the array
+                    questionsArray.put(questionObj);
+                }
+                else if (quizType.equals("fill-in-the-blank")) {
                     // Handle fill-in-the-blank questions
                     String correctAnswer = request.getParameter("correctAnswer" + i);
                     questionObj.put("question", questionContent);
