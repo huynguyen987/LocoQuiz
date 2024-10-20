@@ -179,7 +179,7 @@
                 <!-- My Classes Card -->
                 <div class="card">
                     <h2>My Classes</h2>
-                    <p>View and manage your enrolled classes.</p>
+                    <p>View your enrolled classes.</p>
                     <a href="<%= request.getContextPath() %>/jsp/student.jsp?action=Classrooms" class="button">View</a>
                 </div>
 
@@ -190,23 +190,16 @@
                     <a href="<%= request.getContextPath() %>/jsp/student.jsp?action=viewRecentQuiz" class="button">View Quizzes</a>
                 </div>
 
-                <!-- Progress Card -->
+                <!-- Join Class -->
                 <div class="card">
-                    <h2>Your Progress</h2>
-                    <p>Check your learning progress and achievements.</p>
-                    <a href="<%= request.getContextPath() %>/jsp/progress.jsp" class="button">View Progress</a>
-                </div>
-
-                <!-- Announcements Card -->
-                <div class="card">
-                    <h2>Announcements</h2>
-                    <p>Stay updated with the latest news.</p>
-                    <a href="<%= request.getContextPath() %>/jsp/announcements.jsp" class="button">View Announcements</a>
+                    <h2>Join A Class</h2>
+                    <p>Join class with your teacher class code</p>
+                    <a href="<%= request.getContextPath() %>/jsp/student.jsp?action=JoinClass" class="button">Join</a>
                 </div>
 
                 <!-- Take Quiz Card -->
                 <div class="card">
-                    <h2>Take Quiz</h2>
+                    <h2>Quizzes</h2>
                     <p>Participate in quizzes to test your knowledge.</p>
                     <a href="<%= request.getContextPath() %>/AllQuizzesServlet" class="button">Take Quiz</a>
                 </div>
