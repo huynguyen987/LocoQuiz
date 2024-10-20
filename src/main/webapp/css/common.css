@@ -647,3 +647,321 @@ body.dark-mode {
     align-items: center;
     justify-content: center;
 }
+
+/* My Classes Section */
+#my-classes {
+    margin-top: 20px;
+}
+
+#my-classes h2 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    font-size: 2em;
+    text-align: center;
+}
+
+#my-classes .search-bar {
+    padding: 10px 15px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 20px auto;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 16px;
+    display: block;
+}
+
+#my-classes .classes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+#my-classes .class-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#my-classes .class-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+#my-classes .class-card h3 {
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    font-size: 1.5em;
+}
+
+#my-classes .class-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Class Details Section */
+#class-details {
+    margin-top: 20px;
+}
+
+#class-details h2 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    font-size: 2em;
+    text-align: center;
+}
+
+.class-details-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+@media (min-width: 768px) {
+    .class-details-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.class-details-container .class-info,
+.class-details-container .classmates,
+.class-details-container .assigned-quizzes {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.class-details-container .class-info h3,
+.class-details-container .classmates h3,
+.class-details-container .assigned-quizzes h3 {
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    font-size: 1.5em;
+}
+
+.class-details-container .list {
+    list-style-type: disc;
+    padding-left: 20px;
+    color: var(--text-color);
+}
+
+.class-details-container .list li {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+/* Action Buttons in Class Details */
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.action-buttons .button,
+.action-buttons .delete-button,
+.action-buttons .back-btn {
+    flex: 1 1 auto;
+    min-width: 150px;
+    text-align: center;
+}
+
+/* Back Button Specific Styles */
+.back-btn {
+    background-color: var(--accent-color);
+    color: #fff;
+    border-radius: 5px;
+    padding: 10px 20px;
+    transition: background-color 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.back-btn:hover {
+    background-color: #2c9faf;
+}
+
+/* Join Class Form in Dashboard */
+#dashboard .join-class-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#dashboard .join-class-form input[type="text"] {
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+#dashboard .join-class-form .button {
+    align-self: flex-start;
+}
+
+/* Search Functionality in My Classes */
+#my-classes .search-bar {
+    padding: 10px 15px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 20px auto;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 16px;
+    display: block;
+}
+
+/* Responsive Enhancements for Student Pages */
+@media (max-width: 768px) {
+    #my-classes .classes-grid,
+    .class-details-container {
+        grid-template-columns: 1fr;
+    }
+
+    #class-details .class-details-container {
+        grid-template-columns: 1fr;
+    }
+
+    /* Ensure buttons stack vertically on small screens */
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .action-buttons .button,
+    .action-buttons .delete-button,
+    .action-buttons .back-btn {
+        width: 100%;
+    }
+}
+
+/* Additional Student Page Styles */
+
+/* Success and Error Messages within Student Pages */
+#my-classes .success-message,
+#my-classes .error-message,
+#class-details .success-message,
+#class-details .error-message {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+#my-classes .success-message {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+#my-classes .error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Ensure consistency for "View" buttons within My Classes */
+#my-classes .view-button {
+    background-color: var(--secondary-color);
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+}
+
+#my-classes .view-button:hover {
+    background-color: #17a673;
+}
+
+/* Ensure consistency for "Join Class" buttons */
+#dashboard .join-class-form .button {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#dashboard .join-class-form .button:hover {
+    background-color: #3071d1;
+}
+
+/* Consistent Modal Styles for Student Pages */
+#quizAssignedModal,
+#studentEnrolledModal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 2000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
+    align-items: center;
+    justify-content: center;
+}
+
+#quizAssignedModal .modal-content,
+#studentEnrolledModal .modal-content {
+    background-color: var(--card-bg);
+    margin: auto;
+    padding: 30px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    animation: fadeIn 0.5s;
+}
+
+#quizAssignedModal .modal-icon,
+#studentEnrolledModal .modal-icon {
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+
+.success-icon {
+    color: #28a745;
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    color: var(--text-color);
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close-button:hover {
+    color: #e74c3c;
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-50px); }
+    to { opacity: 1; transform: translateY(0); }
+}

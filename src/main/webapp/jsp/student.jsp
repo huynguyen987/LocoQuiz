@@ -26,11 +26,9 @@
 <main>
     <div class="dashboard-content">
         <%
-
-            //verify user
-            // Session and user authentication
+            // Verify user
             session = request.getSession(false);
-             currentUser = null;
+            currentUser = null;
             if (session != null) {
                 currentUser = (Users) session.getAttribute("user");
             }
@@ -49,6 +47,7 @@
 
             // Message for notifications
             String message = request.getParameter("message");
+            String error = request.getParameter("error");
 
             // Get action parameter
             String action = request.getParameter("action");
@@ -66,41 +65,28 @@
             }
         %>
 
-
-        <!-- Display the table with search bar -->
+        <!-- My Classes Section -->
         <section id="my-classes">
             <h2>My Classes</h2>
-            <input type="text" id="searchInput" placeholder="Search by class name or teacher's name...">
-            <table id="classTable">
-                <thead>
-                <tr>
-                    <th>Class Name</th>
-                    <th>Teacher's Name</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <% if (classList != null && !classList.isEmpty()) {
-                    for (classs cls : classList) { %>
-                <tr>
-                    <td><%= cls.getName() %></td>
-                    <td><%= cls.getTeacher_name() %></td>
-                    <td>
-                        <!-- View button -->
-                        <form action="student.jsp" method="get" style="display:inline;">
-                            <input type="hidden" name="action" value="viewClass">
-                            <input type="hidden" name="classId" value="<%= cls.getId() %>">
-                            <button type="submit">View</button>
-                        </form>
-                    </td>
-                </tr>
-                <% } } else { %>
-                <tr>
-                    <td colspan="3">You are not enrolled in any classes.</td>
-                </tr>
-                <% } %>
-                </tbody>
-            </table>
+            <div class="my-classes-container">
+                <input type="text" id="searchInput" placeholder="Search by class name or teacher's name..." class="search-bar">
+                <div class="classes-grid">
+                    <% if (classList != null && !classList.isEmpty()) {
+                        for (classs cls : classList) { %>
+                    <div class="class-card">
+                        <h3><%= cls.getName() %></h3>
+                        <p><strong>Teacher:</strong> <%= cls.getTeacher_name() %></p>
+                        <div class="class-actions">
+                            <a href="<%= request.getContextPath() %>/jsp/student.jsp?action=viewClass&classId=<%= cls.getId() %>" class="button view-button">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </div>
+                    </div>
+                    <% } } else { %>
+                    <p>You are not enrolled in any classes.</p>
+                    <% } %>
+                </div>
+            </div>
         </section>
         <% } else if ("viewClass".equals(action)) { %>
         <%
@@ -131,38 +117,45 @@
             }
         %>
 
-        <!-- Display Class Details -->
+        <!-- Class Details Section -->
         <section id="class-details">
             <h2>Class Details</h2>
-            <div class="class-info">
-                <h3>Class Information</h3>
-                <p><strong>Name:</strong> <%= classEntity.getName() %></p>
-                <p><strong>Description:</strong> <%= classEntity.getDescription() %></p>
-                <p><strong>Teacher:</strong> <%= classEntity.getTeacher_name() %></p>
-            </div>
-            <div class="classmates">
-                <h3>Classmates</h3>
-                <% if (classmates != null && !classmates.isEmpty()) { %>
-                <ul>
-                    <% for (Users student : classmates) { %>
-                    <li><%= student.getUsername() %></li>
+            <div class="class-details-container">
+                <div class="class-info">
+                    <h3>Class Information</h3>
+                    <p><strong>Name:</strong> <%= classEntity.getName() %></p>
+                    <p><strong>Description:</strong> <%= classEntity.getDescription() %></p>
+                    <p><strong>Teacher:</strong> <%= classEntity.getTeacher_name() %></p>
+                </div>
+                <div class="classmates">
+                    <h3>Classmates</h3>
+                    <% if (classmates != null && !classmates.isEmpty()) { %>
+                    <ul class="list">
+                        <% for (Users student : classmates) { %>
+                        <li><%= student.getUsername() %></li>
+                        <% } %>
+                    </ul>
+                    <% } else { %>
+                    <p>No classmates found.</p>
                     <% } %>
-                </ul>
-                <% } else { %>
-                <p>No classmates found.</p>
-                <% } %>
-            </div>
-            <div class="assigned-quizzes">
-                <h3>Assigned Quizzes</h3>
-                <% if (assignedQuizzes != null && !assignedQuizzes.isEmpty()) { %>
-                <ul>
-                    <% for (quiz quiz : assignedQuizzes) { %>
-                    <li><%= quiz.getName() %></li>
+                </div>
+                <div class="assigned-quizzes">
+                    <h3>Assigned Quizzes</h3>
+                    <% if (assignedQuizzes != null && !assignedQuizzes.isEmpty()) { %>
+                    <ul class="list">
+                        <% for (quiz quiz : assignedQuizzes) { %>
+                        <li><%= quiz.getName() %></li>
+                        <% } %>
+                    </ul>
+                    <% } else { %>
+                    <p>No quizzes assigned.</p>
                     <% } %>
-                </ul>
-                <% } else { %>
-                <p>No quizzes assigned.</p>
-                <% } %>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <a href="<%= request.getContextPath() %>/jsp/student.jsp?action=Classrooms" class="button back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Classes
+                </a>
             </div>
         </section>
         <% } else { %>
@@ -173,30 +166,41 @@
             <% if (message != null) { %>
             <div class="success-message"><%= message %></div>
             <% } %>
+            <% if (error != null) { %>
+            <div class="error-message"><%= error %></div>
+            <% } %>
             <h1>Welcome, <%= user.getUsername() %>!</h1>
             <p>Access your classes, quizzes, and track your progress all in one place.</p>
 
             <!-- Grid of Cards -->
-            <div class="grid">
+            <div class="grid grid-2">
                 <!-- My Classes Card -->
                 <div class="card">
                     <h2>My Classes</h2>
                     <p>View your enrolled classes.</p>
-                    <a href="<%= request.getContextPath() %>/jsp/student.jsp?action=Classrooms" class="button">View</a>
+                    <a href="<%= request.getContextPath() %>/jsp/student.jsp?action=Classrooms" class="button">
+                        <i class="fas fa-book"></i> View
+                    </a>
                 </div>
 
                 <!-- Recent Quizzes Card -->
                 <div class="card">
                     <h2>Recent Quizzes</h2>
                     <p>Continue where you left off.</p>
-                    <a href="<%= request.getContextPath() %>/jsp/student.jsp?action=viewRecentQuiz" class="button">View Quizzes</a>
+                    <a href="<%= request.getContextPath() %>/AllQuizzesServlet?action=viewRecent" class="button">
+                        <i class="fas fa-pencil-alt"></i> View Quizzes
+                    </a>
                 </div>
 
+                <!-- Join Class Card -->
                 <div class="card">
                     <h2>Join A Class</h2>
-                    <p>Join class with your teacher class code</p>
-                    <form action="<%= request.getContextPath() %>/JoinClassServlet" method="POST">
-                        <button type="submit" class="button">Join</button>
+                    <p>Join a class with your teacher's class code.</p>
+                    <form action="<%= request.getContextPath() %>/JoinClassServlet" method="POST" class="join-class-form">
+                        <input type="text" name="classKey" placeholder="Enter Class Code" required>
+                        <button type="submit" class="button">
+                            <i class="fas fa-plus-circle"></i> Join
+                        </button>
                     </form>
                 </div>
 
@@ -204,7 +208,9 @@
                 <div class="card">
                     <h2>Quizzes</h2>
                     <p>Participate in quizzes to test your knowledge.</p>
-                    <a href="<%= request.getContextPath() %>/AllQuizzesServlet" class="button">Take Quiz</a>
+                    <a href="<%= request.getContextPath() %>/AllQuizzesServlet" class="button">
+                        <i class="fas fa-tasks"></i> Take Quiz
+                    </a>
                 </div>
             </div>
         </section>
