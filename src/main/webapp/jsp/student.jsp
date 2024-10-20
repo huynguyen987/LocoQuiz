@@ -26,6 +26,8 @@
 <main>
     <div class="dashboard-content">
         <%
+
+            //verify user
             // Session and user authentication
             session = request.getSession(false);
              currentUser = null;
@@ -190,11 +192,12 @@
                     <a href="<%= request.getContextPath() %>/jsp/student.jsp?action=viewRecentQuiz" class="button">View Quizzes</a>
                 </div>
 
-                <!-- Join Class -->
                 <div class="card">
                     <h2>Join A Class</h2>
                     <p>Join class with your teacher class code</p>
-                    <a href="<%= request.getContextPath() %>/jsp/student.jsp?action=JoinClass" class="button">Join</a>
+                    <form action="<%= request.getContextPath() %>/JoinClassServlet" method="POST">
+                        <button type="submit" class="button">Join</button>
+                    </form>
                 </div>
 
                 <!-- Take Quiz Card -->

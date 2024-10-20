@@ -18,7 +18,7 @@ public class classs {
     private String created_at;
     private String updated_at;
     private int teacher_id;
-    private String teacher_name;
+    private String teacher_name; 
 
 
     public classs() {
