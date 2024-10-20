@@ -259,6 +259,37 @@ document.addEventListener('DOMContentLoaded', function () {
             const answerOptions = section.querySelectorAll('.answer-option');
             section.setAttribute('data-answer-count', answerOptions.length);
         }
+
+        // Update matching pairs if it's a matching question
+        if (quizType === 'matching') {
+            const matchingPairsContainer = section.querySelector(`#matchingPairs${num}`);
+            const matchingPairs = matchingPairsContainer.querySelectorAll('.matching-pair');
+            matchingPairs.forEach((pair, index) => {
+                const pairNum = index + 1;
+                pair.setAttribute('data-pair-num', pairNum);
+                pair.querySelector('.pair-number').textContent = pairNum;
+
+                // Update inputs and labels
+                const inputA = pair.querySelector('.column-a input');
+                const labelA = pair.querySelector('.column-a label');
+                const inputB = pair.querySelector('.column-b input');
+                const labelB = pair.querySelector('.column-b label');
+                const removeBtn = pair.querySelector('.remove-pair-btn');
+
+                inputA.id = `matchA${num}_${pairNum}`;
+                inputA.name = `matchA${num}_${pairNum}`;
+                inputA.placeholder = `Column A Item ${pairNum}`;
+                labelA.setAttribute('for', `matchA${num}_${pairNum}`);
+
+                inputB.id = `matchB${num}_${pairNum}`;
+                inputB.name = `matchB${num}_${pairNum}`;
+                inputB.placeholder = `Column B Item ${pairNum}`;
+                labelB.setAttribute('for', `matchB${num}_${pairNum}`);
+
+                removeBtn.setAttribute('data-question', num);
+                removeBtn.setAttribute('data-pair', pairNum);
+            });
+        }
     }
 
     // Helper function to format quiz type
@@ -316,19 +347,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getMatchingQuestionHTML(num) {
         return `
-          <h3>Question ${num} (Matching)</h3>
-          <!-- Remove Question Button -->
-          <button type="button" class="remove-btn" data-num="${num}">Remove Question</button>
-          <!-- Question Content -->
-          <label for="questionContent${num}">Question:</label>
-          <textarea id="questionContent${num}" name="questionContent${num}" required aria-required="true"></textarea>
-          <!-- Matching Pairs Input -->
-          <label for="answer${num}_1">Matching Pairs:</label>
-          <div id="answersContainer${num}">
-              <div class="answer-option">
-                <input type="radio" id="correctAnswer${num}_1" name="correctAnswer${num}" value="1" checked style="display:none;">
-                <input type="text" id="answer${num}_1" name="answer${num}_1" placeholder="Enter matching pairs (e.g., A-B; C-D; E-F)" required aria-required="true">
-              </div>
+      <h3>Question ${num} (Matching)</h3>
+      <!-- Remove Question Button -->
+      <button type="button" class="remove-btn" data-num="${num}">Remove Question</button>
+      <!-- Question Content -->
+      <label for="questionContent${num}">Instructions (optional):</label>
+      <textarea id="questionContent${num}" name="questionContent${num}" placeholder="Enter any instructions or leave blank."></textarea>
+      <!-- Instructions -->
+      <p class="matching-instructions">Enter the items for Column A and Column B. The answers will be matched in the order you enter them.</p>
+      <div class="matching-pair-header">
+        <div class="pair-number">#</div>
+        <div class="column-a">Column A</div>
+        <div class="column-b">Column B</div>
+        <div class="actions">Actions</div>
+      </div>
+      <div id="matchingPairs${num}" class="matching-pair-container">
+        ${getMatchingPairHTML(num, 1)}
+      </div>
+      <button type="button" class="add-pair-btn" data-question="${num}">Add Matching Pair</button>
+    `;
+    }
+
+    function getMatchingPairHTML(questionNum, pairNum) {
+        return `
+          <div class="matching-pair" data-pair-num="${pairNum}">
+            <div class="pair-number">${pairNum}</div>
+            <div class="column-a">
+              <label for="matchA${questionNum}_${pairNum}">Item:</label>
+              <input type="text" id="matchA${questionNum}_${pairNum}" name="matchA${questionNum}_${pairNum}" required aria-required="true" placeholder="Column A Item ${pairNum}">
+            </div>
+            <div class="column-b">
+              <label for="matchB${questionNum}_${pairNum}">Item:</label>
+              <input type="text" id="matchB${questionNum}_${pairNum}" name="matchB${questionNum}_${pairNum}" required aria-required="true" placeholder="Column B Item ${pairNum}">
+            </div>
+            <button type="button" class="remove-pair-btn" data-question="${questionNum}" data-pair="${pairNum}">Remove</button>
           </div>
         `;
     }
@@ -351,6 +403,14 @@ document.addEventListener('DOMContentLoaded', function () {
         answersContainer.insertAdjacentHTML('beforeend', newAnswerHTML);
     }
 
+    // Function to add a matching pair to a matching question
+    function addMatchingPair(questionNum) {
+        const matchingPairsContainer = document.getElementById(`matchingPairs${questionNum}`);
+        const currentPairs = matchingPairsContainer.querySelectorAll('.matching-pair').length;
+        const newPairNum = currentPairs + 1;
+        matchingPairsContainer.insertAdjacentHTML('beforeend', getMatchingPairHTML(questionNum, newPairNum));
+    }
+
     // Event delegation for question buttons
     questionGridContainer.addEventListener('click', function (e) {
         if (e.target && e.target.classList.contains('question-btn')) {
@@ -370,7 +430,58 @@ document.addEventListener('DOMContentLoaded', function () {
             const questionNum = parseInt(e.target.getAttribute('data-question'));
             addAnswerOption(questionNum);
         }
+        if (e.target && e.target.classList.contains('add-pair-btn')) {
+            const questionNum = parseInt(e.target.getAttribute('data-question'));
+            addMatchingPair(questionNum);
+        }
+        if (e.target && e.target.classList.contains('remove-pair-btn')) {
+            const questionNum = parseInt(e.target.getAttribute('data-question'));
+            const pairNum = parseInt(e.target.getAttribute('data-pair'));
+            removeMatchingPair(questionNum, pairNum);
+        }
     });
+
+    // Function to remove a matching pair
+    function removeMatchingPair(questionNum, pairNum) {
+        const matchingPairsContainer = document.getElementById(`matchingPairs${questionNum}`);
+        const pairElement = matchingPairsContainer.querySelector(`.matching-pair[data-pair-num="${pairNum}"]`);
+        if (pairElement) {
+            pairElement.remove();
+
+            // Update pair numbers and attributes
+            updateMatchingPairNumbers(questionNum);
+        }
+    }
+
+    // Function to update matching pair numbers after removal
+    function updateMatchingPairNumbers(questionNum) {
+        const matchingPairsContainer = document.getElementById(`matchingPairs${questionNum}`);
+        const pairs = matchingPairsContainer.querySelectorAll('.matching-pair');
+        pairs.forEach((pair, index) => {
+            const newPairNum = index + 1;
+            pair.setAttribute('data-pair-num', newPairNum);
+            pair.querySelector('.pair-number').textContent = newPairNum;
+
+            // Update inputs and labels
+            const inputA = pair.querySelector('.column-a input');
+            const labelA = pair.querySelector('.column-a label');
+            const inputB = pair.querySelector('.column-b input');
+            const labelB = pair.querySelector('.column-b label');
+            const removeBtn = pair.querySelector('.remove-pair-btn');
+
+            inputA.id = `matchA${questionNum}_${newPairNum}`;
+            inputA.name = `matchA${questionNum}_${newPairNum}`;
+            inputA.placeholder = `Column A Item ${newPairNum}`;
+            labelA.setAttribute('for', `matchA${questionNum}_${newPairNum}`);
+
+            inputB.id = `matchB${questionNum}_${newPairNum}`;
+            inputB.name = `matchB${questionNum}_${newPairNum}`;
+            inputB.placeholder = `Column B Item ${newPairNum}`;
+            labelB.setAttribute('for', `matchB${questionNum}_${newPairNum}`);
+
+            removeBtn.setAttribute('data-pair', newPairNum);
+        });
+    }
 
     // Pagination functions
     function updatePagination() {
