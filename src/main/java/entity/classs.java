@@ -18,6 +18,8 @@ public class classs {
     private String created_at;
     private String updated_at;
     private int teacher_id;
+    private String teacher_name;
+
 
     public classs() {
     }
@@ -30,6 +32,7 @@ public class classs {
         this.created_at = created_at;
         this.updated_at = updated_at;
         this.teacher_id = teacher_id;
+        this.teacher_name = teacher_name;
     }
 
     public int getId() {
@@ -86,6 +89,14 @@ public class classs {
 
     public void setTeacher_id(int teacher_id) {
         this.teacher_id = teacher_id;
+    }
+
+    public String getTeacher_name() {
+        return teacher_name;
+    }
+
+    public void setTeacher_name(String teacher_name) {
+        this.teacher_name = teacher_name;
     }
 
     @Override

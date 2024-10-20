@@ -78,3 +78,30 @@ notifications.addEventListener('click', (e) => {
 document.addEventListener('click', () => {
     notificationDropdown.style.display = 'none';
 });
+
+// Dynamic filtering for 'My Classes' table
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('classTable');
+
+    if (searchInput && table) {
+        searchInput.addEventListener('input', function() {
+            const filter = searchInput.value.toLowerCase();
+            const rows = table.getElementsByTagName('tr');
+
+            // Loop through table rows, starting from 1 to skip header row
+            for (let i = 1; i < rows.length; i++) {
+                const classNameCell = rows[i].getElementsByTagName('td')[0];
+                const teacherNameCell = rows[i].getElementsByTagName('td')[1];
+                const className = classNameCell.textContent.toLowerCase();
+                const teacherName = teacherNameCell.textContent.toLowerCase();
+
+                if (className.includes(filter) || teacherName.includes(filter)) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        });
+    }
+});

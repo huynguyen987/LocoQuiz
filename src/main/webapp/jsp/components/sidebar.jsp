@@ -16,7 +16,7 @@
     } else if ("student".equals(role)) {
     %>
     <li><a href="<%= request.getContextPath() %>/jsp/student.jsp"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-    <li><a href="<%= request.getContextPath() %>/jsp/my-classes.jsp"><i class="fas fa-chalkboard"></i> My Classes</a></li>
+    <li><a href="<%= request.getContextPath() %>/jsp/student.jsp?action=Classrooms"><i class="fas fa-chalkboard"></i> Classroom</a></li>
     <li><a href="<%= request.getContextPath() %>/jsp/progress.jsp"><i class="fas fa-chart-line"></i> Progress</a></li>
     <li><a href="<%= request.getContextPath() %>/LogoutServlet"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
     <%

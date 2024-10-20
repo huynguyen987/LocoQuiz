@@ -1,11 +1,14 @@
 package dao;
 
+import entity.Users;
 import entity.classs;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import entity.classs;
 import Module.DBConnect;
+import entity.quiz;
 
 public class ClassDAO {
 
@@ -34,37 +37,27 @@ public class ClassDAO {
 
     //getClassesByStudentId
     public List<classs> getClassesByStudentId(int studentId) throws SQLException, ClassNotFoundException {
-        List<classs> classes = new ArrayList<>();
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
+        List<classs> classList = new ArrayList<>();
+        String query = "SELECT c.id, c.name, u.username AS teacher_name " +
+                "FROM class c " +
+                "JOIN class_user cu ON c.id = cu.class_id " +
+                "JOIN users u ON c.teacher_id = u.id " +
+                "WHERE cu.user_id = ?";
 
-        try {
-            conn = new DBConnect().getConnection();
-            String sql = "SELECT c.*, u.username AS teacherName FROM class c " +
-                    "JOIN class_user cu ON c.id = cu.class_id " +
-                    "JOIN users u ON c.teacher_id = u.id " +
-                    "WHERE cu.user_id = ? AND cu.status = 'approved'";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, studentId);
-            rs = pstmt.executeQuery();
-
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, studentId);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 classs cls = new classs();
                 cls.setId(rs.getInt("id"));
                 cls.setName(rs.getString("name"));
-                cls.setDescription(rs.getString("description"));
-                cls.setClass_key(rs.getString("class_key"));
-                cls.setTeacher_id(rs.getInt("teacher_id"));
-                classes.add(cls);
+                cls.setTeacher_name(rs.getString("teacher_name"));
+                classList.add(cls);
             }
-        } finally {
-            if (rs != null) rs.close();
-            if (pstmt != null) pstmt.close();
-            if (conn != null) conn.close();
         }
 
-        return classes;
+        return classList;
     }
 
     //createClass
@@ -133,7 +126,7 @@ public class ClassDAO {
     }
 
     public classs getClassById(int id) throws SQLException, ClassNotFoundException {
-        String sql = "SELECT * FROM class WHERE id = ?";
+        String sql = "SELECT c.*, u.username AS teacher_name FROM class c INNER JOIN users u ON c.teacher_id = u.id WHERE c.id = ?";
         try (Connection connection = new DBConnect().getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -147,6 +140,7 @@ public class ClassDAO {
                     classEntity.setCreated_at(rs.getString("created_at"));
                     classEntity.setUpdated_at(rs.getString("updated_at"));
                     classEntity.setTeacher_id(rs.getInt("teacher_id"));
+                   classEntity.setTeacher_name(rs.getString("teacher_name"));
                     return classEntity;
                 }
             }
@@ -296,5 +290,43 @@ public class ClassDAO {
         }
         return null;
     }
+
+    public List<Users> getStudentsByClassId(int classId) throws SQLException, ClassNotFoundException {
+        List<Users> students = new ArrayList<>();
+        String query = "SELECT u.* FROM users u INNER JOIN class_user cu ON u.id = cu.user_id WHERE cu.class_id = ? AND u.role_id = (SELECT id FROM role WHERE name = 'student')";
+        try (Connection conn =  new DBConnect().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, classId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Users student = new Users();
+                student.setId(rs.getInt("id"));
+                student.setUsername(rs.getString("username"));
+                // Set other fields as needed
+                students.add(student);
+            }
+        }
+        return students;
+    }
+
+    public List<quiz> getQuizzesByClassId(int classId) throws SQLException, ClassNotFoundException {
+        List<quiz> quizzes = new ArrayList<>();
+        String query = "SELECT q.* FROM quiz q INNER JOIN class_quiz cq ON q.id = cq.quiz_id WHERE cq.class_id = ?";
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, classId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                quiz quiz = new quiz();
+                quiz.setId(rs.getInt("id"));
+                quiz.setName(rs.getString("name"));
+                // Set other fields as needed
+                quizzes.add(quiz);
+            }
+        }
+        return quizzes;
+    }
+
+
 
 }
