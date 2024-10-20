@@ -19,15 +19,17 @@ public class LoginServlet extends HttpServlet {
 
         UsersDAO usersDAO = new UsersDAO();
 
+        // LoginServlet.java
         try {
             // Authenticate the user
             Users user = usersDAO.checkLogin(username, password);
 
             if (user != null) {
                 // User is authenticated, set session and redirect based on role
-                    HttpSession session = request.getSession();
-                    session.setAttribute("user", user); // Store the Users object in session
-                    session.setAttribute("userId", user.getId()); // Store the user ID in session
+                HttpSession session = request.getSession();
+                session.setAttribute("user", user); // Store the Users object in session
+                session.setAttribute("userId", user.getId()); // Store the user ID in session
+                session.setAttribute("role", user.getRoleName()); // Store the role in session
 
                 int roleId = user.getRole_id(); // Get the role of the user
                 if (roleId == Users.ROLE_ADMIN) {
@@ -45,7 +47,6 @@ public class LoginServlet extends HttpServlet {
                 request.setAttribute("error", "Invalid username or password.");
                 request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
             }
-
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             request.setAttribute("error", "Login failed due to server error.");
