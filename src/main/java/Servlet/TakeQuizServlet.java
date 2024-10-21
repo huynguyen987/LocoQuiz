@@ -88,7 +88,7 @@ public class TakeQuizServlet extends HttpServlet {
             // Check the type_id
             int typeId = quizData.getType_id();
 
-            if (typeId == 2) {
+            if (typeId == 3) {
                 // If type_id == 2, forward to match-quiz.jsp
                 request.getRequestDispatcher("jsp/match-quiz.jsp").forward(request, response);
             } else if (typeId == 1) {

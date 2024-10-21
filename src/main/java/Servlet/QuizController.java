@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import org.apache.poi.xwpf.usermodel.*; // For Word files
 import org.apache.poi.ss.usermodel.*;   // For Excel files
 import java.io.InputStream;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "QuizController", urlPatterns = {"/QuizController"})
 @MultipartConfig
@@ -57,6 +58,7 @@ public class QuizController extends HttpServlet {
                 String quizName = request.getParameter("quizName");
                 String quizDescription = request.getParameter("quizDescription");
                 String quizType = request.getParameter("quizType");
+                System.out.println("Quiz type: " + quizType);
                 String[] quizTagIdsArray = request.getParameterValues("quizTags");
                 List<String> quizTagIds = quizTagIdsArray != null ? Arrays.asList(quizTagIdsArray) : new ArrayList<>();
 
@@ -103,8 +105,8 @@ public class QuizController extends HttpServlet {
                         String questionContent = request.getParameter("questionContent" + i);
                         JSONObject questionObj = new JSONObject();
 
-                        if (quizType.equals("multiple-choice")) {
-                            // Handle multiple choice questions
+                        if (quizType.equals("multiple-choice") || quizType.equals("matching")) {
+                            // Handle multiple choice and matching questions
                             List<String> answerList = new ArrayList<>();
                             int j = 1;
                             while (true) {
@@ -126,31 +128,20 @@ public class QuizController extends HttpServlet {
                             questionObj.put("question", questionContent);
                             questionObj.put("options", Arrays.asList(answers));
                             questionObj.put("correct", correctAnswerText);
+
+                            // If it's a matching question, ensure options array has only one element
+                            if (quizType.equals("matching")) {
+                                // Combine all options into a single string
+                                String matchingOption = String.join("; ", answers);
+                                questionObj.put("options", Collections.singletonList(matchingOption));
+                                questionObj.put("correct", matchingOption);
+                            }
                         } else if (quizType.equals("fill-in-the-blank")) {
                             // Handle fill-in-the-blank questions
                             String correctAnswer = request.getParameter("correctAnswer" + i);
                             questionObj.put("sequence", i);
                             questionObj.put("question", questionContent);
                             questionObj.put("correct", correctAnswer);
-                        } else if (quizType.equals("matching")) {
-                            // Handle matching questions
-                            JSONArray pairsArray = new JSONArray();
-                            int pairCount = 1;
-                            while (true) {
-                                String columnA = request.getParameter("matchA" + i + "_" + pairCount);
-                                String columnB = request.getParameter("matchB" + i + "_" + pairCount);
-                                if (columnA == null || columnB == null || columnA.trim().isEmpty() || columnB.trim().isEmpty()) {
-                                    break;
-                                }
-                                JSONObject pairObj = new JSONObject();
-                                pairObj.put("columnA", columnA);
-                                pairObj.put("columnB", columnB);
-                                pairsArray.put(pairObj);
-                                pairCount++;
-                            }
-                            questionObj.put("sequence", i);
-                            questionObj.put("question", questionContent);
-                            questionObj.put("pairs", pairsArray);
                         }
 
                         // Add the question object to the list
@@ -158,19 +149,17 @@ public class QuizController extends HttpServlet {
                         q.setSequence(i);
                         q.setQuestionText(questionObj.getString("question"));
                         if (quizType.equals("multiple-choice")) {
-                            q.setOptions(questionObj.getJSONArray("options").toList());
+                            q.setOptions(questionObj.getJSONArray("options").toList().stream()
+                                    .map(Object::toString)
+                                    .collect(Collectors.toList()));
                             q.setCorrectAnswer(questionObj.getString("correct"));
                         } else if (quizType.equals("fill-in-the-blank")) {
                             q.setCorrectAnswer(questionObj.getString("correct"));
                         } else if (quizType.equals("matching")) {
-                            // Handle matching pairs
-                            List<Pair<String, String>> matchingPairs = new ArrayList<>();
-                            JSONArray pairsArray = questionObj.getJSONArray("pairs");
-                            for (int k = 0; k < pairsArray.length(); k++) {
-                                JSONObject pairObj = pairsArray.getJSONObject(k);
-                                matchingPairs.add(new Pair<>(pairObj.getString("columnA"), pairObj.getString("columnB")));
-                            }
-                            q.setMatchingPairs(matchingPairs);
+                            q.setOptions(questionObj.getJSONArray("options").toList().stream()
+                                    .map(Object::toString)
+                                    .collect(Collectors.toList()));
+                            q.setCorrectAnswer(questionObj.getString("correct"));
                         }
                         questions.add(q);
                     }
@@ -184,20 +173,11 @@ public class QuizController extends HttpServlet {
                     questionObj.put("sequence", question.getSequence());
                     questionObj.put("question", question.getQuestionText());
 
-                    if (quizType.equals("multiple-choice")) {
+                    if (quizType.equals("multiple-choice") || quizType.equals("matching")) {
                         questionObj.put("options", question.getOptions());
                         questionObj.put("correct", question.getCorrectAnswer());
                     } else if (quizType.equals("fill-in-the-blank")) {
                         questionObj.put("correct", question.getCorrectAnswer());
-                    } else if (quizType.equals("matching")) {
-                        JSONArray pairsArray = new JSONArray();
-                        for (Pair<String, String> pair : question.getMatchingPairs()) {
-                            JSONObject pairObj = new JSONObject();
-                            pairObj.put("columnA", pair.getKey());
-                            pairObj.put("columnB", pair.getValue());
-                            pairsArray.put(pairObj);
-                        }
-                        questionObj.put("pairs", pairsArray);
                     }
 
                     questionsArray.put(questionObj);
@@ -279,7 +259,7 @@ public class QuizController extends HttpServlet {
                 currentQuestion.setSequence(sequence++);
                 currentQuestion.setQuestionText(text.substring(2).trim());
                 questions.add(currentQuestion);
-            } else if (quizType.equals("multiple-choice") && currentQuestion != null && text.matches("[A-D]\\).*")) {
+            } else if ((quizType.equals("multiple-choice") || quizType.equals("matching")) && currentQuestion != null && text.matches("[A-D]\\).*")) {
                 // Option line
                 if (currentQuestion.getOptions() == null) {
                     currentQuestion.setOptions(new ArrayList<>());
@@ -291,10 +271,13 @@ public class QuizController extends HttpServlet {
                     currentQuestion.setCorrectAnswer(correctAnswer);
                 } else if (quizType.equals("fill-in-the-blank")) {
                     currentQuestion.setCorrectAnswer(correctAnswer);
+                } else if (quizType.equals("matching")) {
+                    // For matching, combine options into a single string
+                    String matchingOption = String.join("; ", currentQuestion.getOptions());
+                    currentQuestion.setOptions(Collections.singletonList(matchingOption));
+                    currentQuestion.setCorrectAnswer(matchingOption);
                 }
-                // For matching, handle differently
             }
-            // Additional parsing logic for matching questions
         }
 
         document.close();
@@ -320,7 +303,7 @@ public class QuizController extends HttpServlet {
                 question.setSequence(sequence++);
                 question.setQuestionText(getCellValue(questionCell));
 
-                if (quizType.equals("multiple-choice")) {
+                if (quizType.equals("multiple-choice") || quizType.equals("matching")) {
                     List<String> options = new ArrayList<>();
                     for (int i = 1; i <= 4; i++) {
                         Cell optionCell = row.getCell(i);
@@ -328,10 +311,17 @@ public class QuizController extends HttpServlet {
                             options.add(getCellValue(optionCell));
                         }
                     }
-                    question.setOptions(Collections.singletonList(options));
-                    Cell correctCell = row.getCell(5);
-                    if (correctCell != null) {
-                        question.setCorrectAnswer(getCellValue(correctCell));
+                    if (quizType.equals("matching")) {
+                        // Combine options into a single string
+                        String matchingOption = String.join("; ", options);
+                        question.setOptions(Collections.singletonList(matchingOption));
+                        question.setCorrectAnswer(matchingOption);
+                    } else {
+                        question.setOptions(options);
+                        Cell correctCell = row.getCell(5);
+                        if (correctCell != null) {
+                            question.setCorrectAnswer(getCellValue(correctCell));
+                        }
                     }
                 } else if (quizType.equals("fill-in-the-blank")) {
                     Cell correctCell = row.getCell(1);
@@ -339,7 +329,6 @@ public class QuizController extends HttpServlet {
                         question.setCorrectAnswer(getCellValue(correctCell));
                     }
                 }
-                // Handle matching questions as needed
 
                 questions.add(question);
             }
@@ -382,29 +371,18 @@ public class QuizController extends HttpServlet {
 class Question {
     private int sequence;
     private String questionText;
-    private List<Object> options; // For MCQs
+    private List<String> options; // Changed from List<Object> to List<String>
     private String correctAnswer;
-    private List<Pair<String, String>> matchingPairs; // For Matching
 
     // Getters and setters
     public int getSequence() { return sequence; }
     public void setSequence(int sequence) { this.sequence = sequence; }
     public String getQuestionText() { return questionText; }
     public void setQuestionText(String questionText) { this.questionText = questionText; }
-    public List<Object> getOptions() { return options; }
-    public void setOptions(List<Object> options) { this.options = options; }
+    public List<String> getOptions() { return options; }
+    public void setOptions(List<String> options) { this.options = options; }
     public String getCorrectAnswer() { return correctAnswer; }
     public void setCorrectAnswer(String correctAnswer) { this.correctAnswer = correctAnswer; }
-    public List<Pair<String, String>> getMatchingPairs() { return matchingPairs; }
-    public void setMatchingPairs(List<Pair<String, String>> matchingPairs) { this.matchingPairs = matchingPairs; }
 }
 
-// Simple Pair class
-class Pair<K, V> {
-    private K key;
-    private V value;
 
-    public Pair(K key, V value) { this.key = key; this.value = value; }
-    public K getKey() { return key; }
-    public V getValue() { return value; }
-}
