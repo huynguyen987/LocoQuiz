@@ -17,7 +17,6 @@
     %>
     <li><a href="<%= request.getContextPath() %>/jsp/student.jsp"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
     <li><a href="<%= request.getContextPath() %>/jsp/student.jsp?action=Classrooms"><i class="fas fa-chalkboard"></i> Classroom</a></li>
-    <li><a href="<%= request.getContextPath() %>/JoinClassServlet"><i class="fas fa-chart-line"></i> Join Class</a></li>
     <li><a href="<%= request.getContextPath() %>/LogoutServlet"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
     <%
       }

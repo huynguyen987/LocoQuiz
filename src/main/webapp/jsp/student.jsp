@@ -69,8 +69,8 @@
         <section id="my-classes">
             <h2>My Classes</h2>
             <div class="my-classes-container">
-                <input type="text" id="searchInput" placeholder="Search by class name or teacher's name..." class="search-bar">
-                <div class="classes-grid">
+                <input type="text" id="searchInput" placeholder="Search by class name or teacher's name..." class="search-bar" onkeyup="filterClasses()">
+                <div class="classes-grid" id="classesGrid">
                     <% if (classList != null && !classList.isEmpty()) {
                         for (classs cls : classList) { %>
                     <div class="class-card">
@@ -223,5 +223,24 @@
 <!-- JavaScript -->
 <script src="<%= request.getContextPath() %>/js/common.js"></script>
 <script src="<%= request.getContextPath() %>/js/student.js"></script>
+<!-- New JavaScript for Search Functionality -->
+<script>
+    function filterClasses() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toLowerCase();
+        const classesGrid = document.getElementById('classesGrid');
+        const classCards = classesGrid.getElementsByClassName('class-card');
+
+        Array.from(classCards).forEach(card => {
+            const className = card.getElementsByTagName('h3')[0].innerText.toLowerCase();
+            const teacherName = card.getElementsByTagName('p')[0].innerText.toLowerCase();
+            if (className.includes(filter) || teacherName.includes(filter)) {
+                card.style.display = "";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+</script>
 </body>
 </html>

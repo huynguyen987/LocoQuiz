@@ -836,3 +836,228 @@ body.dark-mode {
 .quiz-list li .button:hover {
     background-color: #3071d1;
 }
+
+/* My Classes Section Styles */
+#my-classes {
+    padding: 40px 20px;
+    background-color: #f9f9f9;
+}
+
+#my-classes h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 2em;
+}
+
+.my-classes-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.search-bar {
+    width: 100%;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: border 0.3s ease;
+}
+
+.search-bar:focus {
+    border-color: #007BFF;
+    outline: none;
+}
+
+.classes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.class-card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.class-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+}
+
+.class-card h3 {
+    margin-top: 0;
+    color: #007BFF;
+    font-size: 1.5em;
+}
+
+.class-card p {
+    color: #555;
+    margin: 10px 0;
+}
+
+.class-actions {
+    text-align: right;
+    margin-top: 15px;
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    text-decoration: none;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+.button i {
+    margin-right: 8px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .class-card {
+        padding: 15px;
+    }
+
+    .class-card h3 {
+        font-size: 1.3em;
+    }
+
+    .button {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+}
+
+/* No Classes Message */
+#my-classes p {
+    text-align: center;
+    color: #777;
+    font-size: 1.1em;
+}
+
+/* Class Details Section Styles */
+#class-details {
+    padding: 40px 20px;
+    background-color: #f0f4f8;
+}
+
+#class-details h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 2em;
+}
+
+.class-details-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.class-info, .classmates, .assigned-quizzes {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 20px;
+    flex: 1 1 300px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.class-info:hover, .classmates:hover, .assigned-quizzes:hover {
+    box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+}
+
+.class-info h3, .classmates h3, .assigned-quizzes h3 {
+    color: #007BFF;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    border-bottom: 2px solid #007BFF;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.class-info p, .classmates p, .assigned-quizzes p {
+    color: #555;
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+.list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.list li {
+    background-color: #f9f9f9;
+    margin-bottom: 8px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.list li:hover {
+    background-color: #e9ecef;
+}
+
+.list li i {
+    margin-right: 10px;
+    color: #007BFF;
+}
+
+.action-buttons {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.button.back-btn {
+    background-color: #6c757d;
+}
+
+.button.back-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .class-details-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .class-info, .classmates, .assigned-quizzes {
+        flex: 1 1 100%;
+        padding: 15px;
+    }
+
+    .class-info h3, .classmates h3, .assigned-quizzes h3 {
+        font-size: 1.3em;
+    }
+
+    .button {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+}
+
