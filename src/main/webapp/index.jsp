@@ -59,7 +59,6 @@
             <ul>
                 <li><a href="#home">Home</a></li>
                 <li><a href="#features">Features</a></li>
-                <li><a href="#subjects">Subjects</a></li>
                 <li><a href="#latest-quizzes">Latest Quizzes</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
