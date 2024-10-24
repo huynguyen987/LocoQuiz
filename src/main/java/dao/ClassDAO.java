@@ -327,6 +327,32 @@ public class ClassDAO {
         return quizzes;
     }
 
+    //getApprovedClassesByStudent
+    public List<classs> getApprovedClassesByStudent(int studentId) throws SQLException, ClassNotFoundException {
+        List<classs> classList = new ArrayList<>();
+        String query = "SELECT c.id, c.name, u.username AS teacher_name " +
+                "FROM class c " +
+                "JOIN class_user cu ON c.id = cu.class_id " +
+                "JOIN users u ON c.teacher_id = u.id " +
+                "WHERE cu.user_id = ? AND cu.status = 'approved'";
+
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, studentId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                classs cls = new classs();
+                cls.setId(rs.getInt("id"));
+                cls.setName(rs.getString("name"));
+                cls.setTeacher_name(rs.getString("teacher_name"));
+                classList.add(cls);
+            }
+        }
+
+        return classList;
+    }
+
+
 
 
 }

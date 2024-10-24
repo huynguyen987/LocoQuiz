@@ -28,7 +28,6 @@
         <%
             // Verify user
             session = request.getSession(false);
-            currentUser = null;
             if (session != null) {
                 currentUser = (Users) session.getAttribute("user");
             }
@@ -59,7 +58,7 @@
             List<classs> classList = null;
             try {
                 ClassDAO classDAO = new ClassDAO();
-                classList = classDAO.getClassesByStudentId(user.getId());
+                classList = classDAO.getApprovedClassesByStudent(user.getId());
             } catch (SQLException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -196,7 +195,7 @@
                 <div class="card">
                     <h2>Join A Class</h2>
                     <p>Join a class with your teacher's class code.</p>
-                    <form action="<%= request.getContextPath() %>/JoinClassServlet" method="POST" class="join-class-form">
+                    <form action="<%= request.getContextPath() %>/SubmitJoinRequestServlet" method="POST" class="join-class-form">
                         <input type="text" name="classKey" placeholder="Enter Class Code" required>
                         <button type="submit" class="button">
                             <i class="fas fa-plus-circle"></i> Join

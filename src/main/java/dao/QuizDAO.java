@@ -11,12 +11,53 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
 import Module.DBConnect;
 import Module.AnswersReader;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 
 public class QuizDAO {
+
+
+
+    //getTypeIdByName
+    public int getTypeIdByName(String name) throws SQLException, ClassNotFoundException {
+        Connection connection = new DBConnect().getConnection();
+        String sql = "SELECT id FROM type WHERE name = ?";
+        int typeId = -1;
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                typeId = rs.getInt("id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return typeId;
+    }
+
+    public List<Map<String, Object>> getAllTags() throws SQLException, ClassNotFoundException {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        List<Map<String, Object>> tagList = new ArrayList<>();
+        String SELECT_ALL_TAGS_QUERY = "SELECT * FROM tag";
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_TAGS_QUERY)) {
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                Map<String, Object> tag = new java.util.HashMap<>();
+                tag.put("id", rs.getInt("id"));
+                tag.put("name", rs.getString("name"));
+                tag.put("description", rs.getString("description"));
+                tagList.add(tag);
+            }
+        }
+        return tagList;
+    }
+
 
     //getAssignedQuizzesByClassId
     public List<quiz> getAssignedQuizzesByClassId(int classId) throws SQLException, ClassNotFoundException {
@@ -162,6 +203,60 @@ public class QuizDAO {
         return false;
     }
 
+    public boolean updateQuizForEditQuiz(quiz q, String[] selectedTags) throws SQLException, ClassNotFoundException {
+        String updateQuizSQL = "UPDATE quiz SET name = ?, description = ?, type_id = ?, answer = ?, updated_at = NOW() WHERE id = ?";
+        String deleteTagsSQL = "DELETE FROM quiz_tag WHERE quiz_id = ?";
+        String insertTagSQL = "INSERT INTO quiz_tag (quiz_id, tag_id) VALUES (?, ?)";
+
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement updateStmt = conn.prepareStatement(updateQuizSQL);
+             PreparedStatement deleteStmt = conn.prepareStatement(deleteTagsSQL);
+             PreparedStatement insertStmt = conn.prepareStatement(insertTagSQL)) {
+
+            conn.setAutoCommit(false); // Bắt đầu transaction
+
+            // Cập nhật thông tin quiz, bao gồm cả trường answer
+            updateStmt.setString(1, q.getName());
+            updateStmt.setString(2, q.getDescription());
+            updateStmt.setInt(3, q.getType_id());
+            updateStmt.setString(4, q.getAnswer()); // Đã chứa JSON
+            updateStmt.setInt(5, q.getId());
+
+            int affectedRows = updateStmt.executeUpdate();
+            if (affectedRows == 0) {
+                conn.rollback();
+                throw new SQLException("Updating quiz failed, no rows affected.");
+            }
+
+            // Xóa các tag hiện tại
+            deleteStmt.setInt(1, q.getId());
+            deleteStmt.executeUpdate();
+
+            // Thêm các tag mới nếu có
+            if (selectedTags != null && selectedTags.length > 0) {
+                for (String tagIdStr : selectedTags) {
+                    int tagId = Integer.parseInt(tagIdStr);
+                    insertStmt.setInt(1, q.getId());
+                    insertStmt.setInt(2, tagId);
+                    insertStmt.addBatch();
+                }
+                insertStmt.executeBatch();
+            }
+
+            conn.commit(); // Commit transaction
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Phương thức cập nhật quiz (có thể loại bỏ hoặc giữ tùy nhu cầu)
+    public boolean updateQuiz(quiz q, String[] selectedTags) throws SQLException, ClassNotFoundException {
+        return updateQuizForEditQuiz(q, selectedTags);
+    }
+
     //delete quiz
     public boolean deleteQuiz(int id) throws SQLException, ClassNotFoundException {
         Connection connection = new DBConnect().getConnection();
@@ -174,16 +269,6 @@ public class QuizDAO {
             e.printStackTrace();
         }
         return false;
-    }
-
-    //main method
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        QuizDAO dao = new QuizDAO();
-        System.out.println(dao.getAllQuiz());
-        System.out.println(dao.getQuizById(1));
-        System.out.println(dao.insertQuiz(new quiz("name", "description", "created_at", "updated_at", 1, 1, "answer")));
-        System.out.println(dao.updateQuiz(new quiz(1, "name", "description", "created_at", "updated_at", 1, 1, "answer", true,1)));
-        System.out.println(dao.deleteQuiz(1));
     }
 
     // Method to retrieve the latest 10 quizzes

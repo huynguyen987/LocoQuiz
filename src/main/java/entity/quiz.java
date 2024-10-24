@@ -1,6 +1,10 @@
 package entity;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 
 public class quiz {
 
@@ -16,11 +20,13 @@ public class quiz {
     private int views;
     private List<Tag> tag;
 
-
     public quiz() {
     }
 
-    public quiz(int id, String name, String description, String created_at, String updated_at, int user_id, int type_id, String answer, boolean status, int views) {
+    private static final Gson gson = new Gson();
+
+    // Constructor có thêm tham số tag
+    public quiz(int id, String name, String description, String created_at, String updated_at, int user_id, int type_id, String answer, boolean status, int views, List<Tag> tag) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -34,6 +40,7 @@ public class quiz {
         this.tag = tag;
     }
 
+    // Constructor không có tham số tag
     public quiz(String name, String description, String created_at, String updated_at, int user_id, int type_id, String answer) {
         this.name = name;
         this.description = description;
@@ -44,6 +51,32 @@ public class quiz {
         this.answer = answer;
     }
 
+    // Phương thức để phân tích JSON thành danh sách câu hỏi
+    public List<Map<String, Object>> getQuestions() {
+        Type listType = new TypeToken<List<Map<String, Object>>>(){}.getType();
+        return gson.fromJson(this.answer, listType);
+    }
+
+    // Phương thức để thiết lập JSON từ danh sách câu hỏi
+    public void setQuestions(List<Map<String, Object>> questions) {
+        this.answer = gson.toJson(questions);
+    }
+
+    // Phương thức để lấy tên loại quiz dựa trên typeId
+    public String getTypeName() {
+        switch(this.getType_id()) {
+            case 1:
+                return "Multiple Choice";
+            case 2:
+                return "Fill in the Blank";
+            case 3:
+                return "Matching";
+            default:
+                return "Unknown";
+        }
+    }
+
+    // Getters và Setters cho các trường khác
     public int getId() {
         return id;
     }
@@ -134,8 +167,6 @@ public class quiz {
 
     @Override
     public String toString() {
-        return "quiz{" + "id=" + id + ", name=" + name + ", description=" + description + ", created_at=" + created_at + ", updated_at=" + updated_at + ", user_id=" + user_id + ", type_id=" + type_id + ", answer=" + answer + ", status=" + status + '}';
+        return "quiz{" + "id=" + id + ", name=" + name + ", description=" + description + ", created_at=" + created_at + ", updated_at=" + updated_at + ", user_id=" + user_id + ", type_id=" + type_id + ", answer=" + answer + ", status=" + status + ", views=" + views + ", tag=" + tag + '}';
     }
-
-
 }
