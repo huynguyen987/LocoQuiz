@@ -14,37 +14,10 @@
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <!-- Pass contextPath to JavaScript -->
     <script type="text/javascript">
-        var contextPath = '<%= request.getContextPath() %>';
+        const contextPath = '<%= request.getContextPath() %>';
     </script>
 </head>
 <body id="body">
-<!-- Sidebar Trigger Area -->
-<div id="sidebar-trigger" role="button" tabindex="0" aria-label="Open sidebar"></div>
-<!-- Sidebar -->
-<div id="sidebar" class="sidebar">
-    <!-- Sidebar Content -->
-    <div class="sidebar-content">
-        <ul>
-            <li><a href="index.jsp">Home</a></li>
-            <li><a href="${pageContext.request.contextPath}/jsp/all-quizzes.jsp">All Quizzes</a></li>
-            <li><a href="${pageContext.request.contextPath}/jsp/tag-list.jsp">Tag List</a></li>
-            <%
-                if (role != null && role.equals("student")) {
-            %>
-            <li><a href="${pageContext.request.contextPath}/jsp/my-classes.jsp">My Classes</a></li>
-            <li><a href="${pageContext.request.contextPath}/jsp/recent-quizzes.jsp">Recent Quizzes</a></li>
-            <%
-            } else if (role != null && role.equals("teacher")) {
-            %>
-            <li><a href="${pageContext.request.contextPath}/jsp/my-classes.jsp">My Classes</a></li>
-            <li><a href="${pageContext.request.contextPath}/jsp/create-class.jsp">Create Class</a></li>
-            <%
-                }
-            %>
-        </ul>
-    </div>
-</div>
-
 <!-- Header -->
 <header>
     <div class="container">
@@ -341,7 +314,6 @@
                 <ul>
                     <li><a href="#home">Home</a></li>
                     <li><a href="#features">Features</a></li>
-                    <li><a href="#subjects">Subjects</a></li>
                     <li><a href="#latest-quizzes">Latest Quizzes</a></li>
                     <li><a href="#faq">FAQ</a></li>
                     <li><a href="#contact">Contact</a></li>
@@ -349,9 +321,8 @@
             </div>
             <div class="footer-section">
                 <h3>Contact Us</h3>
-                <p>Email: support@quizloco.com</p>
-                <p>Phone: (123) 456-7890</p>
-                <p>Address: 123 Quiz Street, Knowledge City</p>
+                <p>Email: huynphe186731@fpt.edu.vn</p>
+                <p>Phone: 0965-915-509</p>
             </div>
         </div>
         <p class="copyright">&copy; 2024 QuizLoco. All rights reserved.</p>
