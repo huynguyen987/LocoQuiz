@@ -18,9 +18,6 @@ public class EditQuizServlet extends HttpServlet {
 
     private QuizDAO quizDAO = new QuizDAO();
 
-    /**
-     * Handles the HTTP GET method to display the edit form.
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -226,11 +223,11 @@ public class EditQuizServlet extends HttpServlet {
 
                     questionMap.put("options", options);
                     questionMap.put("correct", correctAnswer);
-                } else if ("true-false".equals(questionType)) {
+                } else if ("matching".equals(questionType)) {
                     String correctAnswerStr = request.getParameter("correctAnswer" + q);
                     boolean correct = Boolean.parseBoolean(correctAnswerStr);
                     questionMap.put("correctBool", correct);
-                } else if ("short-answer".equals(questionType)) {
+                } else if ("fill-in-the-blank".equals(questionType)) {
                     String correctAnswer = request.getParameter("correctAnswer" + q);
                     questionMap.put("correct", correctAnswer);
                 }
