@@ -2,6 +2,8 @@
 <%@ page import="entity.Users, entity.classs, dao.ClassDAO, dao.UsersDAO, dao.ClassUserDAO, dao.ClassQuizDAO, dao.QuizDAO" %>
 <%@ page import="java.util.List" %>
 <%@ page import="entity.quiz" %>
+<%@ page import="entity.JoinRequest" %>
+<%@ page import="java.sql.SQLException" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,6 +76,12 @@
                 <p>The student has been successfully enrolled in the class.</p>
             </div>
         </div>
+        <% } else if ("joinRequestApproved".equals(message)) { %>
+        <div class="success-message">Join request approved successfully.</div>
+        <% } else if ("joinRequestRejected".equals(message)) { %>
+        <div class="success-message">Join request rejected successfully.</div>
+        <% } else if ("studentRemoved".equals(message)) { %>
+        <div class="success-message">Student removed from class successfully.</div>
         <% } else if ("createError".equals(message)) { %>
         <div class="error-message">An error occurred while creating the class. Please try again.</div>
         <% } else if ("editError".equals(message)) { %>
@@ -82,6 +90,12 @@
         <div class="error-message">An error occurred while assigning the quiz. Please try again.</div>
         <% } else if ("enrollError".equals(message)) { %>
         <div class="error-message">An error occurred while enrolling the student. Please try again.</div>
+        <% } else if ("approveError".equals(message)) { %>
+        <div class="error-message">An error occurred while approving the join request. Please try again.</div>
+        <% } else if ("rejectError".equals(message)) { %>
+        <div class="error-message">An error occurred while rejecting the join request. Please try again.</div>
+        <% } else if ("removeError".equals(message)) { %>
+        <div class="error-message">An error occurred while removing the student. Please try again.</div>
         <% } else { %>
         <div class="info-message"><%= message %></div>
         <% } %>
@@ -188,6 +202,7 @@
                 Users teacher = usersDAO.getUserById(classEntity.getTeacher_id());
                 List<Users> students = classUserDAO.getUsersByClassId(classId);
                 List<quiz> quizzes = classQuizDAO.getQuizzesByClassId(classId);
+                List<JoinRequest> pendingRequests = classUserDAO.getPendingJoinRequests(classId);
         %>
         <h1>Class Details: <%= classEntity.getName() %></h1>
         <div class="class-details-container">
@@ -196,6 +211,9 @@
                 <h2>Class Information</h2>
                 <p><strong>Description:</strong> <%= classEntity.getDescription() %></p>
                 <p><strong>Class Code:</strong> <%= classEntity.getClass_key() %></p>
+                <button class="copy-button" data-clipboard-text="<%= classEntity.getClass_key() %>">
+                    <i class="fas fa-copy"></i> Copy Class Code
+                </button>
                 <p><strong>Teacher:</strong> <%= teacher.getUsername() %></p>
             </div>
 
@@ -218,13 +236,44 @@
                 </form>
             </div>
 
+            <!-- Pending Join Requests Section -->
+            <div class="card">
+                <h2>Pending Join Requests</h2>
+                <% if (pendingRequests != null && !pendingRequests.isEmpty()) { %>
+                <ul class="list">
+                    <% for (JoinRequest request1 : pendingRequests) { %>
+                    <li>
+                        <%= request1.getUsername() %> (<%= request1.getEmail() %>)
+                        <form action="<%= request.getContextPath() %>/HandleJoinRequestServlet" method="post" class="inline-form">
+                            <input type="hidden" name="classId" value="<%= classEntity.getId() %>">
+                            <input type="hidden" name="userId" value="<%= request1.getUserId() %>">
+                            <button type="submit" name="action" value="approve" class="approve-button">Approve</button>
+                            <button type="submit" name="action" value="reject" class="reject-button">Reject</button>
+                        </form>
+                    </li>
+                    <% } %>
+                </ul>
+                <% } else { %>
+                <p>No pending join requests.</p>
+                <% } %>
+            </div>
+
             <!-- Students Section -->
             <div class="card">
                 <h2>Enrolled Students</h2>
                 <% if (students != null && !students.isEmpty()) { %>
                 <ul class="list">
                     <% for (Users student : students) { %>
-                    <li><%= student.getUsername() %> (<%= student.getEmail() %>)</li>
+                    <li>
+                        <%= student.getUsername() %> (<%= student.getEmail() %>)
+                        <form action="<%= request.getContextPath() %>/RemoveStudentServlet" method="post" class="inline-form">
+                            <input type="hidden" name="classId" value="<%= classEntity.getId() %>">
+                            <input type="hidden" name="userId" value="<%= student.getId() %>">
+                            <button type="submit" class="remove-button">
+                                <i class="fas fa-user-minus"></i> Remove
+                            </button>
+                        </form>
+                    </li>
                     <% } %>
                 </ul>
                 <% } else { %>
@@ -276,7 +325,12 @@
                 return;
             }
 
-            classs classEntity = classDAO.getClassById(classId);
+            classs classEntity = null;
+            try {
+                classEntity = classDAO.getClassById(classId);
+            } catch (SQLException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             if (classEntity != null && classEntity.getTeacher_id() == currentUser.getId()) {
                 // Get quizzes
                 QuizDAO quizDAO = new QuizDAO();
