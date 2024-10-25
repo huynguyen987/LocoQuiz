@@ -259,16 +259,77 @@ public class QuizDAO {
 
     //delete quiz
     public boolean deleteQuiz(int id) throws SQLException, ClassNotFoundException {
-        Connection connection = new DBConnect().getConnection();
-        String sql = "DELETE FROM quiz WHERE id = ?";
-        try {
-            PreparedStatement ps = connection.prepareCall(sql);
-            ps.setInt(1, id);
-            return ps.executeUpdate() == 1;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        // SQL statements to delete from child tables first
+        String deleteResultsSql = "DELETE FROM result WHERE quiz_id = ?";
+        String deleteClassQuizSql = "DELETE FROM class_quiz WHERE quiz_id = ?";
+        String deleteUserQuizSql = "DELETE FROM user_quiz WHERE quiz_id = ?";
+        String deleteQuizTagSql = "DELETE FROM quiz_tag WHERE quiz_id = ?";
+        String deleteQuizSql = "DELETE FROM quiz WHERE id = ?";
+
+        // Obtain a connection
+        try (Connection connection = new DBConnect().getConnection()) {
+            // Begin transaction
+            connection.setAutoCommit(false);
+
+            try (
+                    PreparedStatement deleteResultsStmt = connection.prepareStatement(deleteResultsSql);
+                    PreparedStatement deleteClassQuizStmt = connection.prepareStatement(deleteClassQuizSql);
+                    PreparedStatement deleteUserQuizStmt = connection.prepareStatement(deleteUserQuizSql);
+                    PreparedStatement deleteQuizTagStmt = connection.prepareStatement(deleteQuizTagSql);
+                    PreparedStatement deleteQuizStmt = connection.prepareStatement(deleteQuizSql)
+            ) {
+                // Delete from 'result' table
+                deleteResultsStmt.setInt(1, id);
+                int resultsDeleted = deleteResultsStmt.executeUpdate();
+                System.out.println("Deleted " + resultsDeleted + " records from 'result' table.");
+
+                // Delete from 'class_quiz' table
+                deleteClassQuizStmt.setInt(1, id);
+                int classQuizDeleted = deleteClassQuizStmt.executeUpdate();
+                System.out.println("Deleted " + classQuizDeleted + " records from 'class_quiz' table.");
+
+                // Delete from 'user_quiz' table
+                deleteUserQuizStmt.setInt(1, id);
+                int userQuizDeleted = deleteUserQuizStmt.executeUpdate();
+                System.out.println("Deleted " + userQuizDeleted + " records from 'user_quiz' table.");
+
+                // Delete from 'quiz_tag' table
+                deleteQuizTagStmt.setInt(1, id);
+                int quizTagDeleted = deleteQuizTagStmt.executeUpdate();
+                System.out.println("Deleted " + quizTagDeleted + " records from 'quiz_tag' table.");
+
+                // Finally, delete from 'quiz' table
+                deleteQuizStmt.setInt(1, id);
+                int quizzesDeleted = deleteQuizStmt.executeUpdate();
+                System.out.println("Deleted " + quizzesDeleted + " record(s) from 'quiz' table.");
+
+                // Commit transaction
+                connection.commit();
+
+                // Return true if the quiz was deleted
+                return quizzesDeleted > 0;
+
+            } catch (SQLException e) {
+                // Rollback transaction in case of error
+                if (connection != null) {
+                    try {
+                        connection.rollback();
+                        System.err.println("Transaction rolled back due to an error.");
+                    } catch (SQLException rollbackEx) {
+                        System.err.println("Error during rollback: " + rollbackEx.getMessage());
+                        rollbackEx.printStackTrace();
+                    }
+                }
+                // Log and rethrow the exception
+                e.printStackTrace();
+                throw e;
+            } finally {
+                // Restore auto-commit mode
+                if (connection != null) {
+                    connection.setAutoCommit(true);
+                }
+            }
         }
-        return false;
     }
 
     // Method to retrieve the latest 10 quizzes
