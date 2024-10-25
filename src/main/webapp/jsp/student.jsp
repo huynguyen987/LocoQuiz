@@ -143,7 +143,14 @@
                     <% if (assignedQuizzes != null && !assignedQuizzes.isEmpty()) { %>
                     <ul class="list">
                         <% for (quiz quiz : assignedQuizzes) { %>
-                        <li><%= quiz.getName() %></li>
+                        <li><%= quiz.getName() %>
+                            <form action="<%= request.getContextPath() %>/TakeQuizServlet" method="get">
+                                <input type="hidden" name="id" value="<%= quiz.getId() %>">
+                                <button type="submit" class="button">
+                                    <i class="fas fa-tasks"></i> Take Quiz
+                                </button>
+                            </form>
+                        </li>
                         <% } %>
                     </ul>
                     <% } else { %>
