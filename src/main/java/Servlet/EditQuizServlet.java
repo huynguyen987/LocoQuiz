@@ -79,9 +79,9 @@ public class EditQuizServlet extends HttpServlet {
             List<Map<String, Object>> questions = quizObj.getQuestions();
             request.setAttribute("questions", questions != null ? questions : new ArrayList<>());
 
-            // Đặt tên loại quiz vào request
-            String typeName = quizObj.getTypeName();
-            request.setAttribute("typeName", typeName);
+            // Đặt typeId vào request
+            int typeId = quizObj.getType_id();
+            request.setAttribute("typeId", typeId);
 
             // Forward tới edit-quiz.jsp
             request.getRequestDispatcher("/jsp/edit-quiz.jsp").forward(request, response);
@@ -122,7 +122,7 @@ public class EditQuizServlet extends HttpServlet {
         String quizName = request.getParameter("quizName");
         String quizDescription = request.getParameter("quizDescription");
         String[] selectedTags = request.getParameterValues("quizTags");
-        String quizTypeRadio = request.getParameter("quizTypeRadio"); // e.g., Multiple Choice, True/False, Short Answer
+        String quizTypeRadio = request.getParameter("quizTypeRadio"); // e.g., 1, 2, 3
 
         // Kiểm tra dữ liệu đầu vào
         if (stringQuizId == null || quizName == null || quizDescription == null ||
@@ -183,7 +183,7 @@ public class EditQuizServlet extends HttpServlet {
                 Map<String, Object> questionMap = new java.util.HashMap<>();
                 questionMap.put("question", questionContent);
 
-                if ("multiple-choice".equals(questionType)) {
+                if ("1".equals(questionType)) { // Multiple Choice
                     String correctAnswerIndexStr = request.getParameter("correctAnswer" + q);
                     int correctAnswerIndex = 0; // Mặc định
 
@@ -223,13 +223,13 @@ public class EditQuizServlet extends HttpServlet {
 
                     questionMap.put("options", options);
                     questionMap.put("correct", correctAnswer);
-                } else if ("matching".equals(questionType)) {
-                    String correctAnswerStr = request.getParameter("correctAnswer" + q);
-                    boolean correct = Boolean.parseBoolean(correctAnswerStr);
-                    questionMap.put("correctBool", correct);
-                } else if ("fill-in-the-blank".equals(questionType)) {
+                } else if ("2".equals(questionType)) { // Fill in the Blank
                     String correctAnswer = request.getParameter("correctAnswer" + q);
                     questionMap.put("correct", correctAnswer);
+                } else if ("3".equals(questionType)) { // Matching
+                    // Xử lý câu hỏi Matching nếu cần
+                    // Ví dụ: questionMap.put("matchingPairs", matchingPairs);
+                    // Hiện tại chưa triển khai
                 }
 
                 updatedQuestions.add(questionMap);
@@ -238,14 +238,23 @@ public class EditQuizServlet extends HttpServlet {
             // Cập nhật thông tin quiz
             quizObj.setName(quizName);
             quizObj.setDescription(quizDescription);
-            // Lấy typeId dựa trên quizTypeRadio
-            int typeId = quizDAO.getTypeIdByName(quizTypeRadio);
+
+            // Lấy typeId từ quizTypeRadio
+            int typeId = 1; // Mặc định
+            if (quizTypeRadio != null && !quizTypeRadio.trim().isEmpty()) {
+                try {
+                    typeId = Integer.parseInt(quizTypeRadio);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
             quizObj.setType_id(typeId);
+
             // Thiết lập danh sách câu hỏi đã cập nhật
             quizObj.setQuestions(updatedQuestions);
 
             // Cập nhật quiz trong cơ sở dữ liệu
-            boolean isUpdated = quizDAO.updateQuiz(quizObj, selectedTags);
+            boolean isUpdated = quizDAO.updateQuizForEditQuiz(quizObj, selectedTags);
 
             if (isUpdated) {
                 response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=editSuccess");

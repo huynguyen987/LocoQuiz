@@ -203,54 +203,53 @@ public class QuizDAO {
         return false;
     }
 
+    //updateQuizForEditQuiz
     public boolean updateQuizForEditQuiz(quiz q, String[] selectedTags) throws SQLException, ClassNotFoundException {
-        String updateQuizSQL = "UPDATE quiz SET name = ?, description = ?, type_id = ?, answer = ?, updated_at = NOW() WHERE id = ?";
-        String deleteTagsSQL = "DELETE FROM quiz_tag WHERE quiz_id = ?";
-        String insertTagSQL = "INSERT INTO quiz_tag (quiz_id, tag_id) VALUES (?, ?)";
-
-        try (Connection conn = new DBConnect().getConnection();
-             PreparedStatement updateStmt = conn.prepareStatement(updateQuizSQL);
-             PreparedStatement deleteStmt = conn.prepareStatement(deleteTagsSQL);
-             PreparedStatement insertStmt = conn.prepareStatement(insertTagSQL)) {
-
-            conn.setAutoCommit(false); // Bắt đầu transaction
-
-            // Cập nhật thông tin quiz, bao gồm cả trường answer
-            updateStmt.setString(1, q.getName());
-            updateStmt.setString(2, q.getDescription());
-            updateStmt.setInt(3, q.getType_id());
-            updateStmt.setString(4, q.getAnswer()); // Đã chứa JSON
-            updateStmt.setInt(5, q.getId());
-
-            int affectedRows = updateStmt.executeUpdate();
-            if (affectedRows == 0) {
-                conn.rollback();
-                throw new SQLException("Updating quiz failed, no rows affected.");
+        Connection connection = new DBConnect().getConnection();
+        String updateQuizSql = "UPDATE quiz SET name = ?, description = ?, updated_at = ?, answer = ? WHERE id = ?";
+        String deleteQuizTagSql = "DELETE FROM quiz_tag WHERE quiz_id = ?";
+        String insertQuizTagSql = "INSERT INTO quiz_tag(quiz_id, tag_id) VALUES(?, ?)";
+        try {
+            connection.setAutoCommit(false); // Start transaction
+            // Update the quiz
+            PreparedStatement updateQuizStmt = connection.prepareStatement(updateQuizSql);
+            updateQuizStmt.setString(1, q.getName());
+            updateQuizStmt.setString(2, q.getDescription());
+            updateQuizStmt.setString(3, q.getUpdated_at());
+            updateQuizStmt.setString(4, q.getAnswer());
+            updateQuizStmt.setInt(5, q.getId());
+            int updatedRows = updateQuizStmt.executeUpdate();
+            if (updatedRows != 1) {
+                throw new SQLException("Failed to update quiz.");
             }
-
-            // Xóa các tag hiện tại
-            deleteStmt.setInt(1, q.getId());
-            deleteStmt.executeUpdate();
-
-            // Thêm các tag mới nếu có
-            if (selectedTags != null && selectedTags.length > 0) {
-                for (String tagIdStr : selectedTags) {
-                    int tagId = Integer.parseInt(tagIdStr);
-                    insertStmt.setInt(1, q.getId());
-                    insertStmt.setInt(2, tagId);
-                    insertStmt.addBatch();
-                }
-                insertStmt.executeBatch();
+            // Delete all tags associated with the quiz
+            PreparedStatement deleteQuizTagStmt = connection.prepareStatement(deleteQuizTagSql);
+            deleteQuizTagStmt.setInt(1, q.getId());
+            deleteQuizTagStmt.executeUpdate();
+            // Insert new tags
+            PreparedStatement insertQuizTagStmt = connection.prepareStatement(insertQuizTagSql);
+            for (String tagId : selectedTags) {
+                insertQuizTagStmt.setInt(1, q.getId());
+                insertQuizTagStmt.setInt(2, Integer.parseInt(tagId));
+                insertQuizTagStmt.addBatch();
             }
-
-            conn.commit(); // Commit transaction
+            insertQuizTagStmt.executeBatch();
+            connection.commit(); // Commit transaction
             return true;
-
         } catch (SQLException e) {
+            if (connection != null) {
+                connection.rollback(); // Rollback in case of error
+            }
             e.printStackTrace();
-            return false;
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
         }
+        return false;
     }
+
+
 
     // Phương thức cập nhật quiz (có thể loại bỏ hoặc giữ tùy nhu cầu)
     public boolean updateQuiz(quiz q, String[] selectedTags) throws SQLException, ClassNotFoundException {

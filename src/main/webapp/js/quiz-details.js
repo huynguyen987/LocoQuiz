@@ -4,18 +4,53 @@ document.addEventListener("DOMContentLoaded", function() {
     // Tăng số lượt xem khi trang được tải
     updateViewCount();
 
-    // Xử lý toggle hiển thị mô tả
-    const toggleDesc = document.getElementById("toggleDesc");
-    const quizDescription = document.getElementById("quizDescription");
+    // Xử lý toggle hiển thị mô tả (nếu cần)
+    // const toggleDesc = document.getElementById("toggleDesc");
+    // const quizDescription = document.getElementById("quizDescription");
 
-    toggleDesc.addEventListener("click", function() {
-        if (quizDescription.style.display === "none") {
-            quizDescription.style.display = "block";
-            toggleDesc.textContent = "[Hide]";
-        } else {
-            quizDescription.style.display = "none";
-            toggleDesc.textContent = "[Show]";
+    // Kiểm tra sự tồn tại của quizCreatorContainer
+    const quizCreatorContainer = document.getElementById("quizCreatorContainer");
+    if (quizCreatorContainer) {
+        // Khởi tạo các tính năng liên quan đến câu hỏi
+        const addQuestionBtn = document.getElementById("addQuestionBtn");
+        if (addQuestionBtn) {
+            addQuestionBtn.addEventListener("click", function() {
+                // Định nghĩa hàm addQuestion ở đây hoặc import từ tệp khác
+                // Ví dụ:
+                // addQuestion();
+                alert("Add question functionality is not implemented yet.");
+            });
         }
+        // ... các sự kiện khác liên quan đến câu hỏi
+    }
+
+    // Xử lý lựa chọn loại quiz
+    const quizTypeRadioButtons = document.getElementsByName("quizTypeRadio");
+    const quizTypeInput = document.getElementById("quizType");
+    const chosenQuizType = document.getElementById("chosenQuizType");
+    const selectedQuizTypeDiv = document.getElementById("selectedQuizType");
+
+    // Chuyển đổi NodeList thành mảng để sử dụng forEach
+    Array.from(quizTypeRadioButtons).forEach(function(radio) {
+        radio.addEventListener("change", function() {
+            if (this.checked) {
+                quizTypeInput.value = this.value;
+                chosenQuizType.textContent = getQuizTypeName(this.value);
+                selectedQuizTypeDiv.style.display = "block";
+            }
+        });
+    });
+
+    // Khởi tạo loại quiz đã chọn dựa trên giá trị input ẩn
+    if (quizTypeInput.value) {
+        chosenQuizType.textContent = getQuizTypeName(quizTypeInput.value);
+        selectedQuizTypeDiv.style.display = "block";
+    }
+
+    // Chức năng nút Start Editing Quiz
+    document.getElementById("startQuizBtn").addEventListener("click", function() {
+        // Hiển thị giao diện chỉnh sửa quiz
+        document.getElementById("quizCreatorContainer").style.display = 'flex';
     });
 });
 
@@ -35,38 +70,15 @@ function updateViewCount() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                document.getElementById("viewCount").textContent = data.newViewCount;
+                const viewCountElement = document.getElementById("viewCount");
+                if (viewCountElement) {
+                    viewCountElement.textContent = data.newViewCount;
+                }
             } else {
                 console.error("Failed to update view count.");
             }
         })
         .catch(error => console.error('Error:', error));
-}
-
-/**
- * Hàm xóa quiz qua AJAX
- * @param {number} quizId
- */
-function deleteQuiz(quizId) {
-    if (confirm("Are you sure you want to delete this quiz?")) {
-        fetch(`/QuizLoco/DeleteQuizServlet?quizId=${quizId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ quizId: quizId })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert("Quiz deleted successfully.");
-                    window.location.href = `/QuizLoco/jsp/teacher.jsp?message=deleteSuccess`;
-                } else {
-                    alert("Failed to delete quiz.");
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    }
 }
 
 /**
@@ -77,43 +89,18 @@ function getQuizIdFromURL() {
     return params.get('id') || params.get('quizId');
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    // Existing initialization code...
-
-    // Check if the quizCreatorContainer exists before initializing question-related features
-    const quizCreatorContainer = document.getElementById("quizCreatorContainer");
-    if (quizCreatorContainer) {
-        // Initialize question-related features
-        document.getElementById("addQuestionBtn").addEventListener("click", addQuestion);
-        // ... other event listeners related to questions
+/**
+ * Hàm chuyển đổi typeId thành tên loại quiz
+ */
+function getQuizTypeName(typeId) {
+    switch(typeId) {
+        case '1':
+            return 'Multiple Choice';
+        case '2':
+            return 'Fill in the Blank';
+        case '3':
+            return 'Matching';
+        default:
+            return 'Unknown';
     }
-
-    // Handle quiz type selection
-    const quizTypeRadioButtons = document.getElementsByName("quizTypeRadio");
-    const quizTypeInput = document.getElementById("quizType");
-    const chosenQuizType = document.getElementById("chosenQuizType");
-    const selectedQuizTypeDiv = document.getElementById("selectedQuizType");
-
-    quizTypeRadioButtons.forEach(function(radio) {
-        radio.addEventListener("change", function() {
-            if (this.checked) {
-                quizTypeInput.value = this.value;
-                chosenQuizType.textContent = this.value.replace(/-/g, ' ').toUpperCase();
-                selectedQuizTypeDiv.style.display = "block";
-            }
-        });
-    });
-
-    // Initialize the selected quiz type based on the hidden input
-    if (quizTypeInput.value) {
-        chosenQuizType.textContent = quizTypeInput.value.replace(/-/g, ' ').toUpperCase();
-        selectedQuizTypeDiv.style.display = "block";
-    }
-
-    // Start Editing Quiz button functionality
-    document.getElementById("startQuizBtn").addEventListener("click", function() {
-        // You can add any specific functionality here if needed
-        alert("Quiz editing started!");
-    });
-});
-
+}
