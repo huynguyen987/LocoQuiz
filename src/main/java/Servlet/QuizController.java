@@ -5,6 +5,7 @@ import dao.TagDAO;
 import dao.userQuizDAO;
 import entity.quiz;
 import entity.Tag;
+import entity.Question;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
@@ -367,22 +368,6 @@ public class QuizController extends HttpServlet {
     }
 }
 
-// Helper classes
-class Question {
-    private int sequence;
-    private String questionText;
-    private List<String> options; // Changed from List<Object> to List<String>
-    private String correctAnswer;
 
-    // Getters and setters
-    public int getSequence() { return sequence; }
-    public void setSequence(int sequence) { this.sequence = sequence; }
-    public String getQuestionText() { return questionText; }
-    public void setQuestionText(String questionText) { this.questionText = questionText; }
-    public List<String> getOptions() { return options; }
-    public void setOptions(List<String> options) { this.options = options; }
-    public String getCorrectAnswer() { return correctAnswer; }
-    public void setCorrectAnswer(String correctAnswer) { this.correctAnswer = correctAnswer; }
-}
 
 
