@@ -19,9 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let studySessionStart = null;
     let studyTimer = null;
 
-
-
-
     // DOM Elements
     const tabButtons = document.querySelectorAll('.tab');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -56,9 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportButton = document.getElementById('export-button');
     const importButton = document.getElementById('import-button');
     const categoryFilter = document.getElementById('category-filter');
-    const importFileBtn = document.getElementById('import-file');
     const resetStatsButton = document.getElementById('reset-stats');
     const statsChartCtx = document.getElementById('statsChart').getContext('2d');
+    const correctButton = document.querySelector('.correct-button');
+    const incorrectButton = document.querySelector('.incorrect-button');
 
     // Load Data from localStorage
     function loadData() {
@@ -81,9 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (savedTheme === 'dark') {
             document.body.classList.add('dark-mode');
-            themeToggle.textContent = '☀️ Light Mode';
+            themeToggle.textContent = '☀️';
         } else {
-            themeToggle.textContent = '🌙 Dark Mode';
+            themeToggle.textContent = '🌙';
         }
     }
 
@@ -224,7 +222,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const category = editCategoryInput.value.trim();
 
         if (front && back) {
-            cards[editingIndex] = { front, back, category, lastReviewed: cards[editingIndex].lastReviewed, interval: cards[editingIndex].interval, nextReview: cards[editingIndex].nextReview };
+            cards[editingIndex] = {
+                front,
+                back,
+                category,
+                lastReviewed: cards[editingIndex].lastReviewed,
+                interval: cards[editingIndex].interval,
+                nextReview: cards[editingIndex].nextReview
+            };
             filteredCards = [...cards];
             extractCategories();
             updateCardsList();
@@ -344,12 +349,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Save Data
-    function saveData() {
-        localStorage.setItem('flashcards', JSON.stringify(cards));
-        localStorage.setItem('flashcard-stats', JSON.stringify(stats));
-    }
-
     // Update Statistics Elements
     function updateStatsElements() {
         totalCardsElement.textContent = cards.length;
@@ -361,10 +360,10 @@ document.addEventListener('DOMContentLoaded', () => {
     themeToggle.addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
         if (document.body.classList.contains('dark-mode')) {
-            themeToggle.textContent = '☀️ Light Mode';
+            themeToggle.textContent = '☀️';
             localStorage.setItem('theme', 'dark');
         } else {
-            themeToggle.textContent = '🌙 Dark Mode';
+            themeToggle.textContent = '🌙';
             localStorage.setItem('theme', 'light');
         }
     });
@@ -436,34 +435,60 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Flashcard Answer Tracking
-    flashcard.addEventListener('dblclick', () => {
+    // Correct Answer
+    correctButton.addEventListener('click', () => {
         if (filteredCards.length === 0) return;
 
-        const isFlipped = flashcard.classList.contains('flipped');
-        if (isFlipped) {
-            const userAnswer = prompt('Did you answer correctly? (yes/no)');
-            if (userAnswer) {
-                if (userAnswer.toLowerCase() === 'yes') {
-                    stats.totalCorrect += 1;
-                    // Simple spaced repetition: Increase interval
-                    filteredCards[currentCard].interval *= 2;
-                } else {
-                    stats.totalIncorrect += 1;
-                    // Reset interval
-                    filteredCards[currentCard].interval = 1;
-                }
-                // Update next review date
-                const nextReviewDate = new Date();
-                nextReviewDate.setDate(nextReviewDate.getDate() + filteredCards[currentCard].interval);
-                filteredCards[currentCard].nextReview = nextReviewDate.toISOString();
-                filteredCards[currentCard].lastReviewed = new Date().toISOString();
-                saveData();
-                updateStatsElements();
-                renderStatsChart();
-            }
+        stats.totalCorrect += 1;
+        stats.currentStreak += 1;
+        if (stats.currentStreak > stats.bestStreak) {
+            stats.bestStreak = stats.currentStreak;
         }
+        stats.cardsStudiedToday += 1;
+
+        // Update card's spaced repetition interval
+        filteredCards[currentCard].interval *= 2;
+        const nextReviewDate = new Date();
+        nextReviewDate.setDate(nextReviewDate.getDate() + filteredCards[currentCard].interval);
+        filteredCards[currentCard].nextReview = nextReviewDate.toISOString();
+        filteredCards[currentCard].lastReviewed = new Date().toISOString();
+
+        saveData();
+        updateStatsElements();
+        renderStatsChart();
+        moveToNextCard();
     });
+
+    // Incorrect Answer
+    incorrectButton.addEventListener('click', () => {
+        if (filteredCards.length === 0) return;
+
+        stats.totalIncorrect += 1;
+        stats.currentStreak = 0;
+        stats.cardsStudiedToday += 1;
+
+        // Reset card's spaced repetition interval
+        filteredCards[currentCard].interval = 1;
+        const nextReviewDate = new Date();
+        nextReviewDate.setDate(nextReviewDate.getDate() + filteredCards[currentCard].interval);
+        filteredCards[currentCard].nextReview = nextReviewDate.toISOString();
+        filteredCards[currentCard].lastReviewed = new Date().toISOString();
+
+        saveData();
+        updateStatsElements();
+        renderStatsChart();
+        moveToNextCard();
+    });
+
+    // Move to Next Card after answering
+    function moveToNextCard() {
+        flashcard.classList.remove('flipped');
+        currentCard = (currentCard + 1) % filteredCards.length;
+        updateCardDisplay();
+    }
+
+    // Flashcard Answer Tracking (Deprecated: Removed Double-click Prompt)
+    // Removed the double-click prompt in favor of dedicated buttons
 
     // Spaced Repetition Filtering
     function applySpacedRepetition() {
@@ -503,8 +528,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 datasets: [{
                     data: [stats.totalCorrect, stats.totalIncorrect],
                     backgroundColor: [
-                        '#4299e1',
-                        '#fc8181'
+                        '#48bb78', // Green for Correct
+                        '#f56565'  // Red for Incorrect
                     ],
                     hoverOffset: 4
                 }]
@@ -545,8 +570,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderStatsChart();
     }
 
-    // Initial Update
+    // Initialize
     init();
-
-
 });
