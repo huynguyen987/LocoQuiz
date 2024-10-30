@@ -6,7 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Flashcard Practice</title>
-  <link rel="stylesheet" href="/jsp/flashcard.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/flashcard.css">
 </head>
 <body>
 <div class="container">
@@ -126,7 +126,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="flashcard.js" defer></script>
+<script src="${pageContext.request.contextPath}/js/flashcard.js" defer></script>
 </body>
 </html>
 
