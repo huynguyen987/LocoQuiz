@@ -1,8 +1,10 @@
 package Servlet;
 
+import controller.CompetitionController;
 import dao.QuizDAO;
 import dao.TagDAO;
 import dao.userQuizDAO;
+import entity.Competition;
 import entity.quiz;
 import entity.Tag;
 import entity.Question;
@@ -28,11 +30,14 @@ import java.util.stream.Collectors;
 @MultipartConfig
 public class QuizController extends HttpServlet {
 
+    public QuizController() {
+    }
+
     // Handle GET request to display the quiz creation form
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Retrieve all tags to populate the dropdown
+        // Lấy danh sách các tags từ cơ sở dữ liệu để hiển thị trong dropdown
         TagDAO tagDAO = new TagDAO();
         try {
             List<Tag> tagList = tagDAO.getAllTags();
@@ -41,9 +46,11 @@ public class QuizController extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // Forward to quiz-creator.jsp
+
+        // Chuyển tiếp đến quiz-creator.jsp
         request.getRequestDispatcher("/jsp/quiz-creator.jsp").forward(request, response);
     }
+
 
     // Handle POST request to process the form submission
     @Override

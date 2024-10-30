@@ -83,12 +83,17 @@ CREATE TABLE class(
                       FOREIGN KEY (teacher_id) REFERENCES users(id)
 );
 
--- 7. Tạo bảng class_user (tham chiếu class và user)
+-- 7. Create the class_user table with additional columns
 CREATE TABLE class_user(
-                           class_id INT NOT NULL,
-                           user_id INT NOT NULL,
-                           FOREIGN KEY (class_id) REFERENCES class(id),
-                           FOREIGN KEY (user_id) REFERENCES users(id)
+    class_id INT NOT NULL,
+    user_id INT NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending',
+    requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    responded_at TIMESTAMP NULL,
+    reject_reason VARCHAR(255) NULL,
+    FOREIGN KEY (class_id) REFERENCES class(id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    PRIMARY KEY (class_id, user_id)
 );
 
 -- 8. Tạo bảng class_quiz (tham chiếu class và quiz)
@@ -111,6 +116,23 @@ CREATE TABLE result(
                        FOREIGN KEY (quiz_id) REFERENCES quiz(id),
                        FOREIGN KEY (class_id) REFERENCES class(id)
 );
+
+CREATE TABLE competitions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    class_id INT NOT NULL,
+    quiz_id INT NOT NULL,
+    time_limit INT NOT NULL, -- thời gian giới hạn trong giây
+    question_count INT NOT NULL,
+    shuffle_questions BOOLEAN NOT NULL,
+    access_start_time DATETIME NOT NULL,
+    access_end_time DATETIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (class_id) REFERENCES classes(id),
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id)
+);
+
 
 -- 10. Chèn dữ liệu mẫu
 

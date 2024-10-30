@@ -2,6 +2,7 @@ package Servlet;
 
 import dao.ClassDAO;
 import entity.classs;
+import entity.Users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -10,25 +11,35 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-@WebServlet(name = "ClassListServlet", value = "/ClassListServlet")
+@WebServlet(name = "ClassListServlet", urlPatterns = {"/ClassListServlet"})
 public class ClassListServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        Users currentUser = null;
+        if (session != null) {
+            currentUser = (Users) session.getAttribute("user");
+        }
+        if (currentUser == null) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
 
+        List<classs> classes = null;
         String search = request.getParameter("search");
-
-        ClassDAO classDAO = new ClassDAO();
         try {
-            List<classs> classes;
+            ClassDAO classDAO = new ClassDAO();
             if (search != null && !search.trim().isEmpty()) {
-                classes = classDAO.searchClasses(search);
+                classes = classDAO.searchClassesByTeacherId(search, currentUser.getId());
             } else {
-                classes = classDAO.getAllClass();
+                classes = classDAO.getClassesByTeacherId(currentUser.getId());
             }
             request.setAttribute("classes", classes);
-            request.getRequestDispatcher("/jsp/classList.jsp").forward(request, response);
-        } catch (SQLException | ClassNotFoundException e) {
+            request.getRequestDispatcher(request.getContextPath() + "/jsp/classList.jsp").forward(request, response);
+        } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("error.jsp");
+            response.sendRedirect(request.getContextPath() + "/error.jsp");
         }
     }
 }

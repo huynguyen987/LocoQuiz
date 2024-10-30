@@ -25,8 +25,8 @@ public class ClassDAO {
                     classEntity.setName(rs.getString("name"));
                     classEntity.setClass_key(rs.getString("class_key"));
                     classEntity.setDescription(rs.getString("description"));
-                    classEntity.setCreated_at(rs.getString("created_at"));
-                    classEntity.setUpdated_at(rs.getString("updated_at"));
+                    classEntity.setCreated_at(rs.getDate("created_at"));
+                    classEntity.setUpdated_at(rs.getDate("updated_at"));
                     classEntity.setTeacher_id(rs.getInt("teacher_id"));
                     return classEntity;
                 }
@@ -70,14 +70,15 @@ public class ClassDAO {
             connection = new DBConnect().getConnection();
 
             // SQL query to insert a new class
-            String sql = "INSERT INTO class (name, class_key, description, teacher_id) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO class (name, class_key, description,created_at, teacher_id) VALUES (?, ?, ?, ?, ?)";
 
             // Prepare the statement and specify that you want to retrieve generated keys
             statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, newClass.getName());
             statement.setString(2, newClass.getClass_key());
             statement.setString(3, newClass.getDescription());
-            statement.setInt(4, newClass.getTeacher_id());
+            statement.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+            statement.setInt(5, newClass.getTeacher_id());
 
             // Execute the update
             int rowsInserted = statement.executeUpdate();
@@ -114,8 +115,8 @@ public class ClassDAO {
                 c.setId(rs.getInt("id"));
                 c.setName(rs.getString("name"));
                 c.setDescription(rs.getString("description"));
-                c.setCreated_at(rs.getTimestamp("created_at").toString());
-                c.setUpdated_at(rs.getTimestamp("updated_at").toString());
+                c.setCreated_at(rs.getTimestamp("created_at"));
+                c.setUpdated_at(rs.getTimestamp("updated_at"));
                 c.setTeacher_id(rs.getInt("teacher_id"));
                 classs.add(c);
             }
@@ -137,8 +138,8 @@ public class ClassDAO {
                     classEntity.setName(rs.getString("name"));
                     classEntity.setClass_key(rs.getString("class_key"));
                     classEntity.setDescription(rs.getString("description"));
-                    classEntity.setCreated_at(rs.getString("created_at"));
-                    classEntity.setUpdated_at(rs.getString("updated_at"));
+                    classEntity.setCreated_at(rs.getDate("created_at"));
+                    classEntity.setUpdated_at(rs.getDate("updated_at"));
                     classEntity.setTeacher_id(rs.getInt("teacher_id"));
                    classEntity.setTeacher_name(rs.getString("teacher_name"));
                     return classEntity;
@@ -219,29 +220,32 @@ public class ClassDAO {
         }
     }
 
-    //get class by teacher_id
-    public List<classs> getClassByTeacherId(int teacher_id) throws SQLException, ClassNotFoundException {
-        List<classs> classs = new ArrayList<>();
-        Connection connection = new DBConnect().getConnection();
-        String sql = "SELECT * FROM class WHERE teacher_id = ?";
-        try {
-            PreparedStatement ps = connection.prepareCall(sql);
-            ps.setInt(1, teacher_id);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                classs c = new classs();
-                c.setId(rs.getInt("id"));
-                c.setName(rs.getString("name"));
-                c.setDescription(rs.getString("description"));
-                c.setCreated_at(rs.getTimestamp("created_at").toString());
-                c.setUpdated_at(rs.getTimestamp("updated_at").toString());
-                c.setTeacher_id(rs.getInt("teacher_id"));
-                classs.add(c);
+    public List<classs> getClassesByTeacherId(int teacherId) throws SQLException, ClassNotFoundException {
+        List<classs> classes = new ArrayList<>();
+        String sql = "SELECT * FROM `class` WHERE teacher_id = ?";
+
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, teacherId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    classs classEntity = new classs();
+                    classEntity.setId(rs.getInt("id"));
+                    classEntity.setName(rs.getString("name"));
+                    classEntity.setClass_key(rs.getString("class_key"));
+                    classEntity.setDescription(rs.getString("description"));
+                    classEntity.setCreated_at(rs.getDate("created_at"));
+                    classEntity.setUpdated_at(rs.getDate("updated_at"));
+                    classEntity.setTeacher_id(rs.getInt("teacher_id"));
+
+                    classes.add(classEntity);
+                }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return classs;
+
+        return classes;
     }
 
 
@@ -258,8 +262,8 @@ public class ClassDAO {
                     classEntity.setName(rs.getString("name"));
                     classEntity.setClass_key(rs.getString("class_key"));
                     classEntity.setDescription(rs.getString("description"));
-                    classEntity.setCreated_at(rs.getString("created_at"));
-                    classEntity.setUpdated_at(rs.getString("updated_at"));
+                    classEntity.setCreated_at(rs.getDate("created_at"));
+                    classEntity.setUpdated_at(rs.getDate("updated_at"));
                     classEntity.setTeacher_id(rs.getInt("teacher_id"));
                     classes.add(classEntity);
                 }
@@ -281,8 +285,8 @@ public class ClassDAO {
                     classEntity.setName(rs.getString("name"));
                     classEntity.setClass_key(rs.getString("class_key"));
                     classEntity.setDescription(rs.getString("description"));
-                    classEntity.setCreated_at(rs.getString("created_at"));
-                    classEntity.setUpdated_at(rs.getString("updated_at"));
+                    classEntity.setCreated_at(rs.getDate("created_at"));
+                    classEntity.setUpdated_at(rs.getDate("updated_at"));
                     classEntity.setTeacher_id(rs.getInt("teacher_id"));
                     return classEntity;
                 }
@@ -353,6 +357,26 @@ public class ClassDAO {
     }
 
 
-
-
+    public List<classs> searchClassesByTeacherId(String search, int id) {
+        List<classs> classList = new ArrayList<>();
+        String query = "SELECT * FROM class WHERE teacher_id = ?";
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                classs cls = new classs();
+                cls.setId(rs.getInt("id"));
+                cls.setName(rs.getString("name"));
+                cls.setDescription(rs.getString("description"));
+                cls.setCreated_at(rs.getTimestamp("created_at"));
+                cls.setUpdated_at(rs.getTimestamp("updated_at"));
+                cls.setTeacher_id(rs.getInt("teacher_id"));
+                classList.add(cls);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return classList;
+    }
 }

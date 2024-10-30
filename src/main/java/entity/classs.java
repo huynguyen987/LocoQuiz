@@ -1,5 +1,7 @@
 package entity;
 
+import java.util.Date;
+
 public class classs {
 //    CREATE TABLE class(
 //                      id INT PRIMARY KEY AUTO_INCREMENT,
@@ -15,8 +17,8 @@ public class classs {
     private String name;
     private String class_key;
     private String description;
-    private String created_at;
-    private String updated_at;
+    private Date created_at;
+    private Date updated_at;
     private int teacher_id;
     private String teacher_name; 
 
@@ -24,7 +26,7 @@ public class classs {
     public classs() {
     }
 
-    public classs(int id, String name, String class_key, String description, String created_at, String updated_at, int teacher_id) {
+    public classs(int id, String name, String class_key, String description, Date created_at, Date updated_at, int teacher_id) {
         this.id = id;
         this.name = name;
         this.class_key = class_key;
@@ -32,7 +34,6 @@ public class classs {
         this.created_at = created_at;
         this.updated_at = updated_at;
         this.teacher_id = teacher_id;
-        this.teacher_name = teacher_name;
     }
 
     public int getId() {
@@ -67,19 +68,19 @@ public class classs {
         this.description = description;
     }
 
-    public String getCreated_at() {
+    public Date getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(String created_at) {
+    public void setCreated_at(Date created_at) {
         this.created_at = created_at;
     }
 
-    public String getUpdated_at() {
+    public Date getUpdated_at() {
         return updated_at;
     }
 
-    public void setUpdated_at(String updated_at) {
+    public void setUpdated_at(Date updated_at) {
         this.updated_at = updated_at;
     }
 

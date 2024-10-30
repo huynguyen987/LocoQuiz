@@ -8,20 +8,20 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @WebServlet(name = "CreateClassServlet", urlPatterns = {"/CreateClassServlet"})
 public class CreateClassServlet extends HttpServlet {
 
-    // tạo ngẫu nhiên một class key
+    // Tạo ngẫu nhiên một class key
     private String generateClassKey() {
-        return UUID.randomUUID().toString().replace("-", "").substring(0, 6);
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 6).toUpperCase();
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         // Lấy thông tin lớp học từ request
         String name = request.getParameter("name");
         String description = request.getParameter("description");
@@ -33,17 +33,17 @@ public class CreateClassServlet extends HttpServlet {
             return;
         }
 
-        // Kiểm tra nếu không phải là giáo viên thì chuyển hướng về trang unauthorized.jsp
         Users currentUser = (Users) session.getAttribute("user");
-        if (currentUser == null || currentUser.getRole_id() != Users.ROLE_TEACHER) {
+        if (currentUser == null || (currentUser.getRole_id() != 2 && currentUser.getRole_id() != 3)) { // 2: Teacher, 3: Admin
             response.sendRedirect(request.getContextPath() + "/unauthorized.jsp");
             return;
         }
 
         // Kiểm tra xem tên lớp học có hợp lệ không
         if (name == null || name.trim().isEmpty()) {
-            // Redirect back to Create Class form with an error message
-            response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?action=createClass&message=createError");
+            // Set thông báo lỗi và forward lại form
+            request.setAttribute("errorMessage", "Tên lớp học không được để trống.");
+            request.getRequestDispatcher("/jsp/createClass.jsp").forward(request, response);
             return;
         }
 
@@ -53,6 +53,7 @@ public class CreateClassServlet extends HttpServlet {
         newClass.setDescription(description != null ? description.trim() : "");
         newClass.setTeacher_id(currentUser.getId());
         newClass.setClass_key(generateClassKey());
+        newClass.setCreated_at(new Timestamp(System.currentTimeMillis())); // Thiết lập createdAt
 
         // Tạo một đối tượng ClassDAO để thao tác với database
         ClassDAO classDAO = new ClassDAO();
@@ -61,12 +62,13 @@ public class CreateClassServlet extends HttpServlet {
             // Thêm lớp học mới vào database
             classDAO.createClass(newClass);
 
-            // Redirect to Teacher page with a success message
-            response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=classCreated");
+            // Redirect đến TeacherDashboardServlet với thông báo thành công
+            response.sendRedirect(request.getContextPath() + "/teacherDashboard?action=update&message=classCreated");
         } catch (Exception e) {
             e.printStackTrace();
-            // Redirect back to Create Class form with an error message
-            response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?action=createClass&message=createError");
+            // Set thông báo lỗi và forward lại form
+            request.setAttribute("errorMessage", "Đã xảy ra lỗi khi tạo lớp học.");
+            request.getRequestDispatcher("/jsp/createClass.jsp").forward(request, response);
         }
     }
 }

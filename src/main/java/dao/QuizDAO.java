@@ -20,6 +20,37 @@ import jakarta.json.JsonObject;
 
 public class QuizDAO {
 
+    public List<quiz> getQuizzesByTeacherId(int teacherId) throws SQLException, ClassNotFoundException {
+        List<quiz> quizzes = new ArrayList<>();
+        String sql = "SELECT * FROM `quiz` WHERE user_id = ?";
+
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, teacherId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    quiz quiz = new quiz();
+                    quiz.setId(rs.getInt("id"));
+                    quiz.setName(rs.getString("name"));
+                    quiz.setDescription(rs.getString("description"));
+                    quiz.setCreated_at(String.valueOf(rs.getTimestamp("created_at")));
+                    quiz.setUpdated_at(String.valueOf(rs.getTimestamp("updated_at")));
+                    quiz.setUser_id(rs.getInt("user_id"));
+                    quiz.setType_id(rs.getInt("type_id"));
+                    quiz.setAnswer(rs.getString("answer"));
+                    quiz.setStatus(rs.getBoolean("status"));
+                    quiz.setViews(rs.getInt("views"));
+
+                    quizzes.add(quiz);
+                }
+            }
+        }
+
+        return quizzes;
+    }
+
 
 
     //getTypeIdByName
