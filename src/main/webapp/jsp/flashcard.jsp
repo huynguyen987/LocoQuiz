@@ -18,11 +18,13 @@
     <h1>Flashcard Practice</h1>
     <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
   </header>
-
+  <!-- Back to home button (back to student page) -->
+  <a href="${pageContext.request.contextPath}/jsp/student.jsp" class="back-button">← Back to Home</a>
   <!-- Navigation Tabs -->
   <nav class="tabs" role="tablist">
     <button class="tab active" data-tab="create" role="tab" aria-selected="true">Create Cards</button>
     <button class="tab" data-tab="practice" role="tab">Practice</button>
+    <button class="tab" data-tab="quiz" role="tab">Quiz Mode</button>
     <button class="tab" data-tab="stats" role="tab">Statistics</button>
   </nav>
 
@@ -52,11 +54,11 @@
         </div>
         <div class="stat-item">
           <div class="stat-value" id="total-correct">0</div>
-          <div class="stat-label">Correct Answers</div>
+          <div class="stat-label">Remembered</div>
         </div>
         <div class="stat-item">
           <div class="stat-value" id="total-incorrect">0</div>
-          <div class="stat-label">Incorrect Answers</div>
+          <div class="stat-label">Did Not Remember Yet</div>
         </div>
       </div>
 
@@ -76,6 +78,19 @@
           Import File 📁
           <input type="file" accept=".txt,.csv" id="file-input" class="file-input" aria-hidden="true">
         </label>
+        <button class="danger-button" id="delete-all-cards">
+          Delete All Cards 🗑️
+        </button>
+        <button class="secondary-button" id="refresh-cards">
+          Refresh List 🔄
+        </button>
+      </div>
+
+      <!-- Additional Information Above Flashcard List -->
+      <div class="pagination-info" id="pagination-info">Showing 1-10 of 0 flashcards</div>
+      <div class="pagination-controls">
+        <button id="prev-page" class="secondary-button">Previous</button>
+        <button id="next-page" class="secondary-button">Next</button>
       </div>
 
       <!-- Card List -->
@@ -90,9 +105,13 @@
       <div id="practice-container">
         <div class="button-group">
           <button class="secondary-button" id="shuffle-button">Shuffle 🔀</button>
-          <select id="category-filter" aria-label="Filter by Category">
-            <option value="all">All Categories</option>
-          </select>
+          <div class="dropdown">
+            <label for="practice-category-filter" class="dropdown-label">Filter by Category:</label>
+            <select id="practice-category-filter" aria-label="Filter by Category">
+              <option value="all">All Categories</option>
+              <!-- Categories will be populated dynamically -->
+            </select>
+          </div>
         </div>
         <div class="flashcard" id="flashcard" tabindex="0" aria-label="Flashcard">
           <div class="flashcard-inner">
@@ -105,10 +124,10 @@
           <span id="card-counter">0 / 0</span>
           <button class="secondary-button" id="next-button">Next ➡️</button>
         </div>
-        <!-- New Answer Buttons -->
+        <!-- Updated Answer Buttons -->
         <div class="answer-buttons">
-          <button class="correct-button">Correct ✅</button>
-          <button class="incorrect-button">Incorrect ❌</button>
+          <button class="remember-button">Remember ✅</button>
+          <button class="did-not-remember-button">Did Not Remember Yet ❌</button>
         </div>
       </div>
       <div id="empty-state" class="empty-state">
@@ -116,12 +135,93 @@
       </div>
     </section>
 
+    <!-- Quiz Mode Tab -->
+    <section id="quiz-tab" class="tab-content" role="tabpanel">
+      <div id="quiz-container">
+        <!-- Quiz Configuration Form -->
+        <div id="quiz-config" class="quiz-config">
+          <h2>Configure Quiz Session</h2>
+          <div class="input-group">
+            <label for="quiz-category-select">Select Category:</label>
+            <select id="quiz-category-select" aria-label="Select Quiz Category">
+              <option value="all">All Categories</option>
+              <!-- Categories will be populated dynamically -->
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="quiz-time-input">Set Time (minutes):</label>
+            <input type="number" id="quiz-time-input" min="1" max="60" value="5" aria-label="Set Quiz Time">
+          </div>
+          <div class="input-group">
+            <label for="quiz-amount-input">Number of Questions:</label>
+            <input type="number" id="quiz-amount-input" min="1" max="100" value="10" aria-label="Set Number of Questions">
+          </div>
+          <div class="button-group">
+            <button class="primary-button" id="start-quiz-session">Start Quiz Session ⏱️</button>
+          </div>
+        </div>
+
+        <!-- Quiz Session Interface -->
+        <div id="quiz-session" class="quiz-session" style="display: none;">
+          <div id="quiz-timer" class="quiz-timer">Time Left: 05:00</div>
+          <div id="quiz-question" class="quiz-question">Question will appear here</div>
+          <div id="quiz-options" class="quiz-options">
+            <!-- Options will be dynamically inserted here -->
+          </div>
+          <div id="quiz-feedback" class="quiz-feedback"></div>
+          <div class="button-group">
+            <button class="secondary-button" id="next-quiz-question" disabled>Next ➡️</button>
+          </div>
+        </div>
+      </div>
+      <div id="quiz-empty-state" class="empty-state">
+        No flashcards available for quiz. Create some cards first!
+      </div>
+    </section>
+
     <!-- Statistics Tab -->
     <section id="stats-tab" class="tab-content" role="tabpanel">
       <div class="stats-details">
         <h2>Statistics</h2>
-        <div class="stats-chart">
-          <canvas id="statsChart"></canvas>
+        <div class="stats-overview">
+          <div class="stat-item">
+            <div class="stat-value" id="total-cards-stats">0</div>
+            <div class="stat-label">Total Cards</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="total-remembered">0</div>
+            <div class="stat-label">Remembered</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="total-did-not-remember">0</div>
+            <div class="stat-label">Did Not Remember Yet</div>
+          </div>
+        </div>
+        <div class="stats-charts">
+          <div class="stats-chart">
+            <canvas id="performanceChart"></canvas>
+          </div>
+          <div class="stats-chart">
+            <canvas id="quizPerformanceChart"></canvas>
+          </div>
+        </div>
+        <div class="stats-quiz-history">
+          <h3>Quiz Session History</h3>
+          <table id="quiz-history-table">
+            <thead>
+            <tr>
+              <th>Date</th>
+              <th>Category</th>
+              <th>Time (mins)</th>
+              <th>Questions</th>
+              <th>Correct</th>
+              <th>Incorrect</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Quiz sessions will be populated dynamically -->
+            </tbody>
+          </table>
         </div>
         <button class="secondary-button" id="reset-stats">Reset Statistics</button>
       </div>
@@ -142,6 +242,9 @@
     </div>
   </div>
 </div>
+
+<!-- Notification -->
+<div id="notification" class="notification" style="display: none;"></div>
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

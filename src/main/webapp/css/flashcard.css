@@ -1,49 +1,101 @@
-/* Reset and Base Styles */
+/* =========================
+   1. CSS Variables for Theming
+   ========================= */
+
+/* Light Mode Variables */
+:root {
+    --background-color: #f5f7fa;
+    --text-color: #2d3748;
+    --primary-color: #4299e1;
+    --secondary-color: #718096;
+    --card-background: #ffffff;
+    --modal-background: #ffffff;
+    --border-color: #e2e8f0;
+    --button-primary-bg: var(--primary-color);
+    --button-primary-text: #ffffff;
+    --button-secondary-bg: #edf2f7;
+    --button-secondary-text: var(--text-color);
+    --button-danger-bg: #fc8181;
+    --button-danger-text: #ffffff;
+    --button-hover-primary-bg: #3182ce;
+    --button-hover-secondary-bg: #e2e8f0;
+    --button-hover-danger-bg: #f56565;
+    --input-background: #ffffff;
+    --input-text-color: #2d3748;
+    --input-border-color: #e2e8f0;
+    --input-focus-border-color: var(--primary-color);
+    --notification-success-bg: #48bb78;
+    --notification-error-bg: #f56565;
+    --flashcard-border-color: #e2e8f0;
+    --flashcard-shadow: rgba(0, 0, 0, 0.1);
+    --quiz-option-bg: #edf2f7;
+    --quiz-option-hover-bg: #e2e8f0;
+    --empty-state-bg: #f7fafc;
+    --empty-state-text: #718096;
+    --modal-shadow: rgba(0, 0, 0, 0.2);
+    --notification-font-size: 1rem;
+}
+
+/* Dark Mode Overrides */
+body.dark-mode {
+    --background-color: #1a202c;
+    --text-color: #f7fafc;
+    --primary-color: #63b3ed;
+    --secondary-color: #a0aec0;
+    --card-background: #2d3748;
+    --modal-background: #4a5568;
+    --border-color: #4a5568;
+    --button-primary-bg: var(--primary-color);
+    --button-primary-text: #ffffff;
+    --button-secondary-bg: #4a5568;
+    --button-secondary-text: #f7fafc;
+    --button-danger-bg: #e53e3e;
+    --button-danger-text: #ffffff;
+    --button-hover-primary-bg: #2b6cb0;
+    --button-hover-secondary-bg: #2d3748;
+    --button-hover-danger-bg: #c53030;
+    --input-background: #4a5568;
+    --input-text-color: #f7fafc;
+    --input-border-color: #718096;
+    --input-focus-border-color: var(--primary-color);
+    --notification-success-bg: #38a169;
+    --notification-error-bg: #c53030;
+    --flashcard-border-color: #718096;
+    --flashcard-shadow: rgba(0, 0, 0, 0.4);
+    --quiz-option-bg: #4a5568;
+    --quiz-option-hover-bg: #2d3748;
+    --empty-state-bg: #2d3748;
+    --empty-state-text: #cbd5e0;
+    --modal-shadow: rgba(0, 0, 0, 0.4);
+    --notification-font-size: 1rem;
+}
+
+/* =========================
+   2. Global Styles
+   ========================= */
+
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }
 
 body {
+    margin: 0;
+    padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    padding: 20px;
-    background: var(--background);
+    background-color: var(--background-color);
     color: var(--text-color);
-    min-height: 100vh;
-    transition: background 0.3s, color 0.3s;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-/* Light and Dark Theme Variables */
-:root {
-    --background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    --text-color: #2d3748;
-    --card-background: white;
-    --modal-background: white;
-    --primary-color: #4299e1;
-    --secondary-color: #718096;
-}
-
-body.dark-mode {
-    --background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-    --text-color: #f7fafc;
-    --card-background: #4a5568;
-    --modal-background: #2d3748;
-    --primary-color: #90cdf4;
-    --secondary-color: #a0aec0;
-}
-
-/* Container and Header */
 .container {
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
-    background-color: var(--card-background);
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s;
+    padding: 20px;
 }
+
+/* =========================
+   3. Header
+   ========================= */
 
 header {
     display: flex;
@@ -54,6 +106,20 @@ header {
 
 header h1 {
     font-size: 2rem;
+    margin: 0;
+}
+
+.back-button {
+    display: inline-block;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: var(--primary-color);
+    font-size: 1rem;
+    transition: color 0.3s;
+}
+
+.back-button:hover {
+    color: var(--button-hover-primary-bg);
 }
 
 .theme-toggle {
@@ -69,18 +135,22 @@ header h1 {
     color: var(--primary-color);
 }
 
-/* Tabs */
+/* =========================
+   4. Navigation Tabs
+   ========================= */
+
 .tabs {
     display: flex;
     margin-bottom: 30px;
-    background-color: #f7fafc;
+    background-color: var(--card-background);
     border-radius: 10px;
     padding: 5px;
-    transition: background-color 0.3s;
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s, border-color 0.3s;
 }
 
 body.dark-mode .tabs {
-    background-color: #2d3748;
+    background-color: var(--card-background);
 }
 
 .tab {
@@ -89,26 +159,28 @@ body.dark-mode .tabs {
     cursor: pointer;
     background: none;
     border: none;
-    font-size: 16px;
-    color: #4a5568;
+    font-size: 1rem;
+    color: var(--secondary-color);
     border-radius: 8px;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-body.dark-mode .tab {
-    color: #f7fafc;
+.tab:hover:not(.active) {
+    background-color: var(--quiz-option-hover-bg);
+    color: var(--primary-color);
 }
 
 .tab.active {
     background-color: var(--primary-color);
-    color: white;
+    color: var(--button-primary-text);
     font-weight: 600;
 }
 
-.tab:hover:not(.active) {
-    background-color: rgba(66, 153, 225, 0.1);
-}
+/* =========================
+   5. Main Content
+   ========================= */
 
+/* Common Styles for Tab Content */
 .tab-content {
     display: none;
 }
@@ -123,7 +195,10 @@ body.dark-mode .tab {
     to { opacity: 1; }
 }
 
-/* Controls */
+/* =========================
+   6. Controls
+   ========================= */
+
 .controls {
     display: flex;
     justify-content: space-between;
@@ -136,37 +211,37 @@ body.dark-mode .tab {
 #search-input {
     flex: 1;
     padding: 10px;
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--input-border-color);
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 1rem;
     transition: border-color 0.3s ease;
-    margin-right: 10px;
-    background-color: var(--card-background);
-    color: var(--text-color);
-}
-
-body.dark-mode #search-input {
-    border-color: #718096;
+    background-color: var(--input-background);
+    color: var(--input-text-color);
 }
 
 #search-input:focus {
     outline: none;
-    border-color: var(--primary-color);
+    border-color: var(--input-focus-border-color);
 }
 
-/* Stats Summary */
+.control-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* =========================
+   7. Stats Summary
+   ========================= */
+
 .stats-summary {
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
     padding: 15px;
-    background-color: #f7fafc;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
     border-radius: 10px;
-    transition: background-color 0.3s;
-}
-
-body.dark-mode .stats-summary {
-    background-color: #4a5568;
+    transition: background-color 0.3s, border-color 0.3s;
 }
 
 .stat-item {
@@ -174,55 +249,61 @@ body.dark-mode .stats-summary {
 }
 
 .stat-value {
-    font-size: 24px;
+    font-size: 1.5rem;
     font-weight: bold;
     color: var(--primary-color);
 }
 
 .stat-label {
-    color: #718096;
-    font-size: 14px;
+    color: var(--secondary-color);
+    font-size: 0.9rem;
 }
 
-body.dark-mode .stat-label {
-    color: #cbd5e0;
-}
+/* =========================
+   8. Input Group
+   ========================= */
 
-/* Input Group */
 .input-group {
     margin-bottom: 20px;
-    background-color: #f7fafc;
+    background-color: var(--card-background);
     padding: 20px;
+    border: 1px solid var(--border-color);
     border-radius: 10px;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, border-color 0.3s;
 }
 
-body.dark-mode .input-group {
-    background-color: #4a5568;
-}
-
-.input-group input[type="text"] {
+.input-group input[type="text"],
+.input-group select,
+.input-group input[type="number"] {
     width: 100%;
     padding: 12px;
     margin-bottom: 10px;
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--input-border-color);
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 1rem;
     transition: border-color 0.3s ease;
-    background-color: var(--card-background);
+    background-color: var(--input-background);
+    color: var(--input-text-color);
+}
+
+.input-group input[type="text"]:focus,
+.input-group select:focus,
+.input-group input[type="number"]:focus {
+    outline: none;
+    border-color: var(--input-focus-border-color);
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
     color: var(--text-color);
 }
 
-body.dark-mode .input-group input[type="text"] {
-    border-color: #718096;
-}
+/* =========================
+   9. Button Group
+   ========================= */
 
-.input-group input[type="text"]:focus {
-    outline: none;
-    border-color: var(--primary-color);
-}
-
-/* Button Group */
 .button-group {
     display: flex;
     gap: 10px;
@@ -230,63 +311,103 @@ body.dark-mode .input-group input[type="text"] {
     flex-wrap: wrap;
 }
 
-.primary-button {
-    background-color: var(--primary-color);
-    color: white;
+.primary-button,
+.secondary-button,
+.danger-button,
+.remember-button,
+.did-not-remember-button,
+.quiz-option-button,
+#start-quiz-session {
+    flex: 1;
+    min-width: 120px;
     padding: 12px 24px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
-    flex: 1;
+    transition: background-color 0.3s ease, color 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: background-color 0.3s ease;
+}
+
+.primary-button {
+    background-color: var(--button-primary-bg);
+    color: var(--button-primary-text);
 }
 
 .primary-button:hover {
-    background-color: #3182ce;
+    background-color: var(--button-hover-primary-bg);
 }
 
 .secondary-button {
-    background-color: #edf2f7;
-    color: var(--text-color);
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: background-color 0.3s ease;
+    background-color: var(--button-secondary-bg);
+    color: var(--button-secondary-text);
 }
 
 .secondary-button:hover {
-    background-color: #e2e8f0;
+    background-color: var(--button-hover-secondary-bg);
 }
 
 .danger-button {
-    background-color: #fc8181;
-    color: white;
+    background-color: var(--button-danger-bg);
+    color: var(--button-danger-text);
 }
 
 .danger-button:hover {
-    background-color: #f56565;
+    background-color: var(--button-hover-danger-bg);
 }
 
-/* Flashcard */
+.remember-button {
+    background-color: #48bb78; /* Green */
+    color: #ffffff;
+}
+
+.remember-button:hover {
+    background-color: #38a169;
+}
+
+.did-not-remember-button {
+    background-color: #f56565; /* Red */
+    color: #ffffff;
+}
+
+.did-not-remember-button:hover {
+    background-color: #e53e3e;
+}
+
+.quiz-option-button {
+    background-color: var(--quiz-option-bg);
+    color: var(--text-color);
+}
+
+.quiz-option-button:hover {
+    background-color: var(--quiz-option-hover-bg);
+}
+
+#start-quiz-session {
+    background-color: var(--button-primary-bg);
+    color: var(--button-primary-text);
+}
+
+#start-quiz-session:hover {
+    background-color: var(--button-hover-primary-bg);
+}
+
+/* =========================
+   10. Flashcard
+   ========================= */
+
 .flashcard {
-    height: 400px;
+    width: 100%;
+    max-width: 600px;
+    height: 300px;
     perspective: 1000px;
     cursor: pointer;
-    margin-bottom: 20px;
+    margin: 0 auto 20px;
+    overflow: hidden;
 }
 
 .flashcard-inner {
@@ -302,7 +423,8 @@ body.dark-mode .input-group input[type="text"] {
     transform: rotateY(180deg);
 }
 
-.flashcard-front, .flashcard-back {
+.flashcard-front,
+.flashcard-back {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -310,24 +432,34 @@ body.dark-mode .input-group input[type="text"] {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    font-size: 1.5rem;
     background-color: var(--card-background);
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--flashcard-border-color);
     border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-shadow: 0 4px 6px var(--flashcard-shadow);
     color: var(--text-color);
-    transition: background-color 0.3s, border-color 0.3s;
+    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
 .flashcard-back {
     transform: rotateY(180deg);
-    background-color: #f7fafc;
+    background-color: var(--card-background);
 }
 
-body.dark-mode .flashcard-back {
-    background-color: #4a5568;
+.flashcard-back::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
 }
+
+/* =========================
+   11. Navigation
+   ========================= */
 
 .navigation {
     display: flex;
@@ -335,13 +467,10 @@ body.dark-mode .flashcard-back {
     align-items: center;
     margin-top: 20px;
     padding: 10px;
-    background-color: #f7fafc;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
     border-radius: 10px;
-    transition: background-color 0.3s;
-}
-
-body.dark-mode .navigation {
-    background-color: #4a5568;
+    transition: background-color 0.3s, border-color 0.3s;
 }
 
 #card-counter {
@@ -349,7 +478,10 @@ body.dark-mode .navigation {
     color: var(--secondary-color);
 }
 
-/* Answer Buttons */
+/* =========================
+   12. Answer Buttons
+   ========================= */
+
 .answer-buttons {
     display: flex;
     justify-content: center;
@@ -357,38 +489,9 @@ body.dark-mode .navigation {
     margin-top: 20px;
 }
 
-.correct-button, .incorrect-button {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-}
-
-.correct-button {
-    background-color: #48bb78; /* Green */
-    color: white;
-}
-
-.correct-button:hover {
-    background-color: #38a169;
-}
-
-.incorrect-button {
-    background-color: #f56565; /* Red */
-    color: white;
-}
-
-.incorrect-button:hover {
-    background-color: #e53e3e;
-}
-
-/* Card List */
-.card-list {
-    margin-top: 20px;
-}
+/* =========================
+   13. Card List
+   ========================= */
 
 .card-list h3 {
     margin-bottom: 10px;
@@ -397,24 +500,20 @@ body.dark-mode .navigation {
 
 .card-item {
     padding: 15px;
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--border-color);
     border-radius: 10px;
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: all 0.3s ease;
+    transition: border-color 0.3s, box-shadow 0.3s;
     background-color: var(--card-background);
     color: var(--text-color);
 }
 
-body.dark-mode .card-item {
-    border-color: #718096;
-}
-
 .card-item:hover {
     border-color: var(--primary-color);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--flashcard-shadow);
 }
 
 .card-content {
@@ -430,52 +529,56 @@ body.dark-mode .card-item {
 .action-button {
     padding: 6px 12px;
     border-radius: 6px;
-    font-size: 14px;
+    font-size: 0.9rem;
     cursor: pointer;
     border: none;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .action-button.secondary-button {
-    background-color: #edf2f7;
-    color: var(--text-color);
+    background-color: var(--button-secondary-bg);
+    color: var(--button-secondary-text);
 }
 
 .action-button.secondary-button:hover {
-    background-color: #e2e8f0;
+    background-color: var(--button-hover-secondary-bg);
 }
 
 .action-button.danger-button {
-    background-color: #fc8181;
-    color: white;
+    background-color: var(--button-danger-bg);
+    color: var(--button-danger-text);
 }
 
 .action-button.danger-button:hover {
-    background-color: #f56565;
+    background-color: var(--button-hover-danger-bg);
 }
 
-/* File Input */
+/* =========================
+   14. File Input
+   ========================= */
+
 .file-input {
     display: none;
 }
 
-/* Empty State */
+/* =========================
+   15. Empty State
+   ========================= */
+
 .empty-state {
     text-align: center;
-    color: #718096;
+    color: var(--empty-state-text);
     padding: 60px 20px;
-    background-color: #f7fafc;
+    background-color: var(--empty-state-bg);
     border-radius: 10px;
     margin-top: 20px;
     transition: background-color 0.3s, color 0.3s;
 }
 
-body.dark-mode .empty-state {
-    background-color: #4a5568;
-    color: #f7fafc;
-}
+/* =========================
+   16. Modal
+   ========================= */
 
-/* Modal */
 .modal {
     display: none;
     position: fixed;
@@ -499,9 +602,9 @@ body.dark-mode .empty-state {
     border-radius: 15px;
     width: 90%;
     max-width: 500px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 25px var(--modal-shadow);
     color: var(--text-color);
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
 }
 
 .modal-title {
@@ -514,43 +617,325 @@ body.dark-mode .empty-state {
     width: 100%;
     padding: 12px;
     margin-bottom: 15px;
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--input-border-color);
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 1rem;
     transition: border-color 0.3s ease;
-    background-color: var(--modal-background);
-    color: var(--text-color);
-}
-
-body.dark-mode .modal-content input[type="text"] {
-    border-color: #718096;
+    background-color: var(--input-background);
+    color: var(--input-text-color);
 }
 
 .modal-content input[type="text"]:focus {
     outline: none;
-    border-color: var(--primary-color);
+    border-color: var(--input-focus-border-color);
 }
 
-.button-group button {
+.modal .button-group button {
     flex: 1;
 }
 
-#card-counter {
-    font-weight: 600;
-    color: var(--secondary-color);
-}
+/* =========================
+   17. Statistics Details
+   ========================= */
 
-/* Stats Details */
 .stats-details {
     padding: 20px;
 }
 
-.stats-chart {
-    max-width: 600px;
-    margin: 0 auto 20px;
+.stats-details h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--text-color);
 }
 
-/* Responsive Design */
+.stats-overview {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.stats-overview .stat-item {
+    text-align: center;
+}
+
+.stats-overview .stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.stats-overview .stat-label {
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+}
+
+.stats-charts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.stats-chart {
+    width: 100%;
+    max-width: 600px;
+    background-color: var(--card-background);
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.stats-quiz-history {
+    margin-bottom: 20px;
+}
+
+.stats-quiz-history h3 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: var(--text-color);
+}
+
+#quiz-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+#quiz-history-table th,
+#quiz-history-table td {
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    text-align: center;
+}
+
+#quiz-history-table th {
+    background-color: var(--secondary-color);
+    color: #ffffff;
+}
+
+#quiz-history-table tr:nth-child(even) {
+    background-color: var(--quiz-option-hover-bg);
+}
+
+#quiz-history-table tr:hover {
+    background-color: var(--button-hover-secondary-bg);
+}
+
+/* =========================
+   18. Pagination in Create Tab
+   ========================= */
+
+.pagination-info {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    color: var(--secondary-color);
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.pagination-controls button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--button-secondary-bg);
+    color: var(--button-secondary-text);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-controls button:hover {
+    background-color: var(--button-hover-secondary-bg);
+}
+
+.pagination-controls button:disabled {
+    background-color: var(--button-secondary-bg);
+    color: var(--secondary-color);
+    cursor: not-allowed;
+}
+
+/* =========================
+   19. Quiz Timer
+   ========================= */
+
+.quiz-timer {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+}
+
+/* =========================
+   20. Quiz Configuration Form
+   ========================= */
+
+.quiz-config {
+    background-color: var(--card-background);
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.quiz-config h2 {
+    text-align: center;
+    margin-bottom: 15px;
+    color: var(--text-color);
+}
+
+.quiz-config .input-group {
+    margin-bottom: 15px;
+}
+
+.quiz-config .input-group label {
+    margin-bottom: 5px;
+    display: block;
+    color: var(--text-color);
+}
+
+.quiz-config .input-group select,
+.quiz-config .input-group input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid var(--input-border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: var(--input-background);
+    color: var(--input-text-color);
+    transition: border-color 0.3s ease;
+}
+
+.quiz-config .input-group select:focus,
+.quiz-config .input-group input[type="number"]:focus {
+    outline: none;
+    border-color: var(--input-focus-border-color);
+}
+
+/* =========================
+   21. Quiz Session Interface
+   ========================= */
+
+.quiz-session {
+    background-color: var(--card-background);
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.quiz-session .quiz-question {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: var(--text-color);
+    text-align: center;
+}
+
+.quiz-session .quiz-options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.quiz-session .quiz-feedback {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 1rem;
+    color: var(--secondary-color);
+}
+
+#next-quiz-question {
+    margin-top: 20px;
+}
+
+/* =========================
+   22. Notification Styles
+   ========================= */
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 8px;
+    color: #ffffff;
+    opacity: 0.9;
+    z-index: 1001;
+    animation: fadeInOut 3s forwards;
+    font-size: var(--notification-font-size);
+}
+
+.notification.success {
+    background-color: var(--notification-success-bg);
+}
+
+.notification.error {
+    background-color: var(--notification-error-bg);
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-20px); }
+    10% { opacity: 0.9; transform: translateY(0); }
+    90% { opacity: 0.9; }
+    100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* =========================
+   23. Statistics Charts
+   ========================= */
+
+.stats-chart canvas {
+    width: 100% !important;
+    height: auto !important;
+}
+
+/* =========================
+   24. Quiz History Table
+   ========================= */
+
+#quiz-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+#quiz-history-table th,
+#quiz-history-table td {
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    text-align: center;
+}
+
+#quiz-history-table th {
+    background-color: var(--secondary-color);
+    color: #ffffff;
+}
+
+#quiz-history-table tr:nth-child(even) {
+    background-color: var(--quiz-option-hover-bg);
+}
+
+#quiz-history-table tr:hover {
+    background-color: var(--button-hover-secondary-bg);
+}
+
+/* =========================
+   25. Responsive Design
+   ========================= */
+
 @media (max-width: 800px) {
     .stats-summary {
         flex-direction: column;
@@ -570,12 +955,17 @@ body.dark-mode .modal-content input[type="text"] {
         flex-direction: column;
     }
 
-    .button-group button, .button-group label {
+    .button-group button,
+    .button-group label {
         width: 100%;
     }
 
     .flashcard {
-        height: 300px;
+        height: 250px;
+    }
+
+    .stats-charts {
+        flex-direction: column;
     }
 
     .stats-chart {
@@ -585,5 +975,24 @@ body.dark-mode .modal-content input[type="text"] {
     .answer-buttons {
         flex-direction: column;
         gap: 10px;
+    }
+
+    .quiz-question {
+        font-size: 1.2rem;
+    }
+
+    .quiz-option-button {
+        font-size: 0.9rem;
+        padding: 10px 16px;
+    }
+
+    .quiz-config,
+    .quiz-session {
+        padding: 15px;
+    }
+
+    .quiz-controls button,
+    #start-quiz-session {
+        width: 100%;
     }
 }
