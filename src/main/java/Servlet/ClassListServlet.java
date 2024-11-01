@@ -25,6 +25,7 @@ public class ClassListServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
+        System.out.println("currentUser: " + currentUser.getUsername());
 
         List<classs> classes = null;
         String search = request.getParameter("search");

@@ -3,6 +3,8 @@
 <%@ page import="entity.Competition" %>
 <%@ page import="dao.ClassDAO" %>
 <%@ page import="dao.CompetitionDAO" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -18,6 +20,20 @@
     request.setAttribute("classes", classes);
     request.setAttribute("competitions", competitions);
 %>
+<%
+    List<Competition> activeCompetitions = new ArrayList<>();
+    Date now = new Date();
+    for (Competition competition : competitions) {
+        if (competition.getAccessEndTime().after(now)) { // So sánh thời gian kết thúc
+            activeCompetitions.add(competition);
+        }
+    }
+
+    // Đặt danh sách đã lọc vào request
+    request.setAttribute("classes", classes);
+    request.setAttribute("competitions", activeCompetitions);
+%>
+
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -60,7 +76,7 @@
                     <p>${fn:length(classes)}</p>
                 </div>
                 <div class="stat-actions">
-                    <a href="${pageContext.request.contextPath}/ClassListServlet" class="view-button">
+                    <a href="${pageContext.request.contextPath}/jsp/classList.jsp?user=${teacher.getId()}" class="view-button">
                         <i class="fas fa-eye"></i> Xem Chi Tiết
                     </a>
                 </div>
@@ -103,9 +119,15 @@
                             <p>Mã Lớp: ${classs.class_key}</p>
                             <p>Ngày Tạo: <fmt:formatDate value="${classs.created_at}" pattern="yyyy-MM-dd HH:mm"/></p>
                             <div class="class-actions">
-                                <a href="${pageContext.request.contextPath}/ClassDetailsServlet?classId=${classs.id}" class="view-button">
+                                <a href="${pageContext.request.contextPath}/ClassDetailsServlet?classsId=${classs.id}&user=${teacher}" class="view-button">
                                     <i class="fas fa-eye"></i> Xem Chi Tiết
                                 </a>
+                                <form action="${pageContext.request.contextPath}/DeleteClassServlet" method="post" class="delete-form">
+                                    <input type="hidden" name="classId" value="${classs.id}">
+                                    <button type="submit" class="button delete-button" aria-label="Xóa lớp">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </c:forEach>
@@ -125,31 +147,49 @@
                         <div class="competition-card">
                             <h3>${competition.name}</h3>
                             <p>${competition.description}</p>
-                            <p>Thời Gian Giới Hạn: ${competition.timeLimit / 60} phút</p>
-                            <p>Số Câu Hỏi: ${competition.questionCount}</p>
-                            <p>Trộn Câu Hỏi:
+                            <p><strong>Thời Gian Giới Hạn:</strong> ${competition.timeLimit / 60} phút</p>
+                            <p><strong>Số Câu Hỏi:</strong> ${competition.questionCount}</p>
+                            <p><strong>Trộn Câu Hỏi:</strong>
                                 <c:choose>
                                     <c:when test="${competition.shuffleQuestions}">Có</c:when>
                                     <c:otherwise>Không</c:otherwise>
                                 </c:choose>
                             </p>
-                            <p>Thời Gian Truy Cập: <fmt:formatDate value="${competition.accessStartTime}" pattern="yyyy-MM-dd HH:mm"/> đến <fmt:formatDate value="${competition.accessEndTime}" pattern="yyyy-MM-dd HH:mm"/></p>
+                            <p><strong>Thời Gian Truy Cập:</strong> <fmt:formatDate value="${competition.accessStartTime}" pattern="yyyy-MM-dd HH:mm"/> đến <fmt:formatDate value="${competition.accessEndTime}" pattern="yyyy-MM-dd HH:mm"/></p>
                             <div class="competition-actions">
-                                <a href="${pageContext.request.contextPath}/CompetitionDetailsServlet?competitionId=${competition.id}" class="view-button">
+                                <a href="${pageContext.request.contextPath}/CompetitionDetailsServlet?competitionId=${competition.id}" class="button view-button">
                                     <i class="fas fa-eye"></i> Xem Chi Tiết
                                 </a>
+                                <form action="${pageContext.request.contextPath}/DeleteCompetitionServlet" method="post" class="delete-form">
+                                    <input type="hidden" name="competitionId" value="${competition.id}">
+                                    <button type="submit" class="button delete-button" aria-label="Xóa Cuộc Thi">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
                             </div>
+
+
                         </div>
                     </c:forEach>
                 </div>
             </c:if>
             <c:if test="${empty competitions}">
-                <p>Bạn chưa tạo cuộc thi nào.</p>
+                <p>Bạn chưa tạo cuộc thi nào hoặc các cuộc thi đã hết hạn.</p>
             </c:if>
         </section>
 
     </div>
+<%--    style for trash button in class section like competition section--%>
+    <style>
+        .button delete-button , .button delete-button:hover {
+            background-color: #ff0000;
+            color: #fff;
+            inline-size: auto;
+        }
+    </style>
 </main>
+
+
 
 <%@ include file="components/footer.jsp" %>
 

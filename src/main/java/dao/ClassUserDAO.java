@@ -196,4 +196,34 @@ public class ClassUserDAO {
         return false;
     }
 
+    public int getTeacherIdByClassId(int classId) {
+        String sql = "SELECT teacher_id FROM class WHERE id = ?";
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, classId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("teacher_id");
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public boolean isStudentEnrolled(int classId, int id) {
+        String sql = "SELECT * FROM class_user WHERE class_id = ? AND user_id = ? AND status = 'approved'";
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, classId);
+            ps.setInt(2, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
