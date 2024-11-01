@@ -1,3 +1,6 @@
+<%@ page import="dao.ClassDAO" %>
+<%@ page import="entity.classs" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -12,13 +15,20 @@
 <body>
 <%@ include file="components/header.jsp" %>
 <%@ include file="components/sidebar.jsp" %>
+<%
+  ClassDAO classDAO = new ClassDAO();
+  Users teacher = (Users) session.getAttribute("user");
+  List<classs> classes = classDAO.getClassesByTeacherId(teacher.getId());
+  System.out.println("classes: " + classes.size());
+  request.setAttribute("classes", classes);
+%>
 
 <main>
   <div class="class-list-container">
     <h1>Danh Sách Lớp Học</h1>
 
     <!-- Form Tìm Kiếm -->
-    <form action="${pageContext.request.contextPath}/ClassListServlet" method="get">
+    <form action="${pageContext.request.contextPath}/ClassListServlet?" method="get">
       <input type="text" name="search" placeholder="Tìm kiếm lớp học" value="${param.search}">
       <button type="submit">Tìm Kiếm</button>
     </form>
@@ -32,7 +42,7 @@
             <p>${classs.description}</p>
             <p>Mã Lớp: ${classs.class_key}</p>
             <p>Ngày Tạo: <fmt:formatDate value="${classs.created_at}" pattern="yyyy-MM-dd HH:mm"/></p>
-            <a href="${pageContext.request.contextPath}/ClassDetailsServlet?classId=${classs.id}">Xem Chi Tiết</a>
+            <a href="${pageContext.request.contextPath}/ClassDetailsServlet?classsId=${classs.id}&user=${teacher}">Xem Chi Tiết</a>
           </li>
         </c:forEach>
       </ul>

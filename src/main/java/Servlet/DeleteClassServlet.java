@@ -29,7 +29,7 @@ public class DeleteClassServlet extends HttpServlet {
                 boolean isDeleted = classDAO.deleteClass(classId);
                 if (isDeleted) {
                     // Redirect to teacher dashboard with a success message
-                    response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=classDeleted");
+                    response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=Class deleted successfully.");
                 } else {
                     request.setAttribute("errorMessage", "Không thể xóa lớp.");
                     request.getRequestDispatcher("/jsp/teacher.jsp").forward(request, response);
