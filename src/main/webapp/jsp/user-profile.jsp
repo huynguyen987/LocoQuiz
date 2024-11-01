@@ -39,7 +39,7 @@
         </div>
         <nav class="sidebar-nav">
             <ul>
-                <li><a href="${pageContext.request.contextPath}/jsp/profile.jsp" class="active"><i class="fas fa-user"></i> Profile</a></li>
+                <li><a href="${pageContext.request.contextPath}/jsp/user-profile.jsp" class="active"><i class="fas fa-user"></i> Profile</a></li>
                 <li><a href="${pageContext.request.contextPath}/jsp/dashboard.jsp"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                 <li><a href="${pageContext.request.contextPath}/jsp/quizzes.jsp"><i class="fas fa-file-alt"></i> Quizzes</a></li>
                 <li><a href="${pageContext.request.contextPath}/jsp/settings.jsp"><i class="fas fa-cog"></i> Settings</a></li>
@@ -66,7 +66,6 @@
                         <% } else { %>
                         <img src="../img/avt.jpg" alt="Default Avatar" class="avatar">
                         <% } %>
-                        <a href="upload-avatar.jsp" class="btn-update-avatar"><i class="fas fa-camera"></i> Update Avatar</a>
                     </div>
                 </div>
 

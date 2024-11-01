@@ -186,8 +186,7 @@ public class UsersDAO {
         }
 
         return isDeleted;
-    }
-// Get all students not in class
+    }// Get all students not in class
     public List<Users> getAllStudentsNotInClass(int classId) throws SQLException, ClassNotFoundException {
         String sql = "SELECT * FROM users WHERE role_id = 2 AND id NOT IN (SELECT user_id FROM class_user WHERE class_id = ?)";
         List<Users> students = new ArrayList<>();
@@ -239,13 +238,41 @@ public class UsersDAO {
         return user; // Returns null if authentication fails
     }
 
+    public boolean updateUserForUploadImage(Users user) throws SQLException, ClassNotFoundException {
+        String sql = "UPDATE users SET username = ?, email = ?, gender = ?";
 
-    // Main method for testing
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        UsersDAO usersDAO = new UsersDAO();
-        List<Users> users = usersDAO.getAllUsers();
-        for (Users user : users) {
-            System.out.println(user);
+        // Kiểm tra nếu avatar không null, thêm vào câu lệnh SQL
+        if (user.getAvatar() != null) {
+            sql += ", avatar = ?";
         }
+
+        sql += " WHERE id = ?";
+
+        boolean isUpdated = false;
+
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            int paramIndex = 1;
+            ps.setString(paramIndex++, user.getUsername());
+            ps.setString(paramIndex++, user.getEmail());
+            ps.setString(paramIndex++, user.getGender());
+
+            if (user.getAvatar() != null) {
+                ps.setBytes(paramIndex++, user.getAvatar());
+            }
+
+            ps.setInt(paramIndex, user.getId());
+
+            int affectedRows = ps.executeUpdate();
+            isUpdated = affectedRows > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e; // Ném lại ngoại lệ để Servlet có thể xử lý
+        }
+
+        return isUpdated;
     }
 }
+

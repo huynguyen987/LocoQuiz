@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="entity.Users, dao.UsersDAO" %>
 <%@ page import="java.sql.SQLException" %>
+<%@ page import="java.util.Base64" %>
 
 <%
     // Kiểm tra người dùng đã đăng nhập chưa
@@ -37,8 +38,25 @@
     <title>Edit Profile - QuizLoco</title>
     <!-- Sử dụng context path để liên kết CSS đúng cách -->
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/edit-profile.css">
+
+    <!-- Cropper.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Custom CSS cho Cropper -->
     <style>
-        /* Thêm một số kiểu cơ bản cho thông báo và nút */
+        /* Định dạng cho ảnh xem trước */
+        .img-container {
+            max-width: 100%;
+            max-height: 400px;
+            margin-bottom: 20px;
+            display: none; /* Ẩn đi cho đến khi có ảnh */
+        }
+
+        .img-container img {
+            max-width: 100%;
+        }
+
+        /* Các kiểu CSS khác (nếu cần) */
         .success-message {
             background-color: #d4edda;
             color: #155724;
@@ -71,6 +89,54 @@
         .btn-back-dashboard:hover {
             background-color: #0056b3;
         }
+
+        .btn-submit {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-submit:hover {
+            background-color: #218838;
+        }
+
+        .profile-avatar img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select,
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .profile-actions {
+            margin-top: 20px;
+        }
+
+        .profile-actions a {
+            margin-right: 10px;
+            text-decoration: none;
+        }
     </style>
 </head>
 
@@ -98,7 +164,7 @@
                 <% if (success != null) { %>
                 <div class="success-message"><%= success %></div>
                 <% } %>
-                <form action="<%= request.getContextPath() %>/EditProfileServlet" method="post">
+                <form action="<%= request.getContextPath() %>/EditProfileServlet" method="post" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="username">Username:</label>
                         <input type="text" id="username" name="username" value="<%= user.getUsername() %>" required>
@@ -116,14 +182,42 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label for="avatar">Upload New Avatar (optional):</label>
+                        <input type="file" id="avatar" name="avatar" accept="image/*">
+                    </div>
+
+                    <!-- Thêm vùng hiển thị ảnh xem trước -->
+                    <div class="img-container">
+                        <img id="preview-image" src="#">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="hidden" id="croppedImageData" name="croppedImageData">
                         <input type="submit" value="Update Profile" class="btn-submit">
                     </div>
                 </form>
             </div>
+
+            <div class="profile-avatar">
+                <%
+                    if (user.getAvatar() != null && user.getAvatar().length > 0) {
+                        String base64Avatar = Base64.getEncoder().encodeToString(user.getAvatar());
+                        String mimeType = "image/jpeg"; // Bạn có thể xác định loại MIME thực tế nếu cần
+                        System.out.println("Displaying avatar for user ID: " + user.getId());
+                        System.out.println("Base64 Avatar Length: " + base64Avatar.length());
+                %>
+                <img src="data:<%= mimeType %>;base64,<%= base64Avatar %>" alt="Avatar">
+                <% } else { %>
+                <p>No avatar available.</p>
+                <% } %>
+            </div>
+
             <div class="profile-actions">
                 <a href="<%= request.getContextPath() %>/jsp/change-password.jsp" class="btn-submit">Change Password</a>
-                <a href="<%= request.getContextPath() %>/jsp/upload-avatar.jsp" class="btn-submit">Update Avatar</a>
+                <!-- Nếu bạn muốn cho phép upload avatar trực tiếp từ đây, bạn có thể bỏ qua liên kết này -->
+                <!-- <a href="<%= request.getContextPath() %>/jsp/upload-avatar.jsp" class="btn-submit">Update Avatar</a> -->
             </div>
+
             <div class="back-to-dashboard" style="margin-top: 20px;">
                 <%
                     String role = user.getRoleName();
@@ -150,5 +244,69 @@
     </div>
 </footer>
 
+<!-- Cropper.js JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- Custom JS -->
+<script>
+    // Biến lưu trữ đối tượng Cropper
+    let cropper;
+
+    // Lắng nghe sự kiện khi người dùng chọn tệp ảnh
+    document.getElementById('avatar').addEventListener('change', function (e) {
+        const imgContainer = document.querySelector('.img-container');
+        const previewImage = document.getElementById('preview-image');
+        const file = e.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                previewImage.src = event.target.result;
+                imgContainer.style.display = 'block';
+
+                // Khởi tạo Cropper.js sau khi ảnh đã được load
+                if (cropper) {
+                    cropper.destroy(); // Hủy bỏ cropper cũ nếu có
+                }
+                cropper = new Cropper(previewImage, {
+                    aspectRatio: 1, // Tỉ lệ khung hình 1:1 cho avatar
+                    viewMode: 1,
+                    movable: true,
+                    zoomable: true,
+                    rotatable: true,
+                    scalable: true,
+                });
+            };
+            reader.readAsDataURL(file);
+        } else {
+            imgContainer.style.display = 'none';
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+        }
+    });
+
+    // Xử lý sự kiện submit form
+    document.querySelector('form').addEventListener('submit', function (e) {
+        if (cropper) {
+            // Lấy dữ liệu ảnh đã cắt
+            cropper.getCroppedCanvas().toBlob(function (blob) {
+                // Chuyển đổi blob thành base64 để gửi qua form
+                const reader = new FileReader();
+                reader.onloadend = function () {
+                    const base64data = reader.result;
+                    document.getElementById('croppedImageData').value = base64data;
+
+                    // Sau khi đã thiết lập dữ liệu, submit form
+                    e.target.submit();
+                };
+                reader.readAsDataURL(blob);
+            });
+            // Ngăn chặn việc submit form ngay lập tức
+            e.preventDefault();
+        }
+    });
+</script>
 </body>
 </html>
