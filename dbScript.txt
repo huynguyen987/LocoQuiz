@@ -133,6 +133,19 @@ CREATE TABLE competitions (
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id)
 );
 
+CREATE TABLE competition_results (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    competition_id INT NOT NULL,
+    user_id INT NOT NULL,
+    class_id INT NOT NULL,
+    score FLOAT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (competition_id) REFERENCES competitions(id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (class_id) REFERENCES class(id)
+);
+
+
 
 -- 10. Chèn dữ liệu mẫu
 

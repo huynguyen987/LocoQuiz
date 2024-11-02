@@ -34,8 +34,15 @@ public class CreateClassServlet extends HttpServlet {
         }
 
         Users currentUser = (Users) session.getAttribute("user");
-        if (currentUser == null || (currentUser.getRole_id() != 2 && currentUser.getRole_id() != 3)) { // 2: Teacher, 3: Admin
-            response.sendRedirect(request.getContextPath() + "/unauthorized.jsp");
+        System.out.println("User who is creating class: " + currentUser.getUsername() + " and have role: " + currentUser.getRole_id());
+        if (currentUser == null) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+//        neu la sinh vien thi chuyen ve trang chu
+        if (currentUser.getRole_id() == Users.ROLE_STUDENT) {
+            System.out.println("You are student");
+            response.sendRedirect(request.getContextPath() + "/jsp/student.jsp");
             return;
         }
 

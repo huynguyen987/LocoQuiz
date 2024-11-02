@@ -73,7 +73,7 @@
 
       <!-- Hộp chứa các nút hành động -->
       <div class="class-action-buttons">
-        <a href="<%= request.getContextPath() %>/CreateCompetitionServlet?classId=<%= classEntity.getId() %>" class="button create-competition-btn">
+        <a href="<%= request.getContextPath() %>/TakeCompetitionServlet?action=configure&classId =<%= classEntity.getId() %>" class="button create-competition-btn">
           <i class="fas fa-trophy"></i> Tạo Cuộc Thi
         </a>
         <a href="<%= request.getContextPath() %>/CreateQuizServlet?classId=<%= classEntity.getId() %>" class="button create-quiz-btn">
