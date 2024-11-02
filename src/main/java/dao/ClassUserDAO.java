@@ -12,10 +12,26 @@ import entity.classs;
 
 public class ClassUserDAO {
 
-    // Get students by class ID (approved only)
+    //isStudentEnrolled
+    public boolean isStudentEnrolled(int classId, int studentId) throws SQLException, ClassNotFoundException {
+        String sql = "SELECT COUNT(*) FROM class_user WHERE class_id = ? AND user_id = ? AND status = 'approved'";
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, classId);
+            ps.setInt(2, studentId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    //getStudentsByClassId
     public List<Users> getStudentsByClassId(int classId) throws SQLException, ClassNotFoundException {
-        String sql = "SELECT u.* FROM users u JOIN class_user cu ON u.id = cu.user_id WHERE cu.class_id = ? AND cu.status = 'approved' AND u.role_id = 3";
         List<Users> students = new ArrayList<>();
+        String sql = "SELECT u.* FROM users u JOIN class_user cu ON u.id = cu.user_id WHERE cu.class_id = ? AND cu.status = 'approved'";
         try (Connection connection = new DBConnect().getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, classId);
@@ -31,6 +47,32 @@ public class ClassUserDAO {
         }
         return students;
     }
+
+
+    public List<Users> getStudentsByClassIdAll(int classId) throws SQLException, ClassNotFoundException {
+        List<Users> students = new ArrayList<>();
+        String sql = "SELECT u.*, cu.status FROM users u " +
+                "JOIN class_user cu ON u.id = cu.user_id " +
+                "WHERE cu.class_id = ?";
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, classId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Users student = new Users();
+                    student.setId(rs.getInt("id"));
+                    student.setUsername(rs.getString("username"));
+                    student.setEmail(rs.getString("email"));
+                    // Thêm thuộc tính trạng thái nếu cần
+                    String status = rs.getString("status");
+                    // Bạn có thể sử dụng status để hiển thị trong JSP
+                    students.add(student);
+                }
+            }
+        }
+        return students;
+    }
+
 
     // Get users by class ID (approved only)
     public List<Users> getUsersByClassId(int classId) throws SQLException, ClassNotFoundException {
@@ -155,31 +197,6 @@ public class ClassUserDAO {
         return false;
     }
 
-    // Get all approved classes for a student
-    public List<classs> getApprovedClassesByStudent(int userId) throws SQLException, ClassNotFoundException {
-        List<classs> approvedClasses = new ArrayList<>();
-        String sql = "SELECT c.* FROM class c " +
-                "JOIN class_user cu ON c.id = cu.class_id " +
-                "WHERE cu.user_id = ? AND cu.status = 'approved'";
-        try (Connection conn = new DBConnect().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    classs cls = new classs();
-                    cls.setId(rs.getInt("id"));
-                    cls.setName(rs.getString("name"));
-                    cls.setClass_key(rs.getString("class_key"));
-                    cls.setDescription(rs.getString("description"));
-                    cls.setTeacher_id(rs.getInt("teacher_id"));
-                    // Set other fields as necessary
-                    approvedClasses.add(cls);
-                }
-            }
-        }
-        return approvedClasses;
-    }
-
     //isUserEnrolledInClass
     public boolean isUserEnrolledInClass(int classId, int userId) throws SQLException, ClassNotFoundException {
         String sql = "SELECT COUNT(*) FROM class_user WHERE class_id = ? AND user_id = ? AND status = 'approved'";
@@ -195,35 +212,18 @@ public class ClassUserDAO {
         }
         return false;
     }
-
-    public int getTeacherIdByClassId(int classId) {
-        String sql = "SELECT teacher_id FROM class WHERE id = ?";
+    //sendJoinRequest
+    public boolean sendJoinRequest(int classId, int userId) throws SQLException, ClassNotFoundException {
+        String sql = "INSERT INTO class_user (class_id, user_id, status) VALUES (?, ?, 'pending')";
         try (Connection conn = new DBConnect().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, classId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("teacher_id");
-                }
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return -1;
-    }
+            ps.setInt(2, userId);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLIntegrityConstraintViolationException e) {
 
-    public boolean isStudentEnrolled(int classId, int id) {
-        String sql = "SELECT * FROM class_user WHERE class_id = ? AND user_id = ? AND status = 'approved'";
-        try (Connection conn = new DBConnect().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, classId);
-            ps.setInt(2, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 }

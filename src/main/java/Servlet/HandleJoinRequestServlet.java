@@ -44,6 +44,6 @@ public class HandleJoinRequestServlet extends HttpServlet {
             }
         }
 
-        response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?action=classDetails&classId=" + classId + "&message=" + message);
+        response.sendRedirect(request.getContextPath() + "/ClassDetailsServlet?classsId=" + classId + "&message=" + URLEncoder.encode(message, StandardCharsets.UTF_8));
     }
 }

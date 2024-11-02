@@ -18,13 +18,13 @@ public class JoinClassServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Kiểm tra phiên đăng nhập
+        // Check user session
         HttpSession session = request.getSession(false);
         Users currentUser = null;
         if (session != null) {
             currentUser = (Users) session.getAttribute("user");
         }
-        if (currentUser == null || !"student".equalsIgnoreCase(currentUser.getRoleName())) {
+        if (currentUser == null || currentUser.getRole_id() != Users.ROLE_STUDENT) {
             response.sendRedirect(request.getContextPath() + "/unauthorized.jsp");
             return;
         }
@@ -41,7 +41,7 @@ public class JoinClassServlet extends HttpServlet {
         ClassUserDAO classUserDAO = new ClassUserDAO();
 
         try {
-            // Tìm lớp học dựa trên classKey
+            // Find class by classKey
             classs classEntity = classDAO.getClassByClassKey(classKey);
 
             if (classEntity == null) {
@@ -53,18 +53,18 @@ public class JoinClassServlet extends HttpServlet {
             int classId = classEntity.getId();
             int studentId = currentUser.getId();
 
-            // Kiểm tra xem sinh viên đã tham gia lớp này chưa
+            // Check if student is already enrolled or has a pending request
             if (classUserDAO.isUserEnrolledInClass(classId, studentId)) {
-                String message = URLEncoder.encode("Bạn đã tham gia lớp học này rồi.", StandardCharsets.UTF_8);
+                String message = URLEncoder.encode("Bạn đã tham gia lớp học này rồi hoặc đang chờ duyệt.", StandardCharsets.UTF_8);
                 response.sendRedirect(request.getContextPath() + "/jsp/my-classes.jsp?message=" + message);
                 return;
             }
 
-            // Đăng ký sinh viên vào lớp học
-            boolean isEnrolled = classUserDAO.enrollStudentToClass(classId, studentId);
+            // Send join request
+            boolean isRequested = classUserDAO.sendJoinRequest(classId, studentId);
 
-            if (isEnrolled) {
-                String message = URLEncoder.encode("Tham gia lớp học thành công.", StandardCharsets.UTF_8);
+            if (isRequested) {
+                String message = URLEncoder.encode("Yêu cầu tham gia lớp học đã được gửi.", StandardCharsets.UTF_8);
                 response.sendRedirect(request.getContextPath() + "/jsp/my-classes.jsp?message=" + message);
             } else {
                 String error = URLEncoder.encode("Có lỗi xảy ra. Vui lòng thử lại.", StandardCharsets.UTF_8);
