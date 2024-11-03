@@ -109,8 +109,9 @@
             <td><%= user.getRole_id() == 1 ? "Admin" : (user.getRole_id() == 2 ? "Teacher" : "Student") %></td>
             <td><%= user.getEmail() %></td>
             <td>
-                <form action="UserServlet" method="post">
-                    <input type="hidden" name="userId" value="<%= user.getId() %>">
+                <form action="${pageContext.request.contextPath}/UserServlet" method="post">
+
+                <input type="hidden" name="userId" value="<%= user.getId() %>">
                     <button type="submit" name="action" value="updateRole">Update Role</button>
                     <button type="submit" name="action" value="toggleStatus">
                         <%= user.getRole_id() == 1 ? "Deactivate" : "Activate" %>

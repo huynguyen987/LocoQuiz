@@ -48,8 +48,9 @@
       <td><%= q.getCreatorId() %></td>
       <td><%= q.isStatus() ? "Visible" : "Hidden" %></td>
       <td>
-        <form action="QuizServlet" method="post">
-          <input type="hidden" name="quizId" value="<%= q.getId() %>">
+        <form action="${pageContext.request.contextPath}/UserServlet" method="post">
+
+        <input type="hidden" name="quizId" value="<%= q.getId() %>">
           <button type="submit" name="action" value="updateQuiz">Edit</button>
           <button type="submit" name="action" value="toggleVisibility">
             <%= q.isStatus() ? "Hide" : "Show" %>

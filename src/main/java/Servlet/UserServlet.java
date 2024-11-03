@@ -41,7 +41,8 @@ public class UserServlet extends HttpServlet {
         }
 
         // Redirect back to admin page after action
-        response.sendRedirect("admin.jsp");
+        response.sendRedirect(request.getContextPath() + "/jsp/admin.jsp");
+
     }
 
     private void updateRole(int userId) throws Exception {
