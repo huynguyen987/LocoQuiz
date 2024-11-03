@@ -1,6 +1,7 @@
 package Servlet;
 
 import dao.QuizDAO;
+import entity.Question;
 import entity.Users;
 import entity.quiz;
 import jakarta.servlet.ServletException;
@@ -76,7 +77,7 @@ public class EditQuizServlet extends HttpServlet {
             request.setAttribute("quiz", quizObj);
 
             // Đặt danh sách câu hỏi vào request
-            List<Map<String, Object>> questions = quizObj.getQuestions();
+            List<Question> questions = quizObj.getQuestions();
             request.setAttribute("questions", questions != null ? questions : new ArrayList<>());
 
             // Đặt typeId vào request

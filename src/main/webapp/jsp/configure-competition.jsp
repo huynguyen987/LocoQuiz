@@ -1,108 +1,110 @@
+<%@ page import="entity.Competition" %>
+<%@ page import="java.util.List" %>
+<%@ page import="entity.classs" %>
+<%@ page import="entity.quiz" %>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ include file="/jsp/components/header.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page import="entity.classs, entity.quiz" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%
+  Competition competition = (Competition) request.getAttribute("competition");
+  List<classs> classes = (List<classs>) request.getAttribute("classes");
+  List<quiz> quizzes = (List<quiz>) request.getAttribute("quizzes");
+  String pageTitle = (String) request.getAttribute("pageTitle");
+  String errorMessage = (String) request.getAttribute("errorMessage");
+%>
+<!-- Nhiệm vụ: Tạo form tạo hoặc chỉnh sửa cuộc thi -->
 
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Configure Competition - QuizLoco</title>
+  <title><c:out value="${pageTitle}" /></title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/common.css">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 </head>
 <body>
-<!-- Include Header -->
-<%@ include file="components/header.jsp" %>
 
-<!-- Main Content -->
-<main>
-  <div class="form-container">
-    <h1>Create New Competition</h1>
+<div class="container">
+  <h2><c:out value="${pageTitle}" /></h2>
 
-    <!-- Form -->
-    <form action="${pageContext.request.contextPath}/TakeCompetitionServlet" method="post">
-      <!-- Competition Name -->
-      <label for="name">Competition Name:</label>
-      <input type="text" id="name" name="name" required>
+  <c:if test="${not empty errorMessage}">
+    <div class="error-message">
+      <c:out value="${errorMessage}" />
+    </div>
+  </c:if>
 
-      <!-- Description -->
-      <label for="description">Description:</label>
-      <textarea id="description" name="description" placeholder="Enter competition description..."></textarea>
-
-      <!-- Select Class -->
-      <label for="classId">Select Class:</label>
-      <select id="classId" name="classId" required>
-        <c:if test="${not empty classes}">
-          <c:forEach var="classEntity" items="${classes}">
-            <option value="${classEntity.id}">${classEntity.name}</option>
-          </c:forEach>
-        </c:if>
-        <c:if test="${empty classes}">
-          <option value="">No classes available</option>
-        </c:if>
-      </select>
-
-      <!-- Select Quiz -->
-      <label for="quizId">Select Quiz:</label>
-      <select id="quizId" name="quizId" required>
-        <c:if test="${not empty quizzes}">
-          <c:forEach var="quizEntity" items="${quizzes}">
-            <option value="${quizEntity.id}">${quizEntity.name}</option>
-          </c:forEach>
-        </c:if>
-        <c:if test="${empty quizzes}">
-          <option value="">No quizzes available</option>
-        </c:if>
-      </select>
-
-      <!-- Time Limit -->
-      <label for="timeLimit">Time Limit (minutes):</label>
-      <input type="number" id="timeLimit" name="timeLimit" min="1" required>
-
-      <!-- Number of Questions -->
-      <label for="questionCount">Number of Questions:</label>
-      <input type="number" id="questionCount" name="questionCount" min="1" required>
-
-      <!-- Shuffle Questions -->
-      <label for="shuffle">Shuffle Questions:</label>
-      <input type="checkbox" id="shuffle" name="shuffle">
-
-      <!-- Access Start Time -->
-      <label for="accessStartTime">Access Start Time:</label>
-      <input type="datetime-local" id="accessStartTime" name="accessStartTime" required>
-
-      <!-- Access End Time -->
-      <label for="accessEndTime">Access End Time:</label>
-      <input type="datetime-local" id="accessEndTime" name="accessEndTime" required>
-
-      <!-- Submit Button -->
-      <button type="submit" class="submit-btn">
-        <i class="fas fa-plus"></i> Create Competition
-      </button>
-    </form>
-
-    <!-- Display Error Message if Any -->
-    <c:if test="${not empty errorMessage}">
-      <p class="error-message">${errorMessage}</p>
+  <form action="${pageContext.request.contextPath}/TakeCompetitionServlet" method="post">
+    <input type="hidden" name="action" value="${competition != null ? 'update' : 'create'}" />
+    <c:if test="${competition != null}">
+      <input type="hidden" name="id" value="${competition.id}" />
     </c:if>
-  </div>
-  <%--chỉnh close button xuống thấp hơn 1 ti--%>
-</main>
 
-<!-- Back to Dashboard Link -->
-<div class="close-button">
-  <a href="${pageContext.request.contextPath}/jsp/teacher.jsp?action=dashboard" class="button back-btn">
-    <i class="fas fa-arrow-left"></i> Back to Dashboard
-  </a>
-  <style>
-    .close-button {
-      margin-top: 60px;
-    }
-  </style>
+    <div class="form-group">
+      <label for="name">Tên Cuộc Thi:</label>
+      <input type="text" id="name" name="name" value="<c:out value="${competition != null ? competition.name : ''}" />" required />
+    </div>
+
+    <div class="form-group">
+      <label for="description">Mô Tả:</label>
+      <textarea id="description" name="description" required><c:out value="${competition != null ? competition.description : ''}" /></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="classId">Lớp Học:</label>
+      <select id="classId" name="classId" required>
+        <option value="">-- Chọn Lớp Học --</option>
+        <c:forEach var="cls" items="${classes}">
+          <option value="${cls.id}" <c:if test="${competition != null && cls.id == competition.classId}">selected</c:if>>${cls.name}</option>
+        </c:forEach>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="quizId">Quiz Liên Kết:</label>
+      <select id="quizId" name="quizId" required>
+        <option value="">-- Chọn Quiz --</option>
+        <c:forEach var="quiz" items="${quizzes}">
+          <option value="${quiz.id}" <c:if test="${competition != null && quiz.id == competition.quizId}">selected</c:if>>${quiz.name}</option>
+        </c:forEach>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="timeLimit">Thời Gian Làm Bài (phút):</label>
+      <input type="number" id="timeLimit" name="timeLimit" min="1" value="<c:out value="${competition != null ? competition.timeLimit / 60 : ''}" />" required />
+    </div>
+
+    <div class="form-group">
+      <label for="questionCount">Số Lượng Câu Hỏi:</label>
+      <input type="number" id="questionCount" name="questionCount" min="1" value="<c:out value="${competition != null ? competition.questionCount : ''}" />" required />
+    </div>
+
+    <div class="form-group">
+      <label for="shuffle">Xáo Trộn Câu Hỏi:</label>
+      <input type="checkbox" id="shuffle" name="shuffle" <c:if test="${competition != null && competition.shuffleQuestions}">checked</c:if> />
+    </div>
+
+    <div class="form-group">
+      <label for="accessStartTime">Thời Gian Bắt Đầu:</label>
+      <fmt:formatDate var="formattedStartTime" value="${competition.accessStartTime}" pattern="yyyy-MM-dd'T'HH:mm" />
+      <input type="datetime-local" id="accessStartTime" name="accessStartTime" value="${formattedStartTime}" required />
+    </div>
+
+    <div class="form-group">
+      <label for="accessEndTime">Thời Gian Kết Thúc:</label>
+      <fmt:formatDate var="formattedEndTime" value="${competition.accessEndTime}" pattern="yyyy-MM-dd'T'HH:mm" />
+      <input type="datetime-local" id="accessEndTime" name="accessEndTime" value="${formattedEndTime}" required />
+    </div>
+
+    <div class="form-actions">
+      <button type="submit"><c:out value="${competition != null ? 'Cập Nhật' : 'Tạo'}" /></button>
+      <a href="${pageContext.request.contextPath}/TakeCompetitionServlet?action=list">Hủy</a>
+    </div>
+  </form>
 </div>
 
-<!-- Include Footer -->
-<%@ include file="components/footer.jsp" %>
+<%@ include file="/jsp/components/footer.jsp" %>
 </body>
 </html>

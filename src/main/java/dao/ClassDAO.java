@@ -249,6 +249,7 @@ public class ClassDAO {
     }
 
 
+
     public List<classs> searchClasses(String keyword) throws SQLException, ClassNotFoundException {
         String sql = "SELECT * FROM class WHERE name LIKE ?";
         List<classs> classes = new ArrayList<>();
@@ -378,5 +379,33 @@ public class ClassDAO {
             e.printStackTrace();
         }
         return classList;
+    }
+
+    public boolean isStudentInClass(int id, int classId) {
+        String query = "SELECT * FROM class_user WHERE user_id = ? AND class_id = ?";
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, id);
+            ps.setInt(2, classId);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean isTeacherInClass(int id, int classId) {
+        String query = "SELECT * FROM class WHERE teacher_id = ? AND id = ?";
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, id);
+            ps.setInt(2, classId);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

@@ -51,8 +51,11 @@ public class quiz {
         this.answer = answer;
     }
 
+    public quiz(int id, String name) {
+    }
+
     // Phương thức để phân tích JSON thành danh sách câu hỏi
-    public List<Map<String, Object>> getQuestions() {
+    public List<Question> getQuestions() {
         Type listType = new TypeToken<List<Map<String, Object>>>(){}.getType();
         return gson.fromJson(this.answer, listType);
     }

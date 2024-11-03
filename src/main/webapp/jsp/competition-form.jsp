@@ -1,109 +1,172 @@
+<%@ page import="entity.Competition" %>
+<%@ page import="java.util.List" %>
+<%@ page import="entity.quiz" %>
+<%@ page import="entity.classs" %>
+<!-- File: /jsp/competition-form.jsp -->
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ include file="/jsp/components/header.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%
+    Competition competition = (Competition) request.getAttribute("competition");
+    List<classs> classes = (List<classs>) request.getAttribute("classes");
+    List<quiz> quizzes = (List<quiz>) request.getAttribute("quizzes");
+    String pageTitle = (String) request.getAttribute("pageTitle");
+    String errorMessage = (String) request.getAttribute("errorMessage");
+%>
+<!-- Nhiệm vụ: Tạo form tạo hoặc chỉnh sửa cuộc thi -->
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Competition Form - QuizLoco</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/form.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <title><c:out value="${pageTitle}" /></title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/common.css">
 </head>
 <body>
-<%@ include file="components/header.jsp" %>
-<%@ include file="components/sidebar.jsp" %>
 
-<main>
-    <div class="dashboard-content">
-        <h1><c:choose>
-            <c:when test="${not empty competition}">Edit Competition</c:when>
-            <c:otherwise>Create New Competition</c:otherwise>
-        </c:choose>
-        </h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h2 class="mb-4 text-center"><c:out value="${pageTitle}" /></h2>
 
-        <!-- Hiển thị thông báo lỗi nếu có -->
-        <c:if test="${not empty errorMessage}">
-            <div class="error-message">${errorMessage}</div>
-        </c:if>
-
-        <form action="${pageContext.request.contextPath}/CompetitionController" method="post" class="form-container">
-            <c:if test="${not empty competition}">
-                <input type="hidden" name="action" value="edit">
-                <input type="hidden" name="id" value="${competition.id}">
-            </c:if>
-            <c:if test="${empty competition}">
-                <input type="hidden" name="action" value="create">
+            <c:if test="${not empty errorMessage}">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <c:out value="${errorMessage}" />
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             </c:if>
 
-            <label for="name">Competition Name:</label>
-            <input type="text" id="name" name="name" value="${competition.name}" required>
+            <div class="card">
+                <div class="card-body">
+                    <form class="needs-validation" action="${pageContext.request.contextPath}/CompetitionController" method="post" novalidate>
+                        <input type="hidden" name="action" value="${competition != null ? 'edit' : 'create'}" />
+                        <c:if test="${competition != null}">
+                            <input type="hidden" name="id" value="${competition.id}" />
+                        </c:if>
 
-            <label for="description">Description:</label>
-            <textarea id="description" name="description">${competition.description}</textarea>
+                        <!-- Tên Cuộc Thi -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Tên Cuộc Thi <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name"
+                                   value="<c:out value="${competition != null ? competition.name : ''}" />" required />
+                        </div>
 
-            <label for="classId">Select Class:</label>
-            <select id="classId" name="classId" required>
-                <option value="">-- Select Class --</option>
-                <c:forEach var="classEntity" items="${classes}">
-                    <c:choose>
-                        <c:when test="${not empty competition && competition.classId == classEntity.id}">
-                            <option value="${classEntity.id}" selected>${classEntity.name} (Key: ${classEntity.classKey})</option>
-                        </c:when>
-                        <c:otherwise>
-                            <option value="${classEntity.id}">${classEntity.name} (Key: ${classEntity.classKey})</option>
-                        </c:otherwise>
-                    </c:choose>
-                </c:forEach>
-            </select>
+                        <!-- Mô Tả -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Mô Tả <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="description" name="description" rows="4" required><c:out value="${competition != null ? competition.description : ''}" /></textarea>
+                        </div>
 
-            <label for="quizId">Select Quiz:</label>
-            <select id="quizId" name="quizId" required>
-                <option value="">-- Select Quiz --</option>
-                <c:forEach var="quizEntity" items="${quizzes}">
-                    <c:choose>
-                        <c:when test="${not empty competition && competition.quizId == quizEntity.id}">
-                            <option value="${quizEntity.id}" selected>${quizEntity.name}</option>
-                        </c:when>
-                        <c:otherwise>
-                            <option value="${quizEntity.id}">${quizEntity.name}</option>
-                        </c:otherwise>
-                    </c:choose>
-                </c:forEach>
-            </select>
+                        <!-- Lớp Học -->
+                        <div class="mb-3">
+                            <label for="classId" class="form-label">Lớp Học <span class="text-danger">*</span></label>
+                            <select class="form-select" id="classId" name="classId" required>
+                                <option value="">-- Chọn Lớp Học --</option>
+                                <c:forEach var="cls" items="${classes}">
+                                    <option value="${cls.id}"
+                                            <c:if test="${competition != null && cls.id == competition.classId}">selected</c:if>>
+                                            ${cls.name}
+                                    </option>
+                                </c:forEach>
+                            </select>
+                        </div>
 
-            <label for="timeLimit">Time Limit (minutes):</label>
-            <input type="number" id="timeLimit" name="timeLimit" min="1" value="${competition.timeLimit / 60}" required>
+                        <!-- Quiz Liên Kết -->
+                        <div class="mb-3">
+                            <label for="quizId" class="form-label">Quiz Liên Kết <span class="text-danger">*</span></label>
+                            <select class="form-select" id="quizId" name="quizId" required>
+                                <option value="">-- Chọn Quiz --</option>
+                                <c:forEach var="quiz" items="${quizzes}">
+                                    <option value="${quiz.id}"
+                                            <c:if test="${competition != null && quiz.id == competition.quizId}">selected</c:if>>
+                                            ${quiz.name}
+                                    </option>
+                                </c:forEach>
+                            </select>
+                        </div>
 
-            <label for="questionCount">Number of Questions:</label>
-            <input type="number" id="questionCount" name="questionCount" min="1" value="${competition.questionCount}" required>
+                        <!-- Thời Gian Làm Bài -->
+                        <div class="mb-3">
+                            <label for="timeLimit" class="form-label">Thời Gian Làm Bài (phút) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="timeLimit" name="timeLimit" min="1"
+                                   value="<c:out value="${competition != null ? competition.timeLimit / 60 : ''}" />" required />
+                        </div>
 
-            <label for="shuffle">Shuffle Questions:</label>
-            <input type="checkbox" id="shuffle" name="shuffle" <c:if test="${competition.shuffleQuestions}">checked</c:if>>
+                        <!-- Số Lượng Câu Hỏi -->
+                        <div class="mb-3">
+                            <label for="questionCount" class="form-label">Số Lượng Câu Hỏi <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="questionCount" name="questionCount" min="1"
+                                   value="<c:out value="${competition != null ? competition.questionCount : ''}" />" required />
+                        </div>
 
-            <label for="accessStartTime">Access Start Time:</label>
-            <input type="datetime-local" id="accessStartTime" name="accessStartTime" value="${competition.accessStartTime}" required>
+                        <!-- Xáo Trộn Câu Hỏi -->
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="shuffle" name="shuffle"
+                                   <c:if test="${competition != null && competition.shuffleQuestions}">checked</c:if> />
+                            <label class="form-check-label" for="shuffle">
+                                Xáo Trộn Câu Hỏi
+                            </label>
+                        </div>
 
-            <label for="accessEndTime">Access End Time:</label>
-            <input type="datetime-local" id="accessEndTime" name="accessEndTime" value="${competition.accessEndTime}" required>
+                        <!-- Thời Gian Bắt Đầu -->
+                        <div class="mb-3">
+                            <label for="accessStartTime" class="form-label">Thời Gian Bắt Đầu <span class="text-danger">*</span></label>
+                            <fmt:formatDate var="formattedStartTime" value="${competition.accessStartTime}" pattern="yyyy-MM-dd'T'HH:mm" />
+                            <input type="datetime-local" class="form-control" id="accessStartTime" name="accessStartTime"
+                                   value="${formattedStartTime}" required />
+                        </div>
 
-            <button type="submit" class="submit-btn">
-                <c:choose>
-                    <c:when test="${not empty competition}">
-                        <i class="fas fa-edit"></i> Update Competition
-                    </c:when>
-                    <c:otherwise>
-                        <i class="fas fa-plus"></i> Create Competition
-                    </c:otherwise>
-                </c:choose>
-            </button>
-        </form>
+                        <!-- Thời Gian Kết Thúc -->
+                        <div class="mb-3">
+                            <label for="accessEndTime" class="form-label">Thời Gian Kết Thúc <span class="text-danger">*</span></label>
+                            <fmt:formatDate var="formattedEndTime" value="${competition.accessEndTime}" pattern="yyyy-MM-dd'T'HH:mm" />
+                            <input type="datetime-local" class="form-control" id="accessEndTime" name="accessEndTime"
+                                   value="${formattedEndTime}" required />
+                        </div>
 
-        <a href="${pageContext.request.contextPath}/CompetitionController?action=list" class="action-btn back-btn">
-            <i class="fas fa-arrow-left"></i> Back to Competition List
-        </a>
+                        <!-- Hành Động -->
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary"><c:out value="${competition != null ? 'Cập Nhật' : 'Tạo'}" /></button>
+                            <a href="${pageContext.request.contextPath}/CompetitionController?action=list" class="btn btn-secondary">Hủy</a>
+                        </div>
+                    </form>
+                    <!-- Thêm vào cuối form, trước thẻ </form> -->
+                    <script>
+                        // Example starter JavaScript for disabling form submissions if there are invalid fields
+                        (function () {
+                            'use strict'
+
+                            var forms = document.querySelectorAll('.needs-validation')
+
+                            // Loop over them and prevent submission
+                            Array.prototype.slice.call(forms)
+                                .forEach(function (form) {
+                                    form.addEventListener('submit', function (event) {
+                                        if (!form.checkValidity()) {
+                                            event.preventDefault()
+                                            event.stopPropagation()
+                                        }
+
+                                        form.classList.add('was-validated')
+                                    }, false)
+                                })
+                        })()
+                    </script>
+
+                </div>
+            </div>
+        </div>
     </div>
-</main>
+</div>
 
-<%@ include file="components/footer.jsp" %>
+<!-- Bootstrap JS và các plugin cần thiết -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<%@ include file="/jsp/components/footer.jsp" %>
 </body>
 </html>

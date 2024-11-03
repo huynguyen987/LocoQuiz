@@ -1,9 +1,19 @@
 package entity;
+import entity.quiz;
+import entity.classs;
+import dao.ClassDAO;
+import dao.QuizDAO;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
+
 public class Competition {
+
+    QuizDAO quizDAO = new QuizDAO();
+    ClassDAO classDAO = new ClassDAO();
+
     private int id;
     private String name;
     private String description;
@@ -17,7 +27,8 @@ public class Competition {
     private Timestamp createdAt;
 
     // Constructors
-    public Competition() {}
+    public Competition() {
+    }
 
     public Competition(int id, String name, String description, int classId, int quizId, int timeLimit, int questionCount, boolean shuffleQuestions, Date accessStartTime, Date accessEndTime, Timestamp createdAt) {
         this.id = id;

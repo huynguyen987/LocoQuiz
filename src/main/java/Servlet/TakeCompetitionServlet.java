@@ -3,19 +3,16 @@ package Servlet;
 import dao.ClassDAO;
 import dao.CompetitionDAO;
 import dao.QuizDAO;
-import entity.Competition;
-import entity.Users;
-import entity.classs;
-import entity.quiz;
+import entity.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -72,8 +69,46 @@ public class TakeCompetitionServlet extends HttpServlet {
             return;
         }
 
-        // Xử lý các hành động khác nếu cần
-        // ...
+        // Tham gia cuộc thi (take a competition)
+        if ("take".equals(action)) {
+            // Lấy ID của cuộc thi từ tham số
+            String competitionIdParam = request.getParameter("competitionId");
+            if (competitionIdParam == null || competitionIdParam.isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp");
+                return;
+            }
+
+            try {
+                int competitionId = Integer.parseInt(competitionIdParam);
+                // Sử dụng CompetitionDAO để lấy thông tin cuộc thi theo ID
+                CompetitionDAO competitionDAO = new CompetitionDAO();
+                Competition competition = competitionDAO.getCompetitionById(competitionId);
+
+                if (competition == null) {
+                    request.setAttribute("errorMessage", "Competition not found.");
+                    request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+                    return;
+                }
+
+                // Lấy danh sách câu hỏi cho cuộc thi
+                List<Question> questions = competitionDAO.getQuestionsForCompetition(competitionId);
+
+                // Đặt các thuộc tính cho JSP
+                request.setAttribute("competition", competition);
+                request.setAttribute("questions", questions);
+
+                // Chuyển hướng đến trang tham gia cuộc thi
+                request.getRequestDispatcher("/jsp/take-competition.jsp").forward(request, response);
+                return;
+            } catch (NumberFormatException e) {
+                request.setAttribute("errorMessage", "Invalid competition ID.");
+                request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+            } catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
+                request.setAttribute("errorMessage", "An error occurred while retrieving competition data.");
+                request.getRequestDispatcher("/jsp/error.jsp").forward(request, response);
+            }
+        }
     }
 
     @Override
@@ -133,8 +168,13 @@ public class TakeCompetitionServlet extends HttpServlet {
         Date accessEndTime = null;
         if (errorMessage == null) {
             try {
-                accessStartTime = Date.from(LocalDateTime.parse(accessStartTimeStr, formatter).atZone(java.time.ZoneId.systemDefault()).toInstant());
-                accessEndTime = Date.from(LocalDateTime.parse(accessEndTimeStr, formatter).atZone(java.time.ZoneId.systemDefault()).toInstant());
+                // Sử dụng LocalDateTime.parse để phân tích cú pháp chuỗi ngày giờ với thời gian
+                LocalDateTime startLDT = LocalDateTime.parse(accessStartTimeStr, formatter);
+                accessStartTime = Date.from(startLDT.atZone(ZoneId.systemDefault()).toInstant());
+
+                LocalDateTime endLDT = LocalDateTime.parse(accessEndTimeStr, formatter);
+                accessEndTime = Date.from(endLDT.atZone(ZoneId.systemDefault()).toInstant());
+
                 if (accessStartTime.after(accessEndTime)) {
                     errorMessage = "Access start time must be before access end time.";
                 }
@@ -185,6 +225,10 @@ public class TakeCompetitionServlet extends HttpServlet {
 
         // Lưu vào cơ sở dữ liệu
         CompetitionDAO competitionDAO = new CompetitionDAO();
+        ClassDAO classDAO = new ClassDAO();
+        QuizDAO quizDAO = new QuizDAO();
+        List<classs> classes = null;
+        List<quiz> quizzes = null;
         try {
             boolean success = competitionDAO.createCompetition(competition);
             if (success) {
@@ -193,17 +237,12 @@ public class TakeCompetitionServlet extends HttpServlet {
             } else {
                 request.setAttribute("errorMessage", "Failed to create competition.");
                 // Lấy lại danh sách lớp và quiz để hiển thị
-                ClassDAO classDAO = new ClassDAO();
-                List<classs> classes = null;
                 try {
                     classes = classDAO.getClassesByTeacherId(currentUser.getId());
                 } catch (SQLException | ClassNotFoundException e) {
                     e.printStackTrace();
                 }
 
-                // Lấy lại danh sách các quiz
-                QuizDAO quizDAO = new QuizDAO();
-                List<quiz> quizzes = null;
                 try {
                     quizzes = quizDAO.getQuizzesByTeacherId(currentUser.getId());
                 } catch (SQLException | ClassNotFoundException e) {
@@ -218,17 +257,12 @@ public class TakeCompetitionServlet extends HttpServlet {
             e.printStackTrace();
             request.setAttribute("errorMessage", "An error occurred while creating the competition.");
             // Lấy lại danh sách lớp và quiz để hiển thị
-            ClassDAO classDAO = new ClassDAO();
-            List<classs> classes = null;
             try {
                 classes = classDAO.getClassesByTeacherId(currentUser.getId());
             } catch (SQLException | ClassNotFoundException ex) {
                 ex.printStackTrace();
             }
 
-            // Lấy lại danh sách các quiz
-            QuizDAO quizDAO = new QuizDAO();
-            List<quiz> quizzes = null;
             try {
                 quizzes = quizDAO.getQuizzesByTeacherId(currentUser.getId());
             } catch (SQLException | ClassNotFoundException ex) {
