@@ -125,6 +125,9 @@ public class CompetitionController extends HttpServlet {
                 case "edit":
                     updateCompetition(request, response, currentUser);
                     break;
+                case "delete":
+                    deleteCompetition(request, response, currentUser);
+                    break;
                 default:
                     listCompetitions(request, response, currentUser);
                     break;
@@ -425,4 +428,7 @@ public class CompetitionController extends HttpServlet {
             request.getRequestDispatcher("/jsp/competition-form.jsp").forward(request, response);
         }
     }
+    public void takeCompetition(HttpServletRequest request, HttpServletResponse response, Users currentUser)
+            throws SQLException, ServletException, IOException, ClassNotFoundException {
+//        Nhận data ừ
 }
