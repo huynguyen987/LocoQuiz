@@ -110,7 +110,7 @@
   </div>
 
   <section class="quiz-details">
-    <h2>Description <span id="toggleDesc" class="toggle-description">[Hide]</span></h2>
+    <h2>Description <span id="toggleDesc" class="toggle-description"></span></h2>
     <p id="quizDescription"><%= q.getDescription() %></p>
 
     <!-- Display Tags -->
