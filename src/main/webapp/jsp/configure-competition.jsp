@@ -4,7 +4,6 @@
 <%@ page import="entity.quiz" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="/jsp/components/header.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -22,10 +21,9 @@
 <head>
   <meta charset="UTF-8">
   <title><c:out value="${pageTitle}" /></title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/common.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/configure-comp.css">
 </head>
 <body>
-
 <div class="container">
   <h2><c:out value="${pageTitle}" /></h2>
 
@@ -105,6 +103,5 @@
   </form>
 </div>
 
-<%@ include file="/jsp/components/footer.jsp" %>
 </body>
 </html>

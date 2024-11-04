@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let quizTotalQuestions = 10;
     let quizQuestionsAsked = 0;
     let quizQuestions = [];
+    let currentQuizQuestion = '';
+    let quizCorrectAnswer = '';
 
     // DOM Elements
     const tabButtons = document.querySelectorAll('.tab');
@@ -81,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const quizOptionsContainer = document.getElementById('quiz-options');
     const quizFeedback = document.getElementById('quiz-feedback');
     const nextQuizButton = document.getElementById('next-quiz-question');
+    const exitQuizButton = document.getElementById('exit-quiz-session');
     const quizEmptyState = document.getElementById('quiz-empty-state');
     const quizCategoryFilter = document.getElementById('quiz-category-select');
     const quizTimeInput = document.getElementById('quiz-time-input');
@@ -161,9 +164,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Define disableNavigationTabs Function
+    function disableNavigationTabs(disable) {
+        tabButtons.forEach(button => {
+            if (disable) {
+                button.disabled = true;
+                button.classList.add('disabled-tab');
+            } else {
+                button.disabled = false;
+                button.classList.remove('disabled-tab');
+            }
+        });
+    }
+
     // Tab Switching
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
+            if (quizSessionActive) {
+                showNotification('Cannot switch tabs during an active quiz session.', 'error');
+                return;
+            }
+
             const tabName = button.dataset.tab;
 
             tabButtons.forEach(btn => btn.classList.remove('active'));
@@ -651,6 +672,11 @@ document.addEventListener('DOMContentLoaded', () => {
     rememberButton.addEventListener('click', () => {
         if (filteredCards.length === 0) return;
 
+        if (quizSessionActive) {
+            // In Quiz Mode - Do nothing or disable in practice mode
+            return;
+        }
+
         stats.totalCorrect += 1;
         stats.currentStreak += 1;
         if (stats.currentStreak > stats.bestStreak) {
@@ -675,6 +701,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Did Not Remember Yet Button in Practice Mode
     didNotRememberButton.addEventListener('click', () => {
         if (filteredCards.length === 0) return;
+
+        if (quizSessionActive) {
+            // In Quiz Mode - Do nothing or disable in practice mode
+            return;
+        }
 
         stats.totalIncorrect += 1;
         stats.currentStreak = 0;
@@ -844,7 +875,7 @@ document.addEventListener('DOMContentLoaded', () => {
             categoryTd.textContent = session.category || 'All';
 
             const timeTd = document.createElement('td');
-            timeTd.textContent = session.time || 'No Limit';
+            timeTd.textContent = session.time !== 0 ? session.time : 'No Limit';
 
             const questionsTd = document.createElement('td');
             questionsTd.textContent = session.questions || '-';
@@ -926,8 +957,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (timeInput !== 0 && (isNaN(timeInput) || timeInput < 1 || timeInput > 60)) {
-            showNotification('Please enter a valid time between 1 and 60 minutes, or set to 0 for no time limit.', 'error');
+        if (isNaN(timeInput) || timeInput < 0 || timeInput > 60) {
+            showNotification('Please enter a valid time between 0 and 60 minutes.', 'error');
             return;
         }
 
@@ -937,6 +968,8 @@ document.addEventListener('DOMContentLoaded', () => {
         quizSessionIncorrect = 0;
         quizQuestionsAsked = 0;
         quizQuestions = [];
+        currentQuizQuestion = '';
+        quizCorrectAnswer = '';
 
         // Prepare quiz questions
         const availableCards = selectedQuizCategory === 'all' ? cards : cards.filter(card => card.category === selectedQuizCategory);
@@ -949,15 +982,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const shuffled = availableCards.sort(() => 0.5 - Math.random());
         quizQuestions = shuffled.slice(0, Math.min(quizTotalQuestions, availableCards.length));
 
+        // Enable quiz session
+        quizSessionActive = true;
+
+        // Disable navigation tabs
+        disableNavigationTabs(true);
+
         // Hide configuration and show quiz session interface
         quizConfig.style.display = 'none';
         quizSessionDiv.style.display = 'block';
         quizFeedback.textContent = '';
         nextQuizButton.disabled = true;
 
-        // Start Timer if time limit is set
+        // Start Timer if time limit is set (time > 0)
         if (quizSessionDuration > 0) {
             startQuizTimer();
+        } else {
+            updateQuizTimerDisplay(); // Show "Unlimited"
         }
 
         // Generate the first quiz question
@@ -979,19 +1020,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update Quiz Timer Display
     function updateQuizTimerDisplay() {
+        const quizTimerDiv = document.getElementById('quiz-timer');
+        if (quizSessionDuration === 0) {
+            quizTimerDiv.textContent = `Time Left: Unlimited`;
+            return;
+        }
+
         const minutes = Math.floor(quizSessionTimeLeft / 60).toString().padStart(2, '0');
         const seconds = (quizSessionTimeLeft % 60).toString().padStart(2, '0');
-        if (quizTimeInput.value != 0) { // Only display timer if time limit is set
-            quizTimerDiv = document.getElementById('quiz-timer');
-            if (quizTimerDiv) {
-                quizTimerDiv.textContent = `Time Left: ${minutes}:${seconds}`;
-            }
-        } else {
-            quizTimerDiv = document.getElementById('quiz-timer');
-            if (quizTimerDiv) {
-                quizTimerDiv.textContent = `Time Left: Unlimited`;
-            }
-        }
+        quizTimerDiv.textContent = `Time Left: ${minutes}:${seconds}`;
     }
 
     // End Quiz Session
@@ -1006,7 +1043,7 @@ document.addEventListener('DOMContentLoaded', () => {
         stats.quizSessions.push({
             date: new Date().toISOString(),
             category: selectedQuizCategory === 'all' ? 'All' : selectedQuizCategory,
-            time: quizTimeInput.value,
+            time: quizSessionDuration > 0 ? (quizSessionDuration / 60) : 0,
             questions: quizQuestionsAsked,
             correct: quizSessionCorrect,
             incorrect: quizSessionIncorrect
@@ -1023,6 +1060,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         showNotification(`Quiz Session Completed!\nCorrect: ${quizSessionCorrect}\nIncorrect: ${quizSessionIncorrect}`, 'success');
         setupQuizSession(); // Reset the quiz session interface
+        disableNavigationTabs(false);
     }
 
     // Generate a Quiz Question
@@ -1032,7 +1070,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (quizSessionTimeLeft <= 0 && quizSessionDuration !== 0) {
+        if (quizSessionDuration !== 0 && quizSessionTimeLeft <= 0) {
             endQuizSession();
             return;
         }
@@ -1080,7 +1118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle Quiz Answer Selection
     function handleQuizAnswer(selectedOption) {
-        if (quizSessionTimeLeft <= 0 && quizSessionDuration !== 0) return;
+        if (!quizSessionActive) return;
 
         if (selectedOption === quizCorrectAnswer) {
             quizFeedback.textContent = '✅ Remembered Correctly!';
@@ -1130,6 +1168,13 @@ document.addEventListener('DOMContentLoaded', () => {
         quizFeedback.textContent = '';
         nextQuizButton.disabled = true;
         generateQuizQuestion();
+    });
+
+    // Exit Quiz Session
+    exitQuizButton.addEventListener('click', () => {
+        if (confirm('Are you sure you want to exit the quiz session early?')) {
+            endQuizSession();
+        }
     });
 
     // ------------------- End of Quiz Mode Functionality -------------------

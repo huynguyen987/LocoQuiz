@@ -176,6 +176,12 @@ body.dark-mode .tabs {
     font-weight: 600;
 }
 
+/* Added: Disabled Tab Styles */
+.tab.disabled-tab {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /* =========================
    5. Main Content
    ========================= */
@@ -317,7 +323,8 @@ body.dark-mode .tabs {
 .remember-button,
 .did-not-remember-button,
 .quiz-option-button,
-#start-quiz-session {
+#start-quiz-session,
+#exit-quiz-session {
     flex: 1;
     min-width: 120px;
     padding: 12px 24px;
@@ -394,6 +401,15 @@ body.dark-mode .tabs {
 
 #start-quiz-session:hover {
     background-color: var(--button-hover-primary-bg);
+}
+
+#exit-quiz-session {
+    background-color: #e53e3e; /* Red */
+    color: #ffffff;
+}
+
+#exit-quiz-session:hover {
+    background-color: #c53030;
 }
 
 /* =========================
@@ -728,6 +744,14 @@ body.dark-mode .tabs {
     background-color: var(--button-hover-secondary-bg);
 }
 
+#quiz-history-table tr:hover {
+    background-color: var(--button-hover-secondary-bg);
+}
+
+#quiz-history-table tr:hover {
+    background-color: var(--button-hover-secondary-bg);
+}
+
 /* =========================
    18. Pagination in Create Tab
    ========================= */
@@ -857,7 +881,8 @@ body.dark-mode .tabs {
     color: var(--secondary-color);
 }
 
-#next-quiz-question {
+#next-quiz-question,
+#exit-quiz-session {
     margin-top: 20px;
 }
 
@@ -992,7 +1017,8 @@ body.dark-mode .tabs {
     }
 
     .quiz-controls button,
-    #start-quiz-session {
+    #start-quiz-session,
+    #exit-quiz-session {
         width: 100%;
     }
 }
