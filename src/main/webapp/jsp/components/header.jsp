@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <!-- Các thẻ head như meta, title, link CSS, v.v. -->
+
 </head>
 <body>
 <header>

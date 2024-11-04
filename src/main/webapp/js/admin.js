@@ -16,22 +16,6 @@ function resetSearch() {
     filterUsers();
 }
 
-// Update user role (stub function for backend integration)
-function updateRole(userId) {
-    alert(`Update role for User ID: ${userId}`);
-    // AJAX call to update role on the server
-}
 
-// Toggle user status (stub function for backend integration)
-function toggleStatus(userId) {
-    alert(`Toggle status for User ID: ${userId}`);
-    // AJAX call to toggle status on the server
-}
 
-// Delete user (stub function for backend integration)
-function deleteUser(userId) {
-    if (confirm(`Are you sure you want to delete User ID: ${userId}?`)) {
-        alert(`User ID: ${userId} deleted.`);
-        // AJAX call to delete the user on the server
-    }
-}
+
