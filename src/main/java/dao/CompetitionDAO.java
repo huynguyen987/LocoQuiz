@@ -19,7 +19,7 @@ import java.util.List;
 
 public class CompetitionDAO {
 
-//    getClassInfo
+    //    getClassInfo
     public classs getClassInfo(int competitionId) throws SQLException, ClassNotFoundException {
         String sql = "SELECT cl.* FROM `class` cl JOIN `competitions` c ON cl.id = c.class_id WHERE c.id = ?";
         classs classInfo = null;
@@ -43,7 +43,7 @@ public class CompetitionDAO {
         return classInfo;
     }
 
-//    getQuizInfo
+    //    getQuizInfo
     public quiz getQuizInfo(int competitionId) throws SQLException, ClassNotFoundException {
         String sql = "SELECT q.* FROM `quizzes` q JOIN `competitions` c ON q.id = c.quiz_id WHERE c.id = ?";
         quiz quizInfo = null;
@@ -286,8 +286,8 @@ public class CompetitionDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Question question = new Question();
-                    question.setQuestionText(rs.getString("question_text"));
-                    question.setCorrectAnswer(rs.getString("correct_answer"));
+                    question.setQuestion(rs.getString("question_text"));
+                    question.setCorrect(rs.getString("correct_answer"));
                     // options are stored as comma-separated string in the database
                     String[] options = rs.getString("options").split(",");
                     List<String> optionsList = new ArrayList<>();
@@ -302,5 +302,30 @@ public class CompetitionDAO {
             }
         }
         return questions;
+    }
+
+    public quiz getQuizByCompetitionId(int competitionId) {
+        String sql = "SELECT q.* FROM `quiz` q JOIN `competitions` c ON q.id = c.quiz_id WHERE c.id = ?";
+        quiz quizInfo = null;
+
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, competitionId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    quizInfo = new quiz();
+                    quizInfo.setId(rs.getInt("id"));
+                    quizInfo.setName(rs.getString("name"));
+                    quizInfo.setDescription(rs.getString("description"));
+                    quizInfo.setCreated_at(String.valueOf(rs.getTimestamp("created_at")));
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return quizInfo;
     }
 }

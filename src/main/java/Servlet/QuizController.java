@@ -154,19 +154,19 @@ public class QuizController extends HttpServlet {
                         // Add the question object to the list
                         Question q = new Question();
                         q.setSequence(i);
-                        q.setQuestionText(questionObj.getString("question"));
+                        q.setQuestion(questionObj.getString("question"));
                         if (quizType.equals("multiple-choice")) {
                             q.setOptions(questionObj.getJSONArray("options").toList().stream()
                                     .map(Object::toString)
                                     .collect(Collectors.toList()));
-                            q.setCorrectAnswer(questionObj.getString("correct"));
+                            q.setCorrect(questionObj.getString("correct"));
                         } else if (quizType.equals("fill-in-the-blank")) {
-                            q.setCorrectAnswer(questionObj.getString("correct"));
+                            q.setCorrect(questionObj.getString("correct"));
                         } else if (quizType.equals("matching")) {
                             q.setOptions(questionObj.getJSONArray("options").toList().stream()
                                     .map(Object::toString)
                                     .collect(Collectors.toList()));
-                            q.setCorrectAnswer(questionObj.getString("correct"));
+                            q.setCorrect(questionObj.getString("correct"));
                         }
                         questions.add(q);
                     }
@@ -178,13 +178,13 @@ public class QuizController extends HttpServlet {
                 for (Question question : questions) {
                     JSONObject questionObj = new JSONObject();
                     questionObj.put("sequence", question.getSequence());
-                    questionObj.put("question", question.getQuestionText());
+                    questionObj.put("question", question.getQuestion());
 
                     if (quizType.equals("multiple-choice") || quizType.equals("matching")) {
                         questionObj.put("options", question.getOptions());
-                        questionObj.put("correct", question.getCorrectAnswer());
+                        questionObj.put("correct", question.getCorrect());
                     } else if (quizType.equals("fill-in-the-blank")) {
-                        questionObj.put("correct", question.getCorrectAnswer());
+                        questionObj.put("correct", question.getCorrect());
                     }
 
                     questionsArray.put(questionObj);
@@ -264,7 +264,7 @@ public class QuizController extends HttpServlet {
             if (text.startsWith("Q:")) {
                 currentQuestion = new Question();
                 currentQuestion.setSequence(sequence++);
-                currentQuestion.setQuestionText(text.substring(2).trim());
+                currentQuestion.setQuestion(text.substring(2).trim());
                 questions.add(currentQuestion);
             } else if ((quizType.equals("multiple-choice") || quizType.equals("matching")) && currentQuestion != null && text.matches("[A-D]\\).*")) {
                 // Option line
@@ -275,14 +275,14 @@ public class QuizController extends HttpServlet {
             } else if (text.startsWith("Answer:") && currentQuestion != null) {
                 String correctAnswer = text.substring(7).trim();
                 if (quizType.equals("multiple-choice")) {
-                    currentQuestion.setCorrectAnswer(correctAnswer);
+                    currentQuestion.setCorrect(correctAnswer);
                 } else if (quizType.equals("fill-in-the-blank")) {
-                    currentQuestion.setCorrectAnswer(correctAnswer);
+                    currentQuestion.setCorrect(correctAnswer);
                 } else if (quizType.equals("matching")) {
                     // For matching, combine options into a single string
                     String matchingOption = String.join("; ", currentQuestion.getOptions());
                     currentQuestion.setOptions(Collections.singletonList(matchingOption));
-                    currentQuestion.setCorrectAnswer(matchingOption);
+                    currentQuestion.setCorrect(matchingOption);
                 }
             }
         }
@@ -308,7 +308,7 @@ public class QuizController extends HttpServlet {
             if (questionCell != null) {
                 Question question = new Question();
                 question.setSequence(sequence++);
-                question.setQuestionText(getCellValue(questionCell));
+                question.setQuestion(getCellValue(questionCell));
 
                 if (quizType.equals("multiple-choice") || quizType.equals("matching")) {
                     List<String> options = new ArrayList<>();
@@ -322,18 +322,18 @@ public class QuizController extends HttpServlet {
                         // Combine options into a single string
                         String matchingOption = String.join("; ", options);
                         question.setOptions(Collections.singletonList(matchingOption));
-                        question.setCorrectAnswer(matchingOption);
+                        question.setCorrect(matchingOption);
                     } else {
                         question.setOptions(options);
                         Cell correctCell = row.getCell(5);
                         if (correctCell != null) {
-                            question.setCorrectAnswer(getCellValue(correctCell));
+                            question.setCorrect(getCellValue(correctCell));
                         }
                     }
                 } else if (quizType.equals("fill-in-the-blank")) {
                     Cell correctCell = row.getCell(1);
                     if (correctCell != null) {
-                        question.setCorrectAnswer(getCellValue(correctCell));
+                        question.setCorrect(getCellValue(correctCell));
                     }
                 }
 

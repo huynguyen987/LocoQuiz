@@ -1,11 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="entity.Users, dao.UsersDAO" %>
 <%@ page import="java.sql.SQLException" %>
 <%@ page import="jakarta.servlet.ServletException" %>
 <%@ page import="java.util.List" %>
-<%@ page import="entity.classs" %>
-<%@ page import="entity.quiz" %>
 <%@ page import="dao.ClassDAO" %>
+<%@ page import="entity.*" %>
+<%@ page import="dao.UsersDAO" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,15 +21,23 @@
 <body>
 <%@ include file="components/header.jsp" %>
 <%@ include file="components/sidebar.jsp" %>
+<%
+    // Đảm bảo rằng currentUser được lấy từ session trước khi sử dụng
+    Users currentUser = null;
+    // HttpSession session = request.getSession(false); // Giữ lại nếu cần
+    System.out.println("session: " + session);
+    if (session != null) {
+        currentUser = (Users) session.getAttribute("user");
+    }
+    if (currentUser != null) {
+        System.out.println("Student view dashboard: " + currentUser.getUsername());
+    }
+%>
 
 <main>
     <div class="dashboard-content">
         <%
             // Verify user
-            session = request.getSession(false);
-            if (session != null) {
-                currentUser = (Users) session.getAttribute("user");
-            }
             if (currentUser == null || !"student".equalsIgnoreCase(currentUser.getRoleName())) {
                 response.sendRedirect(request.getContextPath() + "/unauthorized.jsp");
                 return;
@@ -71,14 +78,28 @@
                 <input type="text" id="searchInput" placeholder="Search by class name or teacher's name..." class="search-bar" onkeyup="filterClasses()">
                 <div class="classes-grid" id="classesGrid">
                     <% if (classList != null && !classList.isEmpty()) {
-                        for (classs cls : classList) { %>
+                        for (classs cls : classList) {
+                            // Lấy danh sách cuộc thi cho lớp học hiện tại
+                            List<Competition> competitions = null;
+                            try {
+                                competitions = new ClassDAO().getCompetitionsByClassId(cls.getId());
+                            } catch (SQLException | ClassNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                    %>
                     <div class="class-card">
                         <h3><%= cls.getName() %></h3>
                         <p><strong>Teacher:</strong> <%= cls.getTeacher_name() %></p>
                         <div class="class-actions">
-                            <a href="<%= request.getContextPath() %>/jsp/student.jsp?action=viewClass&classId=<%= cls.getId() %>" class="button view-button">
-                                <i class="fas fa-eye"></i> View
+                            <% if (competitions != null && !competitions.isEmpty()) { %>
+                            <% for (Competition competition : competitions) { %>
+                            <a href="<%= request.getContextPath() %>/jsp/competition-participation.jsp?competitionId=<%= competition.getId() %>" class="button">
+                                <i class="fas fa-tasks"></i> Take Competition: <%= competition.getName() %>
                             </a>
+                            <% } %>
+                            <% } else { %>
+                            <p>No competitions assigned.</p>
+                            <% } %>
                         </div>
                     </div>
                     <% } } else { %>
@@ -91,7 +112,19 @@
         <%
             // Get classId parameter
             String classIdParam = request.getParameter("classId");
-            int classId = Integer.parseInt(classIdParam);
+            int classId = 0;
+            if (classIdParam != null && !classIdParam.isEmpty()) {
+                try {
+                    classId = Integer.parseInt(classIdParam);
+                } catch (NumberFormatException e) {
+                    classId = 0;
+                }
+            }
+
+            if (classId == 0) {
+                response.sendRedirect(request.getContextPath() + "/jsp/student.jsp?action=Classrooms");
+                return;
+            }
 
             // Initialize DAOs
             ClassDAO classDAO = new ClassDAO();
@@ -99,7 +132,7 @@
             // Initialize variables
             classs classEntity = null;
             List<Users> classmates = null;
-            List<quiz> assignedQuizzes = null;
+            List<Competition> assignedQuizzes = null;
 
             try {
                 // Fetch class details
@@ -108,8 +141,8 @@
                 // Fetch classmates
                 classmates = classDAO.getStudentsByClassId(classId);
 
-                // Fetch assigned quizzes
-                assignedQuizzes = classDAO.getQuizzesByClassId(classId);
+                // Fetch assigned competitions
+                assignedQuizzes = classDAO.getCompetitionsByClassId(classId);
 
             } catch (SQLException | ClassNotFoundException e) {
                 e.printStackTrace();
@@ -122,9 +155,9 @@
             <div class="class-details-container">
                 <div class="class-info">
                     <h3>Class Information</h3>
-                    <p><strong>Name:</strong> <%= classEntity.getName() %></p>
-                    <p><strong>Description:</strong> <%= classEntity.getDescription() %></p>
-                    <p><strong>Teacher:</strong> <%= classEntity.getTeacher_name() %></p>
+                    <p><strong>Name:</strong> <%= classEntity != null ? classEntity.getName() : "N/A" %></p>
+                    <p><strong>Description:</strong> <%= classEntity != null ? classEntity.getDescription() : "N/A" %></p>
+                    <p><strong>Teacher:</strong> <%= classEntity != null ? classEntity.getTeacher_name() : "N/A" %></p>
                 </div>
                 <div class="classmates">
                     <h3>Classmates</h3>
@@ -138,30 +171,33 @@
                     <p>No classmates found.</p>
                     <% } %>
                 </div>
+
+                <!-- Assigned Competitions Section -->
                 <div class="assigned-quizzes">
-                    <h3>Assigned Quizzes</h3>
+                    <h3>Assigned Competitions</h3>
                     <% if (assignedQuizzes != null && !assignedQuizzes.isEmpty()) { %>
                     <ul class="list">
-                        <% for (quiz quiz : assignedQuizzes) { %>
-                        <li><%= quiz.getName() %>
-                            <form action="<%= request.getContextPath() %>/TakeQuizServlet" method="get">
-                                <input type="hidden" name="id" value="<%= quiz.getId() %>">
-                                <button type="submit" class="button">
-                                    <i class="fas fa-tasks"></i> Take Quiz
-                                </button>
-                            </form>
+                        <% for (Competition competition : assignedQuizzes) { %>
+                        <li>
+                            <strong>Competition:</strong> <%= competition.getName() %><br>
+                            <strong>Time Limit:</strong> <%= competition.getTimeLimit() / 60 %> minutes
+                            <!-- Sử dụng liên kết để tham gia cuộc thi -->
+                            <a href="<%= request.getContextPath() %>/jsp/competition-participation.jsp?competitionId=<%= competition.getId() %>" class="button">
+                                <i class="fas fa-tasks"></i> Take Competition
+                            </a>
                         </li>
                         <% } %>
                     </ul>
                     <% } else { %>
-                    <p>No quizzes assigned.</p>
+                    <p>No competitions assigned.</p>
                     <% } %>
                 </div>
-            </div>
-            <div class="action-buttons">
-                <a href="<%= request.getContextPath() %>/jsp/student.jsp?action=Classrooms" class="button back-btn">
-                    <i class="fas fa-arrow-left"></i> Back to Classes
-                </a>
+
+                <div class="action-buttons">
+                    <a href="<%= request.getContextPath() %>/jsp/student.jsp?action=Classrooms" class="button back-btn">
+                        <i class="fas fa-arrow-left"></i> Back to Classes
+                    </a>
+                </div>
             </div>
         </section>
         <% } else { %>

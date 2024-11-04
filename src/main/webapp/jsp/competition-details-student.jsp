@@ -1,5 +1,6 @@
 <%@ page import="entity.Competition" %>
 <%@ page import="entity.quiz" %>
+<%@ page import="entity.Users" %>
 <!-- File: /jsp/competition-details-student.jsp -->
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/jsp/components/header.jsp" %>
@@ -9,7 +10,7 @@
 <%
     // Lấy thông tin cuộc thi và người dùng từ request
     Competition competition = (Competition) request.getAttribute("competition");
-//    Users currentUser = (Users) request.getAttribute("currentUser");
+    Users currentUser = (Users) request.getAttribute("currentUser");
     System.out.println("Current user: " + currentUser.getUsername());
     // Kiểm tra nếu competition hoặc currentUser là null
     if (competition == null || currentUser == null) {

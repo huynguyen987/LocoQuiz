@@ -1,27 +1,24 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%
-  // Use the currentUser defined in header.jsp
-  role = currentUser != null ? currentUser.getRoleName() : "";
-%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <aside class="sidebar">
   <ul>
-    <%
-      if ("teacher".equals(role)) {
-    %>
-    <li><a href="<%= request.getContextPath() %>/jsp/teacher.jsp"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-    <li><a href="<%= request.getContextPath() %>/jsp/teacher.jsp?action=createClass"><i class="fas fa-plus"></i> Create Class</a></li>
-    <li><a href="<%= request.getContextPath() %>/QuizController"><i class="fas fa-plus"></i> Create Quiz</a></li>
-    <li><a href="<%= request.getContextPath() %>/AllQuizzesServlet"><i class="fas fa-eye"></i> View Quiz</a></li>
-    <%
-    } else if ("student".equals(role)) {
-    %>
-    <li><a href="<%= request.getContextPath() %>/jsp/student.jsp"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-    <li><a href="<%= request.getContextPath() %>/jsp/student.jsp?action=Classrooms"><i class="fas fa-chalkboard"></i> Classroom</a></li>
-    <li><a href="<%= request.getContextPath() %>/QuizController"><i class="fas fa-plus"></i> Create Quiz</a></li>
-    <li><a href="<%= request.getContextPath() %>/jsp/flashcard.jsp"> <i class="fas fa-plus"></i> Flashcard </a></li>
-    <li><a href="<%= request.getContextPath() %>/LogoutServlet"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-    <%
-      }
-    %>
+    <!-- Nếu người dùng là teacher -->
+    <c:if test="${user.roleName == 'teacher'}">
+      <li><a href="${pageContext.request.contextPath}/jsp/teacher.jsp"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="${pageContext.request.contextPath}/jsp/teacher.jsp?action=createClass"><i class="fas fa-plus"></i> Create Class</a></li>
+      <li><a href="${pageContext.request.contextPath}/QuizController"><i class="fas fa-plus"></i> Create Quiz</a></li>
+      <li><a href="${pageContext.request.contextPath}/AllQuizzesServlet"><i class="fas fa-eye"></i> View Quiz</a></li>
+    </c:if>
+
+    <!-- Nếu người dùng là student -->
+    <c:if test="${user.roleName == 'student'}">
+      <li><a href="${pageContext.request.contextPath}/jsp/student.jsp"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="${pageContext.request.contextPath}/jsp/student.jsp?action=Classrooms"><i class="fas fa-chalkboard"></i> Classroom</a></li>
+      <li><a href="${pageContext.request.contextPath}/QuizController"><i class="fas fa-plus"></i> Create Quiz</a></li>
+      <li><a href="${pageContext.request.contextPath}/jsp/flashcard.jsp"><i class="fas fa-plus"></i> Flashcard</a></li>
+      <li><a href="${pageContext.request.contextPath}/LogoutServlet"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+    </c:if>
+
+    <!-- Bạn có thể thêm các điều kiện khác nếu cần -->
   </ul>
 </aside>

@@ -1,3 +1,4 @@
+<%@ page import="entity.Users" %>
 <!-- File: /jsp/competition-take.jsp -->
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/jsp/components/header.jsp" %>
@@ -5,6 +6,7 @@
 
 <%
     // Lấy competitionId từ request parameter
+    Users currentUser = (Users) session.getAttribute("user");
     String competitionIdStr = request.getParameter("id");
     if (competitionIdStr == null || competitionIdStr.isEmpty()) {
         response.sendRedirect(request.getContextPath() + "/CompetitionController?action=list");

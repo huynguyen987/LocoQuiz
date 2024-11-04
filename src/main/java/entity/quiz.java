@@ -3,10 +3,11 @@ package entity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class quiz {
+public class quiz extends Competition {
 
     private int id;
     private String name;
@@ -15,17 +16,18 @@ public class quiz {
     private String updated_at;
     private int user_id;
     private int type_id;
-    private String answer;
+    private String answer; // JSON string representing the list of questions
     private boolean status;
     private int views;
     private List<Tag> tag;
 
+    private static final Gson gson = new Gson();
+
+    // No-argument constructor
     public quiz() {
     }
 
-    private static final Gson gson = new Gson();
-
-    // Constructor có thêm tham số tag
+    // Constructor with tag
     public quiz(int id, String name, String description, String created_at, String updated_at, int user_id, int type_id, String answer, boolean status, int views, List<Tag> tag) {
         this.id = id;
         this.name = name;
@@ -40,7 +42,7 @@ public class quiz {
         this.tag = tag;
     }
 
-    // Constructor không có tham số tag
+    // Constructor without tag
     public quiz(String name, String description, String created_at, String updated_at, int user_id, int type_id, String answer) {
         this.name = name;
         this.description = description;
@@ -51,21 +53,39 @@ public class quiz {
         this.answer = answer;
     }
 
+    // Constructor with id and name
     public quiz(int id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
-    // Phương thức để phân tích JSON thành danh sách câu hỏi
+    /**
+     * Deserialize the JSON string 'answer' into a List<Question>.
+     *
+     * @return List of Question objects.
+     */
     public List<Question> getQuestions() {
-        Type listType = new TypeToken<List<Map<String, Object>>>(){}.getType();
+        if (this.answer == null || this.answer.isEmpty()) {
+            return new ArrayList<>();
+        }
+        Type listType = new TypeToken<List<Question>>() {}.getType();
         return gson.fromJson(this.answer, listType);
     }
 
-    // Phương thức để thiết lập JSON từ danh sách câu hỏi
+    /**
+     * Serialize a List<Question> into a JSON string and set it to 'answer'.
+     *
+     * @param questions List of Question objects.
+     */
     public void setQuestions(List<Map<String, Object>> questions) {
         this.answer = gson.toJson(questions);
     }
 
-    // Phương thức để lấy tên loại quiz dựa trên typeId
+    /**
+     * Get the type name based on type_id.
+     *
+     * @return Type name as a String.
+     */
     public String getTypeName() {
         switch(this.getType_id()) {
             case 1:
@@ -79,7 +99,8 @@ public class quiz {
         }
     }
 
-    // Getters và Setters cho các trường khác
+    // Getters and Setters for all fields
+
     public int getId() {
         return id;
     }
@@ -171,5 +192,24 @@ public class quiz {
     @Override
     public String toString() {
         return "quiz{" + "id=" + id + ", name=" + name + ", description=" + description + ", created_at=" + created_at + ", updated_at=" + updated_at + ", user_id=" + user_id + ", type_id=" + type_id + ", answer=" + answer + ", status=" + status + ", views=" + views + ", tag=" + tag + '}';
+    }
+
+    // Test method
+    public static void main(String[] args) {
+        quiz q = new quiz();
+        // Initialize a sample JSON string for 'answer'
+        String sampleAnswerJson = "["
+                + "{\"sequence\":1,\"question\":\"What is the capital of France?\",\"correct\":\"Paris\",\"options\":[\"Paris\",\"London\",\"Berlin\",\"Rome\"]},"
+                + "{\"sequence\":2,\"question\":\"What is 2 + 2?\",\"correct\":\"4\",\"options\":[\"3\",\"4\",\"5\",\"6\"]}"
+                + "]";
+        q.setAnswer(sampleAnswerJson); // Set the 'answer' field with JSON
+
+        List<Question> questions = q.getQuestions();
+        for (Question question : questions) {
+            System.out.println("Sequence: " + question.getSequence());
+            System.out.println("Options: " + question.getOptions());
+            System.out.println("Correct Answer: " + question.getCorrect());
+            System.out.println("-----------------------------");
+        }
     }
 }

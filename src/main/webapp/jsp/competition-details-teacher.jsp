@@ -1,10 +1,11 @@
+<%@ page import="entity.Users" %>
 <!-- File: /jsp/competition-list.jsp -->
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/jsp/components/header.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%
-//  Users currentUser = (Users) session.getAttribute("user");
+  Users currentUser = (Users) session.getAttribute("user");
   System.out.println("User view competition list: " + currentUser.getUsername());
   if (currentUser == null) {
     response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");

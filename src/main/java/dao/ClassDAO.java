@@ -1,14 +1,12 @@
 package dao;
 
-import entity.Users;
-import entity.classs;
+import entity.*;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import entity.classs;
 import Module.DBConnect;
-import entity.quiz;
 
 public class ClassDAO {
 
@@ -407,5 +405,31 @@ public class ClassDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public List<Competition> getCompetitionsByClassId(int classId) throws SQLException, ClassNotFoundException {
+        List<Competition> competitions = new ArrayList<>();
+        String query = "SELECT * FROM competitions WHERE class_id = ?";
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, classId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Competition competition = new Competition();
+                competition.setId(rs.getInt("id"));
+                competition.setName(rs.getString("name"));
+                competition.setDescription(rs.getString("description"));
+                competition.setClassId(rs.getInt("class_id"));
+                competition.setQuizId(rs.getInt("quiz_id"));
+                competition.setTimeLimit(rs.getInt("time_limit"));
+                competition.setQuestionCount(rs.getInt("question_count"));
+                competition.setShuffleQuestions(rs.getBoolean("shuffle_questions"));
+                competition.setAccessStartTime(rs.getDate("access_start_time"));
+                competition.setAccessEndTime(rs.getDate("access_end_time"));
+                competition.setCreatedAt(rs.getTimestamp("created_at"));
+                competitions.add(competition);
+            }
+        }
+        return competitions;
     }
 }
