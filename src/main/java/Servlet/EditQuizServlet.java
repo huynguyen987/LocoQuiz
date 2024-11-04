@@ -1,20 +1,32 @@
+// File: src/Servlet/EditQuizServlet.java
 package Servlet;
 
 import dao.QuizDAO;
+import dao.TagDAO;
+import dao.userQuizDAO;
 import entity.Question;
-import entity.Users;
+import entity.Tag;
 import entity.quiz;
+import entity.Users;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+// For file parsing
+import org.apache.poi.xwpf.usermodel.*; // For Word files
+import org.apache.poi.ss.usermodel.*;   // For Excel files
+import java.io.InputStream;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "EditQuizServlet", urlPatterns = {"/EditQuizServlet"})
+@MultipartConfig
 public class EditQuizServlet extends HttpServlet {
 
     private QuizDAO quizDAO = new QuizDAO();
@@ -22,7 +34,7 @@ public class EditQuizServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Lấy user từ session
+        // Retrieve user from session
         HttpSession session = request.getSession();
         Users currentUser = (Users) session.getAttribute("user");
         if (currentUser == null || (!currentUser.hasRole("teacher") && !currentUser.hasRole("admin"))) {
@@ -30,7 +42,7 @@ public class EditQuizServlet extends HttpServlet {
             return;
         }
 
-        // Lấy quizId từ request
+        // Get quizId from request
         String stringQuizId = request.getParameter("quizId");
         if (stringQuizId == null || stringQuizId.trim().isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=editError");
@@ -50,229 +62,477 @@ public class EditQuizServlet extends HttpServlet {
             quiz quizObj = quizDAO.getQuizById(quizId);
 
             if (quizObj == null) {
-                // Quiz không tồn tại
-                request.setAttribute("errorMessage", "Quiz không tồn tại.");
-                // Lấy tất cả các tag
-                List<Map<String, Object>> allTags = quizDAO.getAllTags();
-                request.setAttribute("allTags", allTags != null ? allTags : new ArrayList<>());
+                // Quiz does not exist
+                request.setAttribute("errorMessage", "Quiz does not exist.");
+                // Get all tags
+                TagDAO tagDAO = new TagDAO();
+                List<Tag> tagList = tagDAO.getAllTags();
+                request.setAttribute("tagList", tagList != null ? tagList : new ArrayList<>());
                 request.getRequestDispatcher("/jsp/edit-quiz.jsp").forward(request, response);
                 return;
             }
 
-            // Kiểm tra quyền sửa quiz
+            // Check permission to edit quiz
             if (quizObj.getUser_id() != currentUser.getId() && !currentUser.hasRole("admin")) {
-                request.setAttribute("errorMessage", "Bạn không có quyền chỉnh sửa quiz này.");
-                // Lấy tất cả các tag
-                List<Map<String, Object>> allTags = quizDAO.getAllTags();
-                request.setAttribute("allTags", allTags != null ? allTags : new ArrayList<>());
+                request.setAttribute("errorMessage", "You do not have permission to edit this quiz.");
+                // Get all tags
+                TagDAO tagDAO = new TagDAO();
+                List<Tag> tagList = tagDAO.getAllTags();
+                request.setAttribute("tagList", tagList != null ? tagList : new ArrayList<>());
                 request.getRequestDispatcher("/jsp/edit-quiz.jsp").forward(request, response);
                 return;
             }
 
-            // Lấy tất cả các tag
-            List<Map<String, Object>> allTags = quizDAO.getAllTags();
-            request.setAttribute("allTags", allTags != null ? allTags : new ArrayList<>());
+            // Get all tags
+            TagDAO tagDAO = new TagDAO();
+            List<Tag> tagList = tagDAO.getAllTags();
+            request.setAttribute("tagList", tagList != null ? tagList : new ArrayList<>());
 
-            // Đặt đối tượng quiz vào request
+            // Set quiz object to request
             request.setAttribute("quiz", quizObj);
 
-            // Đặt danh sách câu hỏi vào request
-            List<Question> questions = quizObj.getQuestions();
-            request.setAttribute("questions", questions != null ? questions : new ArrayList<>());
+            // Parse the answer JSON to get questions
+            String answerJson = quizObj.getAnswer();
+            List<Question> questions = new ArrayList<>();
+            if (answerJson != null && !answerJson.trim().isEmpty()) {
+                JSONArray questionsArray = new JSONArray(answerJson);
+                for (int i = 0; i < questionsArray.length(); i++) {
+                    JSONObject questionObj = questionsArray.getJSONObject(i);
+                    Question question = new Question();
 
-            // Đặt typeId vào request
+                    // Handle missing "sequence" gracefully
+                    if (questionObj.has("sequence")) {
+                        question.setSequence(questionObj.getInt("sequence"));
+                    } else {
+                        // Assign sequence based on array position (1-based)
+                        question.setSequence(i + 1);
+                    }
+
+                    question.setQuestionText(questionObj.getString("question"));
+                    if (questionObj.has("options")) {
+                        JSONArray optionsArray = questionObj.getJSONArray("options");
+                        List<String> options = new ArrayList<>();
+                        for (int j = 0; j < optionsArray.length(); j++) {
+                            options.add(optionsArray.getString(j));
+                        }
+                        question.setOptions(options);
+                    }
+                    if (questionObj.has("correct")) {
+                        question.setCorrectAnswer(questionObj.getString("correct"));
+                    }
+                    questions.add(question);
+                }
+            }
+
+            request.setAttribute("questions", questions);
+
+            // Set quiz type
             int typeId = quizObj.getType_id();
-            request.setAttribute("typeId", typeId);
+            String quizType = determineQuizTypeString(typeId);
+            request.setAttribute("quizType", quizType);
 
-            // Forward tới edit-quiz.jsp
+            // Forward to edit-quiz.jsp
             request.getRequestDispatcher("/jsp/edit-quiz.jsp").forward(request, response);
 
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "Đã xảy ra lỗi khi lấy dữ liệu quiz.");
-            // Lấy tất cả các tag
+            request.setAttribute("errorMessage", "An error occurred while retrieving quiz data.");
+            // Get all tags
+            TagDAO tagDAO = new TagDAO();
+            List<Tag> tagList = null;
             try {
-                List<Map<String, Object>> allTags = quizDAO.getAllTags();
-                request.setAttribute("allTags", allTags != null ? allTags : new ArrayList<>());
+                tagList = tagDAO.getAllTags();
             } catch (SQLException | ClassNotFoundException ex) {
-                ex.printStackTrace();
-                request.setAttribute("allTags", new ArrayList<>());
+                throw new RuntimeException(ex);
             }
+            request.setAttribute("tagList", tagList != null ? tagList : new ArrayList<>());
             request.getRequestDispatcher("/jsp/edit-quiz.jsp").forward(request, response);
         }
     }
 
-    /**
-     * Handles the HTTP POST method to update the quiz.
-     */
+    // Handle POST request to update the quiz
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Lấy user từ session
-        HttpSession session = request.getSession();
-        Users currentUser = (Users) session.getAttribute("user");
+        // Check if the form has multipart content
+        if (request.getContentType() != null && request.getContentType().toLowerCase().startsWith("multipart/")) {
+            try {
+                // Set character encoding to handle Unicode characters
+                request.setCharacterEncoding("UTF-8");
 
-        // Kiểm tra quyền
-        if (currentUser == null || (!currentUser.hasRole("teacher") && !currentUser.hasRole("admin"))) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
-            return;
-        }
+                // Retrieve user from session
+                HttpSession session = request.getSession();
+                Users currentUser = (Users) session.getAttribute("user");
 
-        // Lấy tham số từ form
-        String stringQuizId = request.getParameter("quizId");
-        String quizName = request.getParameter("quizName");
-        String quizDescription = request.getParameter("quizDescription");
-        String[] selectedTags = request.getParameterValues("quizTags");
-        String quizTypeRadio = request.getParameter("quizTypeRadio"); // e.g., 1, 2, 3
+                // Check permission
+                if (currentUser == null || (!currentUser.hasRole("teacher") && !currentUser.hasRole("admin"))) {
+                    response.sendRedirect(request.getContextPath() + "/login.jsp");
+                    return;
+                }
 
-        // Kiểm tra dữ liệu đầu vào
-        if (stringQuizId == null || quizName == null || quizDescription == null ||
-                stringQuizId.trim().isEmpty() || quizName.trim().isEmpty() || quizDescription.trim().isEmpty()) {
-            request.setAttribute("errorMessage", "Vui lòng điền đầy đủ các trường bắt buộc.");
-            doGet(request, response);
-            return;
-        }
+                // Get parameters from form
+                String stringQuizId = request.getParameter("quizId");
+                String quizName = request.getParameter("quizName");
+                String quizDescription = request.getParameter("quizDescription");
+                String quizType = request.getParameter("quizType");
+                String[] quizTagIdsArray = request.getParameterValues("quizTags");
+                List<String> quizTagIds = quizTagIdsArray != null ? Arrays.asList(quizTagIdsArray) : new ArrayList<>();
 
-        int quizId;
-        try {
-            quizId = Integer.parseInt(stringQuizId);
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            request.setAttribute("errorMessage", "Quiz ID không hợp lệ.");
-            doGet(request, response);
-            return;
-        }
+                if (stringQuizId == null || quizName == null || quizDescription == null || quizType == null || quizTagIds.isEmpty()) {
+                    request.setAttribute("errorMessage", "Please fill in all required fields and select at least one tag.");
+                    doGet(request, response);
+                    return;
+                }
 
-        try {
-            quiz quizObj = quizDAO.getQuizById(quizId);
-
-            if (quizObj == null) {
-                request.setAttribute("errorMessage", "Quiz không tồn tại.");
-                doGet(request, response);
-                return;
-            }
-
-            // Kiểm tra quyền sửa quiz
-            if (quizObj.getUser_id() != currentUser.getId() && !currentUser.hasRole("admin")) {
-                request.setAttribute("errorMessage", "Bạn không có quyền chỉnh sửa quiz này.");
-                doGet(request, response);
-                return;
-            }
-
-            // Lấy số lượng câu hỏi đã được cập nhật
-            String questionCountStr = request.getParameter("questionCount");
-            int questionCount = 0;
-            if (questionCountStr != null && !questionCountStr.trim().isEmpty()) {
+                int quizId;
                 try {
-                    questionCount = Integer.parseInt(questionCountStr);
+                    quizId = Integer.parseInt(stringQuizId);
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
-                    questionCount = 0;
-                }
-            }
-
-            List<Map<String, Object>> updatedQuestions = new ArrayList<>();
-
-            for (int q = 1; q <= questionCount; q++) {
-                String questionContent = request.getParameter("questionContent" + q);
-                String questionType = request.getParameter("questionType" + q); // Trường ẩn
-
-                if (questionContent == null || questionContent.trim().isEmpty()) {
-                    continue; // Bỏ qua câu hỏi không đầy đủ
+                    request.setAttribute("errorMessage", "Invalid Quiz ID.");
+                    doGet(request, response);
+                    return;
                 }
 
-                Map<String, Object> questionMap = new java.util.HashMap<>();
-                questionMap.put("question", questionContent);
+                quiz quizObj = quizDAO.getQuizById(quizId);
 
-                if ("1".equals(questionType)) { // Multiple Choice
-                    String correctAnswerIndexStr = request.getParameter("correctAnswer" + q);
-                    int correctAnswerIndex = 0; // Mặc định
+                if (quizObj == null) {
+                    request.setAttribute("errorMessage", "Quiz does not exist.");
+                    doGet(request, response);
+                    return;
+                }
 
-                    if (correctAnswerIndexStr != null && !correctAnswerIndexStr.trim().isEmpty()) {
+                // Check permission to edit quiz
+                if (quizObj.getUser_id() != currentUser.getId() && !currentUser.hasRole("admin")) {
+                    request.setAttribute("errorMessage", "You do not have permission to edit this quiz.");
+                    doGet(request, response);
+                    return;
+                }
+
+                List<Question> questions = new ArrayList<>();
+
+                Part quizFilePart = request.getPart("quizFile");
+
+                if (quizFilePart != null && quizFilePart.getSize() > 0) {
+                    String fileName = getFileName(quizFilePart);
+                    String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+
+                    InputStream fileContent = quizFilePart.getInputStream();
+
+                    if (fileExtension.equals("docx")) {
+                        questions = parseWordFile(fileContent, quizType);
+                    } else if (fileExtension.equals("xlsx")) {
+                        questions = parseExcelFile(fileContent, quizType);
+                    } else {
+                        request.setAttribute("errorMessage", "Unsupported file type. Please upload a .docx or .xlsx file.");
+                        doGet(request, response);
+                        return;
+                    }
+                } else {
+                    // Handle manual input if no file is uploaded
+                    String questionCountStr = request.getParameter("questionCount");
+                    int questionCount = 0;
+                    if (questionCountStr != null && !questionCountStr.trim().isEmpty()) {
                         try {
-                            correctAnswerIndex = Integer.parseInt(correctAnswerIndexStr) - 1;
+                            questionCount = Integer.parseInt(questionCountStr);
                         } catch (NumberFormatException e) {
                             e.printStackTrace();
+                            questionCount = 0;
                         }
                     }
 
-                    // Lấy số lượng câu trả lời
-                    String answerCountStr = request.getParameter("answerCount" + q);
-                    int answerCount = 4; // Mặc định 4 câu trả lời
-                    if (answerCountStr != null && !answerCountStr.trim().isEmpty()) {
-                        try {
-                            answerCount = Integer.parseInt(answerCountStr);
-                        } catch (NumberFormatException e) {
-                            e.printStackTrace();
+                    // Collect all questions and build the JSON array
+                    for (int i = 1; i <= questionCount; i++) {
+                        String questionContent = request.getParameter("questionContent" + i);
+
+                        if (questionContent == null || questionContent.trim().isEmpty()) {
+                            continue; // Skip incomplete questions
                         }
-                    }
 
-                    List<String> options = new ArrayList<>();
-                    for (int a = 1; a <= answerCount; a++) {
-                        String option = request.getParameter("answer" + q + "_" + a);
-                        if (option != null && !option.trim().isEmpty()) {
-                            options.add(option);
+                        JSONObject questionObjJSON = new JSONObject();
+
+                        if (quizType.equals("multiple-choice") || quizType.equals("matching")) {
+                            // Handle multiple choice and matching questions
+                            List<String> answerList = new ArrayList<>();
+                            int j = 1;
+                            while (true) {
+                                String answer = request.getParameter("answer" + i + "_" + j);
+                                if (answer == null || answer.trim().isEmpty()) {
+                                    break;
+                                }
+                                answerList.add(answer);
+                                j++;
+                            }
+                            String[] answers = answerList.toArray(new String[0]);
+
+                            String correctAnswerIndexStr = request.getParameter("correctAnswer" + i);
+                            int correctAnswerIndex = 1; // Default to first answer
+                            if (correctAnswerIndexStr != null && !correctAnswerIndexStr.trim().isEmpty()) {
+                                try {
+                                    correctAnswerIndex = Integer.parseInt(correctAnswerIndexStr);
+                                } catch (NumberFormatException e) {
+                                    e.printStackTrace();
+                                    correctAnswerIndex = 1;
+                                }
+                            }
+                            String correctAnswerText = answers.length >= correctAnswerIndex ? answers[correctAnswerIndex - 1] : answers[0];
+
+                            // Build the question JSON object
+                            questionObjJSON.put("sequence", i);
+                            questionObjJSON.put("question", questionContent);
+                            questionObjJSON.put("options", Arrays.asList(answers));
+                            questionObjJSON.put("correct", correctAnswerText);
+
+                            // If it's a matching question, ensure options array has only one element
+                            if (quizType.equals("matching")) {
+                                // Combine all options into a single string
+                                String matchingOption = String.join("; ", answers);
+                                questionObjJSON.put("options", Collections.singletonList(matchingOption));
+                                questionObjJSON.put("correct", matchingOption);
+                            }
+                        } else if (quizType.equals("fill-in-the-blank")) {
+                            // Handle fill-in-the-blank questions
+                            String correctAnswer = request.getParameter("correctAnswer" + i);
+                            questionObjJSON.put("sequence", i);
+                            questionObjJSON.put("question", questionContent);
+                            questionObjJSON.put("correct", correctAnswer);
                         }
+
+                        // Add the question object to the list
+                        Question q = new Question();
+                        q.setSequence(questionObjJSON.has("sequence") ? questionObjJSON.getInt("sequence") : i);
+                        q.setQuestionText(questionObjJSON.getString("question"));
+                        if (questionObjJSON.has("options")) {
+                            JSONArray optionsArray = questionObjJSON.getJSONArray("options");
+                            List<String> options = new ArrayList<>();
+                            for (int k = 0; k < optionsArray.length(); k++) {
+                                options.add(optionsArray.getString(k));
+                            }
+                            q.setOptions(options);
+                        }
+                        if (questionObjJSON.has("correct")) {
+                            q.setCorrectAnswer(questionObjJSON.getString("correct"));
+                        }
+                        questions.add(q);
                     }
-
-                    // Đảm bảo correctAnswerIndex nằm trong phạm vi
-                    if (correctAnswerIndex < 0 || correctAnswerIndex >= options.size()) {
-                        correctAnswerIndex = 0; // Mặc định chọn câu trả lời đầu tiên
-                    }
-
-                    String correctAnswer = options.get(correctAnswerIndex);
-
-                    questionMap.put("options", options);
-                    questionMap.put("correct", correctAnswer);
-                } else if ("2".equals(questionType)) { // Fill in the Blank
-                    String correctAnswer = request.getParameter("correctAnswer" + q);
-                    questionMap.put("correct", correctAnswer);
-                } else if ("3".equals(questionType)) { // Matching
-                    // Xử lý câu hỏi Matching nếu cần
-                    // Ví dụ: questionMap.put("matchingPairs", matchingPairs);
-                    // Hiện tại chưa triển khai
                 }
 
-                updatedQuestions.add(questionMap);
-            }
+                // Convert questions list to JSON
+                JSONArray questionsArray = new JSONArray();
 
-            // Cập nhật thông tin quiz
-            quizObj.setName(quizName);
-            quizObj.setDescription(quizDescription);
+                for (Question question : questions) {
+                    JSONObject questionObjJSON = new JSONObject();
+                    questionObjJSON.put("sequence", question.getSequence());
+                    questionObjJSON.put("question", question.getQuestionText());
 
-            // Lấy typeId từ quizTypeRadio
-            int typeId = 1; // Mặc định
-            if (quizTypeRadio != null && !quizTypeRadio.trim().isEmpty()) {
-                try {
-                    typeId = Integer.parseInt(quizTypeRadio);
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
+                    if (quizType.equals("multiple-choice") || quizType.equals("matching")) {
+                        questionObjJSON.put("options", question.getOptions());
+                        questionObjJSON.put("correct", question.getCorrectAnswer());
+                    } else if (quizType.equals("fill-in-the-blank")) {
+                        questionObjJSON.put("correct", question.getCorrectAnswer());
+                    }
+
+                    questionsArray.put(questionObjJSON);
                 }
-            }
-            quizObj.setType_id(typeId);
 
-            // Thiết lập danh sách câu hỏi đã cập nhật
-            quizObj.setQuestions(updatedQuestions);
+                String questionsJson = questionsArray.toString();
 
-            // Cập nhật quiz trong cơ sở dữ liệu
-            boolean isUpdated = quizDAO.updateQuizForEditQuiz(quizObj, selectedTags);
+                // Update quiz object
+                quizObj.setName(quizName);
+                quizObj.setDescription(quizDescription);
+                quizObj.setType_id(determineQuizTypeId(quizType));
+                quizObj.setAnswer(questionsJson);
 
-            if (isUpdated) {
-                response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=editSuccess");
-            } else {
-                request.setAttribute("errorMessage", "Cập nhật quiz thất bại.");
+                // Update the quiz in the database
+                boolean isUpdated = quizDAO.updateQuiz(quizObj);
+
+                if (isUpdated) {
+                    // Update quiz tags
+                    quizDAO.deleteQuizTags(quizId); // Remove existing tags
+                    for (String tagIdStr : quizTagIds) {
+                        int tagId = Integer.parseInt(tagIdStr);
+                        quizDAO.insertQuizTag(quizId, tagId);
+                    }
+
+                    // Redirect to a success page
+                    response.sendRedirect(request.getContextPath() + "/jsp/teacher.jsp?message=editSuccess");
+                } else {
+                    // Display error message if the quiz could not be updated
+                    request.setAttribute("errorMessage", "Failed to update quiz.");
+                    doGet(request, response);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                request.setAttribute("errorMessage", "Error: " + e.getMessage());
                 doGet(request, response);
             }
-
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-            request.setAttribute("errorMessage", "Đã xảy ra lỗi khi cập nhật quiz.");
+        } else {
+            // Handle regular form submission without file upload
+            request.setAttribute("errorMessage", "Form must have enctype='multipart/form-data'.");
             doGet(request, response);
         }
     }
 
-    @Override
-    public String getServletInfo() {
-        return "Servlet for editing quizzes";
+    // Helper method to map quizType string to the corresponding type_id in the database
+    private int determineQuizTypeId(String quizType) {
+        switch (quizType) {
+            case "multiple-choice":
+                return 1; // Assuming '1' represents Multiple Choice
+            case "fill-in-the-blank":
+                return 2; // Assuming '2' represents Fill in the Blank
+            case "matching":
+                return 3; // Assuming '3' represents Matching
+            default:
+                return 1; // Default to Multiple Choice
+        }
+    }
+
+    // Helper method to map type_id to quizType string
+    private String determineQuizTypeString(int typeId) {
+        switch (typeId) {
+            case 1:
+                return "multiple-choice";
+            case 2:
+                return "fill-in-the-blank";
+            case 3:
+                return "matching";
+            default:
+                return "multiple-choice";
+        }
+    }
+
+    // Parsing Word files (same as in QuizController)
+    private List<Question> parseWordFile(InputStream fileContent, String quizType) throws IOException {
+        List<Question> questions = new ArrayList<>();
+
+        XWPFDocument document = new XWPFDocument(fileContent);
+        List<XWPFParagraph> paragraphs = document.getParagraphs();
+
+        int sequence = 1;
+        Question currentQuestion = null;
+        for (XWPFParagraph para : paragraphs) {
+            String text = para.getText().trim();
+
+            if (text.startsWith("Q:")) {
+                currentQuestion = new Question();
+                currentQuestion.setSequence(sequence++);
+                currentQuestion.setQuestionText(text.substring(2).trim());
+                questions.add(currentQuestion);
+            } else if ((quizType.equals("multiple-choice") || quizType.equals("matching")) && currentQuestion != null && text.matches("[A-D]\\).*")) {
+                // Option line
+                if (currentQuestion.getOptions() == null) {
+                    currentQuestion.setOptions(new ArrayList<>());
+                }
+                currentQuestion.getOptions().add(text.substring(2).trim());
+            } else if (text.startsWith("Answer:") && currentQuestion != null) {
+                String correctAnswer = text.substring(7).trim();
+                if (quizType.equals("multiple-choice")) {
+                    currentQuestion.setCorrectAnswer(correctAnswer);
+                } else if (quizType.equals("fill-in-the-blank")) {
+                    currentQuestion.setCorrectAnswer(correctAnswer);
+                } else if (quizType.equals("matching")) {
+                    // For matching, combine options into a single string
+                    String matchingOption = String.join("; ", currentQuestion.getOptions());
+                    currentQuestion.setOptions(Collections.singletonList(matchingOption));
+                    currentQuestion.setCorrectAnswer(matchingOption);
+                }
+            }
+        }
+
+        document.close();
+        return questions;
+    }
+
+    // Parsing Excel files (same as in QuizController)
+    private List<Question> parseExcelFile(InputStream fileContent, String quizType) throws IOException {
+        List<Question> questions = new ArrayList<>();
+
+        Workbook workbook = WorkbookFactory.create(fileContent);
+        Sheet sheet = workbook.getSheetAt(0); // Assume first sheet
+
+        Iterator<Row> rowIterator = sheet.iterator();
+        int sequence = 1;
+
+        while (rowIterator.hasNext()) {
+            Row row = rowIterator.next();
+            Cell questionCell = row.getCell(0);
+
+            if (questionCell != null) {
+                Question question = new Question();
+                question.setSequence(sequence++);
+                question.setQuestionText(getCellValue(questionCell));
+
+                if (quizType.equals("multiple-choice") || quizType.equals("matching")) {
+                    List<String> options = new ArrayList<>();
+                    for (int i = 1; i <= 4; i++) {
+                        Cell optionCell = row.getCell(i);
+                        if (optionCell != null) {
+                            options.add(getCellValue(optionCell));
+                        }
+                    }
+                    if (quizType.equals("matching")) {
+                        // Combine options into a single string
+                        String matchingOption = String.join("; ", options);
+                        question.setOptions(Collections.singletonList(matchingOption));
+                        question.setCorrectAnswer(matchingOption);
+                    } else {
+                        question.setOptions(options);
+                        Cell correctCell = row.getCell(5);
+                        if (correctCell != null) {
+                            question.setCorrectAnswer(getCellValue(correctCell));
+                        }
+                    }
+                } else if (quizType.equals("fill-in-the-blank")) {
+                    Cell correctCell = row.getCell(1);
+                    if (correctCell != null) {
+                        question.setCorrectAnswer(getCellValue(correctCell));
+                    }
+                }
+
+                questions.add(question);
+            }
+        }
+
+        workbook.close();
+        return questions;
+    }
+
+    // Helper method to get the file name from the Part
+    private String getFileName(Part part) {
+        String contentDisposition = part.getHeader("content-disposition");
+        if (contentDisposition == null) {
+            return null;
+        }
+        String[] tokens = contentDisposition.split(";");
+        for (String token : tokens) {
+            if (token.trim().startsWith("filename")) {
+                return token.substring(token.indexOf('=') + 1).trim().replace("\"", "");
+            }
+        }
+        return null;
+    }
+
+    // Helper method to get cell value as String
+    private String getCellValue(Cell cell) {
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case NUMERIC:
+                // If the cell is numeric, but represents an integer, format without decimal
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getDateCellValue().toString();
+                } else {
+                    double numericValue = cell.getNumericCellValue();
+                    if (numericValue == (long) numericValue) {
+                        return String.valueOf((long) numericValue);
+                    } else {
+                        return String.valueOf(numericValue);
+                    }
+                }
+                // Handle other cell types as needed
+            default:
+                return "";
+        }
     }
 }

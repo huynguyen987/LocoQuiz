@@ -189,6 +189,16 @@ public class quiz extends Competition {
         this.tag = tag;
     }
 
+    // New method to get the quiz title
+    public String getQuizTitle() {
+        return name;
+    }
+
+    // New method to get the creator ID
+    public int getCreatorId() {
+        return user_id;
+    }
+
     @Override
     public String toString() {
         return "quiz{" + "id=" + id + ", name=" + name + ", description=" + description + ", created_at=" + created_at + ", updated_at=" + updated_at + ", user_id=" + user_id + ", type_id=" + type_id + ", answer=" + answer + ", status=" + status + ", views=" + views + ", tag=" + tag + '}';

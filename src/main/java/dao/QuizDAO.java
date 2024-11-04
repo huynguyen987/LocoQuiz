@@ -6,7 +6,6 @@ import entity.Tag;
 import entity.quiz;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,43 +14,22 @@ import java.util.Map;
 
 import Module.DBConnect;
 import Module.AnswersReader;
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
 
 public class QuizDAO {
 
-    public List<quiz> getQuizzesByTeacherId(int teacherId) throws SQLException, ClassNotFoundException {
-        List<quiz> quizzes = new ArrayList<>();
-        String sql = "SELECT * FROM `quiz` WHERE user_id = ?";
 
-        try (Connection conn = new DBConnect().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, teacherId);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    quiz quiz = new quiz();
-                    quiz.setId(rs.getInt("id"));
-                    quiz.setName(rs.getString("name"));
-                    quiz.setDescription(rs.getString("description"));
-                    quiz.setCreated_at(String.valueOf(rs.getTimestamp("created_at")));
-                    quiz.setUpdated_at(String.valueOf(rs.getTimestamp("updated_at")));
-                    quiz.setUser_id(rs.getInt("user_id"));
-                    quiz.setType_id(rs.getInt("type_id"));
-                    quiz.setAnswer(rs.getString("answer"));
-                    quiz.setStatus(rs.getBoolean("status"));
-                    quiz.setViews(rs.getInt("views"));
-
-                    quizzes.add(quiz);
-                }
-            }
+    //deleteQuizTags
+    public void deleteQuizTags(int quizId) throws SQLException, ClassNotFoundException {
+        Connection connection = new DBConnect().getConnection();
+        String sql = "DELETE FROM quiz_tag WHERE quiz_id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, quizId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-        return quizzes;
     }
-
-
 
     //getTypeIdByName
     public int getTypeIdByName(String name) throws SQLException, ClassNotFoundException {
@@ -69,6 +47,25 @@ public class QuizDAO {
             e.printStackTrace();
         }
         return typeId;
+    }
+
+    //getQuizzesByTeacherId
+    public List<quiz> getQuizzesByTeacherId(int teacherId) throws SQLException, ClassNotFoundException {
+        List<quiz> quizzes = new ArrayList<>();
+        Connection connection = new DBConnect().getConnection();
+        String sql = "SELECT * FROM quiz WHERE user_id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, teacherId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                quiz q = extractQuizFromResultSet(rs);
+                quizzes.add(q);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return quizzes;
     }
 
     public List<Map<String, Object>> getAllTags() throws SQLException, ClassNotFoundException {

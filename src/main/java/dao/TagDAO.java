@@ -29,6 +29,19 @@ public class TagDAO {
         return tags;
     }
 
+    //deleteQuizTags
+    public boolean deleteQuizTags(int quizId) throws SQLException, ClassNotFoundException {
+        String sql = "DELETE FROM quiz_tag WHERE quiz_id = ?";
+        boolean rowDeleted;
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, quizId);
+            rowDeleted = ps.executeUpdate() > 0;
+        }
+        return rowDeleted;
+    }
+
     // Lấy Tag theo id
     public Tag getTagById(int id) throws SQLException, ClassNotFoundException {
         String sql = "SELECT * FROM tag WHERE id = ?";

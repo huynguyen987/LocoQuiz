@@ -26,7 +26,6 @@
                 <li><a href="${pageContext.request.contextPath}/index.jsp">Trang Chủ</a></li>
                 <li><a href="${pageContext.request.contextPath}/jsp/login.jsp">Đăng Nhập</a></li>
                 <li><a href="${pageContext.request.contextPath}/jsp/register.jsp">Đăng Ký</a></li>
-                <li><a href="${pageContext.request.contextPath}/index.jsp#contact">Liên Hệ</a></li>
             </ul>
         </nav>
         <!-- Theme Toggle (Optional) -->

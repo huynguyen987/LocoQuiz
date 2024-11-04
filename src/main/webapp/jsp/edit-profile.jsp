@@ -42,21 +42,40 @@
     <!-- Cropper.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Custom CSS cho Cropper -->
+    <!-- Custom CSS cho Cropper và cải thiện giao diện -->
     <style>
-        /* Định dạng cho ảnh xem trước */
-        .img-container {
-            max-width: 100%;
-            max-height: 400px;
-            margin-bottom: 20px;
-            display: none; /* Ẩn đi cho đến khi có ảnh */
+        /* Cấu trúc Flex container */
+        .profile-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 30px;
         }
 
-        .img-container img {
-            max-width: 100%;
+        /* Phần thông tin người dùng */
+        .edit-profile-form {
+            flex: 1 1 400px;
+            background-color: #f9f9f9;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        /* Các kiểu CSS khác (nếu cần) */
+        /* Phần hiển thị avatar */
+        .profile-avatar {
+            flex: 0 0 200px;
+            text-align: center;
+        }
+
+        .profile-avatar img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ddd;
+        }
+
+        /* Thông báo lỗi và thành công */
         .success-message {
             background-color: #d4edda;
             color: #155724;
@@ -75,42 +94,37 @@
             border-radius: 5px;
         }
 
-        .btn-back-dashboard {
+        /* Nút hành động */
+        .btn-back-dashboard,
+        .btn-submit {
             background-color: #007bff;
             color: white;
-            padding: 10px 15px;
+            padding: 10px 20px;
             text-decoration: none;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-back-dashboard {
+            background-color: #6c757d;
         }
 
         .btn-back-dashboard:hover {
-            background-color: #0056b3;
+            background-color: #5a6268;
         }
 
         .btn-submit {
             background-color: #28a745;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
         }
 
         .btn-submit:hover {
             background-color: #218838;
         }
 
-        .profile-avatar img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
+        /* Các kiểu CSS khác */
         .form-group {
             margin-bottom: 15px;
         }
@@ -118,6 +132,7 @@
         label {
             display: block;
             margin-bottom: 5px;
+            font-weight: bold;
         }
 
         input[type="text"],
@@ -127,15 +142,44 @@
             width: 100%;
             padding: 8px;
             box-sizing: border-box;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            transition: border-color 0.3s ease;
         }
 
-        .profile-actions {
-            margin-top: 20px;
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        input[type="file"]:focus {
+            border-color: #80bdff;
+            outline: none;
         }
 
-        .profile-actions a {
-            margin-right: 10px;
-            text-decoration: none;
+        /* Vùng hiển thị ảnh xem trước */
+        .img-container {
+            max-width: 100%;
+            max-height: 400px;
+            margin-bottom: 20px;
+            display: none; /* Ẩn đi cho đến khi có ảnh */
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .img-container img {
+            width: 100%;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .profile-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .profile-avatar {
+                flex: 0 0 auto;
+            }
         }
     </style>
 </head>
@@ -146,7 +190,7 @@
         <h1><a href="<%= request.getContextPath() %>/index.jsp" class="logo">QuizLoco</a></h1>
 
         <div class="auth-links">
-            <a href="<%= request.getContextPath() %>/LogoutServlet" class="btn-logout">Logout</a>
+            <a href="<%= request.getContextPath() %>/LogoutServlet" class="btn-back-dashboard">Logout</a>
         </div>
     </div>
 </header>
@@ -154,10 +198,10 @@
 <main>
     <div class="container">
         <div class="profile-container">
-            <div class="profile-header">
-                <h1>Edit Profile</h1>
-            </div>
             <div class="edit-profile-form">
+                <div class="profile-header">
+                    <h2>Edit Profile</h2>
+                </div>
                 <% if (error != null) { %>
                 <div class="error-message"><%= error %></div>
                 <% } %>
@@ -186,14 +230,14 @@
                         <input type="file" id="avatar" name="avatar" accept="image/*">
                     </div>
 
-                    <!-- Thêm vùng hiển thị ảnh xem trước -->
+                    <!-- Vùng hiển thị ảnh xem trước -->
                     <div class="img-container">
                         <img id="preview-image" src="#">
                     </div>
 
                     <div class="form-group">
                         <input type="hidden" id="croppedImageData" name="croppedImageData">
-                        <input type="submit" value="Update Profile" class="btn-submit">
+                        <button type="submit" class="btn-submit">Update Profile</button>
                     </div>
                 </form>
             </div>
@@ -211,29 +255,29 @@
                 <p>No avatar available.</p>
                 <% } %>
             </div>
+        </div>
 
-            <div class="profile-actions">
-                <a href="<%= request.getContextPath() %>/jsp/change-password.jsp" class="btn-submit">Change Password</a>
-                <!-- Nếu bạn muốn cho phép upload avatar trực tiếp từ đây, bạn có thể bỏ qua liên kết này -->
-                <!-- <a href="<%= request.getContextPath() %>/jsp/upload-avatar.jsp" class="btn-submit">Update Avatar</a> -->
-            </div>
+        <div class="profile-actions" style="text-align: center;">
+            <a href="<%= request.getContextPath() %>/jsp/change-password.jsp" class="btn-submit">Change Password</a>
+            <!-- Nếu bạn muốn cho phép upload avatar trực tiếp từ đây, bạn có thể bỏ qua liên kết này -->
+            <!-- <a href="<%= request.getContextPath() %>/jsp/upload-avatar.jsp" class="btn-submit">Update Avatar</a> -->
+        </div>
 
-            <div class="back-to-dashboard" style="margin-top: 20px;">
-                <%
-                    String role = user.getRoleName();
-                    String dashboardURL = "";
-                    if ("teacher".equalsIgnoreCase(role)) {
-                        dashboardURL = request.getContextPath() + "/jsp/teacher.jsp";
-                    } else if ("student".equalsIgnoreCase(role)) {
-                        dashboardURL = request.getContextPath() + "/jsp/student.jsp";
-                    } else if ("admin".equalsIgnoreCase(role)) {
-                        dashboardURL = request.getContextPath() + "/jsp/admin.jsp";
-                    }
-                %>
-                <form action="<%= dashboardURL %>" method="get">
-                    <button type="submit" class="btn-back-dashboard">Back to Dashboard</button>
-                </form>
-            </div>
+        <div class="back-to-dashboard" style="text-align: center; margin-top: 20px;">
+            <%
+                String role = user.getRoleName();
+                String dashboardURL = "";
+                if ("teacher".equalsIgnoreCase(role)) {
+                    dashboardURL = request.getContextPath() + "/jsp/teacher.jsp";
+                } else if ("student".equalsIgnoreCase(role)) {
+                    dashboardURL = request.getContextPath() + "/jsp/student.jsp";
+                } else if ("admin".equalsIgnoreCase(role)) {
+                    dashboardURL = request.getContextPath() + "/jsp/admin.jsp";
+                }
+            %>
+            <form action="<%= dashboardURL %>" method="get" style="display: inline;">
+                <button type="submit" class="btn-back-dashboard">Back to Dashboard</button>
+            </form>
         </div>
     </div>
 </main>

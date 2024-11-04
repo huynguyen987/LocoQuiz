@@ -40,9 +40,8 @@
         <nav class="sidebar-nav">
             <ul>
                 <li><a href="${pageContext.request.contextPath}/jsp/user-profile.jsp" class="active"><i class="fas fa-user"></i> Profile</a></li>
-                <li><a href="${pageContext.request.contextPath}/jsp/dashboard.jsp"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                <li><a href="${pageContext.request.contextPath}/jsp/quizzes.jsp"><i class="fas fa-file-alt"></i> Quizzes</a></li>
-                <li><a href="${pageContext.request.contextPath}/jsp/settings.jsp"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="${pageContext.request.contextPath}/jsp/teacher.jsp"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="${pageContext.request.contextPath}/AllQuizzesServlet"><i class="fas fa-file-alt"></i> Quizzes</a></li>
                 <li><a href="${pageContext.request.contextPath}/jsp/logout.jsp"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </nav>
