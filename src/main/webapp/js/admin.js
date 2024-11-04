@@ -15,7 +15,3 @@ function resetSearch() {
     document.getElementById('searchUser').value = '';
     filterUsers();
 }
-
-
-
-
