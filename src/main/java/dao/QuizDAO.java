@@ -17,6 +17,26 @@ import Module.AnswersReader;
 
 public class QuizDAO {
 
+    private static final String SELECT_ALL_VISIBLE_QUIZZES = "SELECT * FROM quiz WHERE status = TRUE ORDER BY id DESC LIMIT ?, ?";
+    private static final String UPDATE_QUIZ_STATUS_SQL = "UPDATE quiz SET status = ? WHERE id = ?";
+    //addQuiz
+    public void addQuiz(quiz q) throws SQLException, ClassNotFoundException {
+        Connection connection = new DBConnect().getConnection();
+        String sql = "INSERT INTO quiz(name, description, created_at, updated_at, user_id, type_id, answer) VALUES(?,?,?,?,?,?,?)";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, q.getName());
+            ps.setString(2, q.getDescription());
+            ps.setString(3, q.getCreated_at());
+            ps.setString(4, q.getUpdated_at());
+            ps.setInt(5, q.getUser_id());
+            ps.setInt(6, q.getType_id());
+            ps.setString(7, q.getAnswer());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     //deleteQuizTags
     public void deleteQuizTags(int quizId) throws SQLException, ClassNotFoundException {
@@ -85,7 +105,6 @@ public class QuizDAO {
         }
         return tagList;
     }
-
 
     //getAssignedQuizzesByClassId
     public List<quiz> getAssignedQuizzesByClassId(int classId) throws SQLException, ClassNotFoundException {
@@ -179,6 +198,30 @@ public class QuizDAO {
         updateStmt.close();
     }
 
+    // Phương thức lấy tất cả các quiz Visible (status = TRUE)
+    public List<quiz> getAllVisibleQuizzes(int offset, int limit) throws SQLException, ClassNotFoundException {
+        List<quiz> quizzes = new ArrayList<>();
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_VISIBLE_QUIZZES)) {
+            preparedStatement.setInt(1, offset);
+            preparedStatement.setInt(2, limit);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                quiz q = new quiz();
+                q.setId(rs.getInt("id"));
+                q.setName(rs.getString("name"));
+                q.setDescription(rs.getString("description"));
+                q.setUser_id(rs.getInt("user_id"));
+                q.setType_id(rs.getInt("type_id"));
+                q.setAnswer(rs.getString("answer"));
+                q.setStatus(rs.getBoolean("status"));
+                q.setViews(rs.getInt("views"));
+                quizzes.add(q);
+            }
+        }
+        return quizzes;
+    }
 
     // Insert quiz and return generated ID
     public int insertQuiz(quiz q) throws SQLException, ClassNotFoundException {
@@ -229,6 +272,17 @@ public class QuizDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public void setQuizStatus(int quizId, boolean status) throws SQLException, ClassNotFoundException {
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_QUIZ_STATUS_SQL)) {
+            preparedStatement.setBoolean(1, status);
+            preparedStatement.setInt(2, quizId);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            System.out.println("setQuizStatus - Rows affected: " + rowsAffected);
+        }
     }
 
     //updateQuizForEditQuiz
@@ -360,34 +414,54 @@ public class QuizDAO {
     }
 
     // Method to retrieve the latest 10 quizzes
-    public List<quiz> getLatestQuizzes() throws SQLException, ClassNotFoundException {
-        List<quiz> latestQuizzes = new ArrayList<>();
-        Connection conn = new DBConnect().getConnection();
-        String sql = "SELECT * FROM quiz ORDER BY created_at DESC LIMIT 10";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        ResultSet rs = stmt.executeQuery();
-        while (rs.next()) {
-            quiz quiz = extractQuizFromResultSet(rs);
-            latestQuizzes.add(quiz);
+    public List<quiz> getLatestQuizzes(int limit) throws SQLException, ClassNotFoundException {
+        List<quiz> quizzes = new ArrayList<>();
+        String SELECT_LATEST_QUIZZES = "SELECT * FROM quiz WHERE status = TRUE ORDER BY created_at DESC LIMIT ?";
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LATEST_QUIZZES)) {
+            preparedStatement.setInt(1, limit);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                quiz q = new quiz();
+                q.setId(rs.getInt("id"));
+                q.setName(rs.getString("name"));
+                q.setDescription(rs.getString("description"));
+                q.setUser_id(rs.getInt("user_id"));
+                q.setType_id(rs.getInt("type_id"));
+                q.setAnswer(rs.getString("answer"));
+                q.setStatus(rs.getBoolean("status"));
+                q.setViews(rs.getInt("views"));
+                quizzes.add(q);
+            }
         }
-        conn.close();
-        return latestQuizzes;
+        return quizzes;
     }
 
 
     // Method to retrieve the most popular 10 quizzes
-    public List<quiz> getPopularQuizzes() throws SQLException, ClassNotFoundException {
-        List<quiz> popularQuizzes = new ArrayList<>();
-        Connection conn = new DBConnect().getConnection();
-        String sql = "SELECT * FROM quiz ORDER BY views DESC LIMIT 10";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        ResultSet rs = stmt.executeQuery();
-        while (rs.next()) {
-            quiz q = extractQuizFromResultSet(rs);
-            popularQuizzes.add(q);
+    public List<quiz> getPopularQuizzes(int limit) throws SQLException, ClassNotFoundException {
+        List<quiz> quizzes = new ArrayList<>();
+        String SELECT_POPULAR_QUIZZES = "SELECT * FROM quiz WHERE status = TRUE ORDER BY views DESC LIMIT ?";
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_POPULAR_QUIZZES)) {
+            preparedStatement.setInt(1, limit);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                quiz q = new quiz();
+                q.setId(rs.getInt("id"));
+                q.setName(rs.getString("name"));
+                q.setDescription(rs.getString("description"));
+                q.setUser_id(rs.getInt("user_id"));
+                q.setType_id(rs.getInt("type_id"));
+                q.setAnswer(rs.getString("answer"));
+                q.setStatus(rs.getBoolean("status"));
+                q.setViews(rs.getInt("views"));
+                quizzes.add(q);
+            }
         }
-        conn.close();
-        return popularQuizzes;
+        return quizzes;
     }
 
 

@@ -149,7 +149,7 @@
           <button type="button" class="remove-btn" data-num="<%= qNum %>">Remove Question</button>
           <!-- Question Content -->
           <label for="questionContent<%= qNum %>">Question:</label>
-          <textarea id="questionContent<%= qNum %>" name="questionContent<%= qNum %>" required aria-required="true"><%= question.getQuestionText() %></textarea>
+          <textarea id="questionContent<%= qNum %>" name="questionContent<%= qNum %>" required aria-required="true"><%= question.getQuestion() %></textarea>
 
           <% if ("multiple-choice".equals(quizType)) { %>
           <!-- Answers -->
@@ -161,7 +161,7 @@
                 int aNum = 1;
                 for (String option : options) { %>
             <div class="answer-option">
-              <input type="radio" id="correctAnswer<%= qNum %>_<%= aNum %>" name="correctAnswer<%= qNum %>" value="<%= aNum %>" <%= option.equals(question.getCorrectAnswer()) ? "checked" : "" %> required aria-required="true">
+              <input type="radio" id="correctAnswer<%= qNum %>_<%= aNum %>" name="correctAnswer<%= qNum %>" value="<%= aNum %>" <%= option.equals(question.getCorrect()) ? "checked" : "" %> required aria-required="true">
               <label for="answer<%= qNum %>_<%= aNum %>">Answer <%= aNum %>:</label>
               <input type="text" id="answer<%= qNum %>_<%= aNum %>" name="answer<%= qNum %>_<%= aNum %>" placeholder="Answer <%= aNum %>" required aria-required="true" value="<%= option %>">
             </div>
@@ -173,14 +173,14 @@
           <% } else if ("fill-in-the-blank".equals(quizType)) { %>
           <!-- Correct Answer -->
           <label for="correctAnswer<%= qNum %>">Correct Answer:</label>
-          <input type="text" id="correctAnswer<%= qNum %>" name="correctAnswer<%= qNum %>" required aria-required="true" value="<%= question.getCorrectAnswer() %>">
+          <input type="text" id="correctAnswer<%= qNum %>" name="correctAnswer<%= qNum %>" required aria-required="true" value="<%= question.getCorrect() %>">
           <% } else if ("matching".equals(quizType)) { %>
           <!-- Matching Pairs -->
           <label for="answer<%= qNum %>_1">Matching Pairs:</label>
           <div id="answersContainer<%= qNum %>">
             <div class="answer-option">
               <input type="radio" id="correctAnswer<%= qNum %>_1" name="correctAnswer<%= qNum %>" value="1" checked style="display:none;">
-              <input type="text" id="answer<%= qNum %>_1" name="answer<%= qNum %>_1" placeholder="Enter matching pairs (e.g., A-B; C-D; E-F)" required aria-required="true" value="<%= question.getCorrectAnswer() %>">
+              <input type="text" id="answer<%= qNum %>_1" name="answer<%= qNum %>_1" placeholder="Enter matching pairs (e.g., A-B; C-D; E-F)" required aria-required="true" value="<%= question.getCorrect() %>">
             </div>
           </div>
           <% } %>

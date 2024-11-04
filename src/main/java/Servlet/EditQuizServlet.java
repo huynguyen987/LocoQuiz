@@ -108,7 +108,7 @@ public class EditQuizServlet extends HttpServlet {
                         question.setSequence(i + 1);
                     }
 
-                    question.setQuestionText(questionObj.getString("question"));
+                    question.setQuestion(questionObj.getString("question"));
                     if (questionObj.has("options")) {
                         JSONArray optionsArray = questionObj.getJSONArray("options");
                         List<String> options = new ArrayList<>();
@@ -118,7 +118,8 @@ public class EditQuizServlet extends HttpServlet {
                         question.setOptions(options);
                     }
                     if (questionObj.has("correct")) {
-                        question.setCorrectAnswer(questionObj.getString("correct"));
+                        // Corrected method name from 'correct' to 'setCorrect'
+                        question.setCorrect(questionObj.getString("correct"));
                     }
                     questions.add(question);
                 }
@@ -143,7 +144,7 @@ public class EditQuizServlet extends HttpServlet {
             try {
                 tagList = tagDAO.getAllTags();
             } catch (SQLException | ClassNotFoundException ex) {
-                throw new RuntimeException(ex);
+                ex.printStackTrace();
             }
             request.setAttribute("tagList", tagList != null ? tagList : new ArrayList<>());
             request.getRequestDispatcher("/jsp/edit-quiz.jsp").forward(request, response);
@@ -301,7 +302,7 @@ public class EditQuizServlet extends HttpServlet {
                         // Add the question object to the list
                         Question q = new Question();
                         q.setSequence(questionObjJSON.has("sequence") ? questionObjJSON.getInt("sequence") : i);
-                        q.setQuestionText(questionObjJSON.getString("question"));
+                        q.setQuestion(questionObjJSON.getString("question"));
                         if (questionObjJSON.has("options")) {
                             JSONArray optionsArray = questionObjJSON.getJSONArray("options");
                             List<String> options = new ArrayList<>();
@@ -311,7 +312,7 @@ public class EditQuizServlet extends HttpServlet {
                             q.setOptions(options);
                         }
                         if (questionObjJSON.has("correct")) {
-                            q.setCorrectAnswer(questionObjJSON.getString("correct"));
+                            q.setCorrect(questionObjJSON.getString("correct"));
                         }
                         questions.add(q);
                     }
@@ -323,13 +324,13 @@ public class EditQuizServlet extends HttpServlet {
                 for (Question question : questions) {
                     JSONObject questionObjJSON = new JSONObject();
                     questionObjJSON.put("sequence", question.getSequence());
-                    questionObjJSON.put("question", question.getQuestionText());
+                    questionObjJSON.put("question", question.getQuestion());
 
                     if (quizType.equals("multiple-choice") || quizType.equals("matching")) {
                         questionObjJSON.put("options", question.getOptions());
-                        questionObjJSON.put("correct", question.getCorrectAnswer());
+                        questionObjJSON.put("correct", question.getCorrect());
                     } else if (quizType.equals("fill-in-the-blank")) {
-                        questionObjJSON.put("correct", question.getCorrectAnswer());
+                        questionObjJSON.put("correct", question.getCorrect());
                     }
 
                     questionsArray.put(questionObjJSON);
@@ -417,7 +418,7 @@ public class EditQuizServlet extends HttpServlet {
             if (text.startsWith("Q:")) {
                 currentQuestion = new Question();
                 currentQuestion.setSequence(sequence++);
-                currentQuestion.setQuestionText(text.substring(2).trim());
+                currentQuestion.setQuestion(text.substring(2).trim());
                 questions.add(currentQuestion);
             } else if ((quizType.equals("multiple-choice") || quizType.equals("matching")) && currentQuestion != null && text.matches("[A-D]\\).*")) {
                 // Option line
@@ -427,15 +428,13 @@ public class EditQuizServlet extends HttpServlet {
                 currentQuestion.getOptions().add(text.substring(2).trim());
             } else if (text.startsWith("Answer:") && currentQuestion != null) {
                 String correctAnswer = text.substring(7).trim();
-                if (quizType.equals("multiple-choice")) {
-                    currentQuestion.setCorrectAnswer(correctAnswer);
-                } else if (quizType.equals("fill-in-the-blank")) {
-                    currentQuestion.setCorrectAnswer(correctAnswer);
+                if (quizType.equals("multiple-choice") || quizType.equals("fill-in-the-blank")) {
+                    currentQuestion.setCorrect(correctAnswer);
                 } else if (quizType.equals("matching")) {
                     // For matching, combine options into a single string
                     String matchingOption = String.join("; ", currentQuestion.getOptions());
                     currentQuestion.setOptions(Collections.singletonList(matchingOption));
-                    currentQuestion.setCorrectAnswer(matchingOption);
+                    currentQuestion.setCorrect(matchingOption);
                 }
             }
         }
@@ -461,7 +460,7 @@ public class EditQuizServlet extends HttpServlet {
             if (questionCell != null) {
                 Question question = new Question();
                 question.setSequence(sequence++);
-                question.setQuestionText(getCellValue(questionCell));
+                question.setQuestion(getCellValue(questionCell));
 
                 if (quizType.equals("multiple-choice") || quizType.equals("matching")) {
                     List<String> options = new ArrayList<>();
@@ -475,18 +474,18 @@ public class EditQuizServlet extends HttpServlet {
                         // Combine options into a single string
                         String matchingOption = String.join("; ", options);
                         question.setOptions(Collections.singletonList(matchingOption));
-                        question.setCorrectAnswer(matchingOption);
+                        question.setCorrect(matchingOption);
                     } else {
                         question.setOptions(options);
                         Cell correctCell = row.getCell(5);
                         if (correctCell != null) {
-                            question.setCorrectAnswer(getCellValue(correctCell));
+                            question.setCorrect(getCellValue(correctCell));
                         }
                     }
                 } else if (quizType.equals("fill-in-the-blank")) {
                     Cell correctCell = row.getCell(1);
                     if (correctCell != null) {
-                        question.setCorrectAnswer(getCellValue(correctCell));
+                        question.setCorrect(getCellValue(correctCell));
                     }
                 }
 
