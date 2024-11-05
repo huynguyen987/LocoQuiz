@@ -16,7 +16,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Quiz Library</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/library.css">
   <script src="<%= request.getContextPath() %>/js/library.js" defer></script>
 </head>
 <body>
