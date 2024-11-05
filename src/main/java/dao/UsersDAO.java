@@ -13,7 +13,7 @@ import Module.*;
 public class UsersDAO {
 
     // Utility method to extract user data from ResultSet
-    private Users extractUserFromResultSet(ResultSet rs) throws SQLException {
+    private static Users extractUserFromResultSet(ResultSet rs) throws SQLException {
         Users user = new Users();
         user.setId(rs.getInt("id"));
         user.setUsername(rs.getString("username"));
@@ -50,7 +50,7 @@ public class UsersDAO {
     }
 
     // Get user by ID
-    public Users getUserById(int id) throws SQLException, ClassNotFoundException {
+    public static Users getUserById(int id) throws SQLException, ClassNotFoundException {
         String sql = "SELECT * FROM users WHERE id = ?";
         Users user = null;
 

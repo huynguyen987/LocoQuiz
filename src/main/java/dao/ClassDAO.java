@@ -432,4 +432,19 @@ public class ClassDAO {
         }
         return competitions;
     }
+
+    public int getTeacherIdByClassId(int classId) {
+        String query = "SELECT teacher_id FROM class WHERE id = ?";
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, classId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("teacher_id");
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 }

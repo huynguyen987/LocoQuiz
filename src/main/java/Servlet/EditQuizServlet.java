@@ -118,10 +118,7 @@ public class EditQuizServlet extends HttpServlet {
                         question.setOptions(options);
                     }
                     if (questionObj.has("correct")) {
-<<<<<<< HEAD
-=======
                         // Corrected method name from 'correct' to 'setCorrect'
->>>>>>> cbe06698f1e835dc216c75f2291aca30a64095b8
                         question.setCorrect(questionObj.getString("correct"));
                     }
                     questions.add(question);
@@ -431,13 +428,7 @@ public class EditQuizServlet extends HttpServlet {
                 currentQuestion.getOptions().add(text.substring(2).trim());
             } else if (text.startsWith("Answer:") && currentQuestion != null) {
                 String correctAnswer = text.substring(7).trim();
-<<<<<<< HEAD
-                if (quizType.equals("multiple-choice")) {
-                    currentQuestion.setCorrect(correctAnswer);
-                } else if (quizType.equals("fill-in-the-blank")) {
-=======
                 if (quizType.equals("multiple-choice") || quizType.equals("fill-in-the-blank")) {
->>>>>>> cbe06698f1e835dc216c75f2291aca30a64095b8
                     currentQuestion.setCorrect(correctAnswer);
                 } else if (quizType.equals("matching")) {
                     // For matching, combine options into a single string

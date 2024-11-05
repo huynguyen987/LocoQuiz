@@ -90,7 +90,7 @@
                     <p>${fn:length(competitions)}</p>
                 </div>
                 <div class="stat-actions">
-                    <a href="${pageContext.request.contextPath}/jsp/teacher.jsp?action=viewAllCompetitions" class="view-button">
+                    <a href="${pageContext.request.contextPath}/CompetitionController?action=list" class="view-button">
                         <i class="fas fa-eye"></i> Xem Cuộc Thi
                     </a>
                 </div>

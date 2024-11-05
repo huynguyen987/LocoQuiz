@@ -65,6 +65,7 @@ public class AddCompetitionResultServlet extends HttpServlet {
             int userId = Integer.parseInt(userIdParam);
             int classId = Integer.parseInt(classIdParam);
             float score = Float.parseFloat(scoreParam);
+            int timeTaken = Integer.parseInt(request.getParameter("timeTaken"));
 
             // Tạo đối tượng CompetitionResult
             CompetitionResult cr = new CompetitionResult();
@@ -72,6 +73,7 @@ public class AddCompetitionResultServlet extends HttpServlet {
             cr.setUserId(userId);
             cr.setClassId(classId);
             cr.setScore(score);
+            cr.setTimeTaken(timeTaken);
             cr.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
             // Thêm vào cơ sở dữ liệu

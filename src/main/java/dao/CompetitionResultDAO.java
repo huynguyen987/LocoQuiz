@@ -2,12 +2,21 @@ package dao;
 
 import entity.CompetitionResult;
 import Module.DBConnect;
+import entity.Users;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CompetitionResultDAO {
+
+//    id INT PRIMARY KEY AUTO_INCREMENT,
+//    competition_id INT NOT NULL,
+//    user_id INT NOT NULL,
+//    class_id INT NOT NULL,
+//    score FLOAT NOT NULL,
+//    timeTaken INT NOT NULL,
+//    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     // Lấy tất cả kết quả
     public List<CompetitionResult> getAllCompetitionResults() throws SQLException, ClassNotFoundException {
@@ -25,6 +34,7 @@ public class CompetitionResultDAO {
                 cr.setUserId(rs.getInt("user_id"));
                 cr.setClassId(rs.getInt("class_id"));
                 cr.setScore(rs.getFloat("score"));
+                cr.setTimeTaken(rs.getInt("timeTaken"));
                 cr.setCreatedAt(rs.getTimestamp("created_at"));
 
                 competitionResults.add(cr);
@@ -54,6 +64,7 @@ public class CompetitionResultDAO {
                     cr.setUserId(rs.getInt("user_id"));
                     cr.setClassId(rs.getInt("class_id"));
                     cr.setScore(rs.getFloat("score"));
+                    cr.setTimeTaken(rs.getInt("timeTaken"));
                     cr.setCreatedAt(rs.getTimestamp("created_at"));
                 }
             }
@@ -67,7 +78,7 @@ public class CompetitionResultDAO {
 
     // Thêm kết quả mới
     public boolean insertCompetitionResult(CompetitionResult cr) throws SQLException, ClassNotFoundException {
-        String sql = "INSERT INTO competition_results (competition_id, user_id, class_id, score, created_at) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO competition_results (competition_id, user_id, class_id, score, timeTaken, created_at) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = new DBConnect().getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -76,7 +87,8 @@ public class CompetitionResultDAO {
             ps.setInt(2, cr.getUserId());
             ps.setInt(3, cr.getClassId());
             ps.setFloat(4, cr.getScore());
-            ps.setTimestamp(5, cr.getCreatedAt());
+            ps.setInt(5, cr.getTimeTaken());
+            ps.setTimestamp(6, cr.getCreatedAt());
 
             return ps.executeUpdate() == 1;
 
@@ -89,7 +101,7 @@ public class CompetitionResultDAO {
 
     // Cập nhật kết quả
     public boolean updateCompetitionResult(CompetitionResult cr) throws SQLException, ClassNotFoundException {
-        String sql = "UPDATE competition_results SET competition_id = ?, user_id = ?, class_id = ?, score = ?, created_at = ? WHERE id = ?";
+        String sql = "UPDATE competition_results SET competition_id = ?, user_id = ?, class_id = ?, score = ?, timeTaken = ?, created_at = ? WHERE id = ?";
 
         try (Connection connection = new DBConnect().getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -98,8 +110,9 @@ public class CompetitionResultDAO {
             ps.setInt(2, cr.getUserId());
             ps.setInt(3, cr.getClassId());
             ps.setFloat(4, cr.getScore());
-            ps.setTimestamp(5, cr.getCreatedAt());
-            ps.setInt(6, cr.getId());
+            ps.setInt(5, cr.getTimeTaken());
+            ps.setTimestamp(6, cr.getCreatedAt());
+            ps.setInt(7, cr.getId());
 
             return ps.executeUpdate() == 1;
 
@@ -145,6 +158,7 @@ public class CompetitionResultDAO {
                     cr.setUserId(rs.getInt("user_id"));
                     cr.setClassId(rs.getInt("class_id"));
                     cr.setScore(rs.getFloat("score"));
+                    cr.setTimeTaken(rs.getInt("timeTaken"));
                     cr.setCreatedAt(rs.getTimestamp("created_at"));
 
                     competitionResults.add(cr);
@@ -176,6 +190,7 @@ public class CompetitionResultDAO {
                     cr.setUserId(rs.getInt("user_id"));
                     cr.setClassId(rs.getInt("class_id"));
                     cr.setScore(rs.getFloat("score"));
+                    cr.setTimeTaken(rs.getInt("timeTaken"));
                     cr.setCreatedAt(rs.getTimestamp("created_at"));
 
                     competitionResults.add(cr);
@@ -207,6 +222,7 @@ public class CompetitionResultDAO {
                     cr.setUserId(rs.getInt("user_id"));
                     cr.setClassId(rs.getInt("class_id"));
                     cr.setScore(rs.getFloat("score"));
+                    cr.setTimeTaken(rs.getInt("timeTaken"));
                     cr.setCreatedAt(rs.getTimestamp("created_at"));
 
                     competitionResults.add(cr);
@@ -227,5 +243,100 @@ public class CompetitionResultDAO {
         for (CompetitionResult cr : competitionResults) {
             System.out.println(cr.toString());
         }
+    }
+
+    public List<CompetitionResult> getCompetitionResultsByCompetitionIdAndClassId(int competitionId, int classId) {
+        List<CompetitionResult> competitionResults = new ArrayList<>();
+        String sql = "SELECT * FROM competition_results WHERE competition_id = ? AND class_id = ?";
+
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, competitionId);
+            ps.setInt(2, classId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    CompetitionResult cr = new CompetitionResult();
+                    cr.setId(rs.getInt("id"));
+                    cr.setCompetitionId(rs.getInt("competition_id"));
+                    cr.setUserId(rs.getInt("user_id"));
+                    cr.setClassId(rs.getInt("class_id"));
+                    cr.setScore(rs.getFloat("score"));
+                    cr.setTimeTaken(rs.getInt("timeTaken"));
+                    cr.setCreatedAt(rs.getTimestamp("created_at"));
+
+                    // Only add non-null results
+                    if (cr != null) {
+                        competitionResults.add(cr);
+                    }
+                }
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return competitionResults;
+    }
+
+
+    public List<CompetitionResult> getCompetitionResultsByCompetitionIdAndUserId(int id, int studentId) {
+        List<CompetitionResult> competitionResults = new ArrayList<>();
+        String sql = "SELECT * FROM competition_results WHERE competition_id = ? AND user_id = ?";
+
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ps.setInt(2, studentId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    CompetitionResult cr = new CompetitionResult();
+                    cr.setId(rs.getInt("id"));
+                    cr.setCompetitionId(rs.getInt("competition_id"));
+                    cr.setUserId(rs.getInt("user_id"));
+                    cr.setClassId(rs.getInt("class_id"));
+                    cr.setScore(rs.getFloat("score"));
+                    cr.setTimeTaken(rs.getInt("timeTaken"));
+                    cr.setCreatedAt(rs.getTimestamp("created_at"));
+
+                    competitionResults.add(cr);
+                }
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return competitionResults;
+    }
+
+    public List<Users> getStudentsByCompetitionIdAndClassId(int competitionId, int classId) {
+        List<Users> students = new ArrayList<>();
+        String sql = "SELECT * FROM users WHERE id IN (SELECT user_id FROM competition_results WHERE competition_id = ? AND class_id = ?)";
+
+        try (Connection connection = new DBConnect().getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, competitionId);
+            ps.setInt(2, classId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Users student = new Users();
+                    student.setId(rs.getInt("id"));
+                    student.setUsername(rs.getString("username"));
+                    student.setEmail(rs.getString("email"));
+                    students.add(student);
+                }
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return students;
     }
 }

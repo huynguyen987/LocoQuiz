@@ -51,10 +51,6 @@ function displayExamDetails(data) {
         <h2>${data.competitionId ? `Competition ID: ${data.competitionId}` : 'Competition'}</h2>
         <p><strong>Total Questions:</strong> ${data.totalQuestions}</p>
         <p><strong>Time Limit:</strong> ${data.timeLimit / 60} minutes</p>
-        <h3>Questions:</h3>
-        <ul>
-            ${data.questions.map(q => `<li>${q.question}</li>`).join('')}
-        </ul>
     `;
 
     examDetailsDiv.appendChild(examInfo);

@@ -346,6 +346,7 @@ public class TakeCompetitionController extends HttpServlet {
         competitionResult.setUserId(currentUser.getId());
         competitionResult.setClassId(competition.getClassId());
         competitionResult.setScore(scorePercentage);
+        competitionResult.setTimeTaken(timeTaken);
         competitionResult.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
         competitionResultDAO.insertCompetitionResult(competitionResult);

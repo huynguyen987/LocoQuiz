@@ -4,22 +4,23 @@
 
 <%-- No scriptlet imports or code --%>
 
+<%-- Show results of all students in a class --%>
 <c:choose>
     <c:when test="${empty competitionResults}">
         <div class="container">
-            <h2>No one has participated in the competition</h2>
+            <h2>Chưa có ai tham gia cuộc thi</h2>
         </div>
     </c:when>
     <c:otherwise>
         <div class="container">
-            <h2>Competition Result</h2>
+            <h2>Kết quả cuộc thi</h2>
             <table class="table">
                 <thead>
                 <tr>
                     <th>STT</th>
-                    <th>Student name</th>
-                    <th>Score</th>
-                    <th>Time taken</th>
+                    <th>Tên học sinh</th>
+                    <th>Điểm</th>
+                    <th>Thời gian làm bài</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -27,9 +28,16 @@
                 <c:forEach var="competitionResult" items="${competitionResults}" varStatus="loop">
                     <tr>
                         <td>${loop.index + 1}</td>
-                        <td>${student.username}</td>
+                        <td>
+                            <c:if test="${usersMap[competitionResult.userId] != null}">
+                                ${usersMap[competitionResult.userId].username}
+                            </c:if>
+                            <c:if test="${usersMap[competitionResult.userId] == null}">
+                                Unknown Student
+                            </c:if>
+                        </td>
                         <td>${competitionResult.score}</td>
-                        <td>${competitionResult.timeTaken} seconds</td>
+                        <td>${competitionResult.timeTaken} giây</td>
                     </tr>
                 </c:forEach>
                 </tbody>

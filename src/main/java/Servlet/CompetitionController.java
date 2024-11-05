@@ -1,10 +1,7 @@
 package Servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dao.ClassDAO;
-import dao.CompetitionDAO;
-import dao.CompetitionResultDAO;
-import dao.QuizDAO;
+import dao.*;
 import entity.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -227,6 +224,7 @@ public class CompetitionController extends HttpServlet {
     private void viewCompetition(HttpServletRequest request, HttpServletResponse response, Users currentUser)
             throws SQLException, ServletException, IOException, ClassNotFoundException {
         String competitionIdStr = request.getParameter("id");
+        System.out.println("Competition ID: " + competitionIdStr);
         if (competitionIdStr == null || competitionIdStr.isEmpty()) {
             response.sendRedirect("CompetitionController?action=list");
             return;
@@ -235,22 +233,73 @@ public class CompetitionController extends HttpServlet {
         int competitionId = Integer.parseInt(competitionIdStr);
         Competition competition = competitionDAO.getCompetitionById(competitionId);
         if (competition == null) {
+            System.out.println("Competition not found.");
             response.sendRedirect("CompetitionController?action=list");
             return;
         }
 
-        request.setAttribute("competition", competition);
+        CompetitionResultDAO competitionResultDAO = new CompetitionResultDAO();
+        ClassDAO classDAO = new ClassDAO();
 
-        // Forward to the appropriate JSP based on user role
         if (currentUser.hasRole("teacher")) {
-            request.getRequestDispatcher("/jsp/competition-details-teacher.jsp").forward(request, response);
+            System.out.println("Viewing competition as teacher.");
+            List<CompetitionResult> competitionResultAll = competitionResultDAO.getCompetitionResultsByCompetitionId(competitionId);
+
+            if (competitionResultAll.isEmpty()) {
+                System.out.println("No results found.");
+                request.setAttribute("competition", competition);
+                request.setAttribute("competitionResults", Collections.emptyList());
+                request.getRequestDispatcher("/jsp/CompetitionResultTeacher.jsp").forward(request, response);
+            } else {
+                List<CompetitionResult> competitionResults = new ArrayList<>();
+                Set<Integer> userIds = new HashSet<>();
+                for (CompetitionResult result : competitionResultAll) {
+                    if (result != null) { // Additional null check
+                        classs classs = classDAO.getClassById(result.getClassId());
+                        if (classs != null) {
+                            result.setClassId(classs.getId());
+                            competitionResults.add(result);
+                            userIds.add(result.getUserId());
+                        }
+                    }
+                }
+
+                // Retrieve students based on competition ID and class ID
+                List<Users> students = competitionResultDAO.getStudentsByCompetitionIdAndClassId(competitionId, competition.getClassId());
+
+                // Create a map of userId to Users for easy lookup in JSP
+                Map<Integer, Users> usersMap = new HashMap<>();
+                for (Users user : students) {
+                    usersMap.put(user.getId(), user);
+                }
+
+                request.setAttribute("competition", competition);
+                request.setAttribute("competitionResults", competitionResults);
+                request.setAttribute("usersMap", usersMap);
+                request.getRequestDispatcher("/jsp/CompetitionResultTeacher.jsp").forward(request, response);
+            }
         } else if (currentUser.hasRole("student")) {
-            request.getRequestDispatcher("/jsp/competition-details-student.jsp").forward(request, response);
+            System.out.println("Viewing competition as student.");
+            int teacherId = classDAO.getTeacherIdByClassId(competition.getClassId());
+            int studentId = currentUser.getId();
+            List<CompetitionResult> competitionResults = competitionResultDAO.getCompetitionResultsByCompetitionIdAndUserId(competition.getId(), studentId);
+
+            // Retrieve student object
+            UsersDAO usersDAO = new UsersDAO();
+            Users student = usersDAO.getUserById(studentId); // Ensure this method exists in UsersDAO
+
+            request.setAttribute("student", student);
+            request.setAttribute("competition", competition);
+            request.setAttribute("teacherId", teacherId);
+            request.setAttribute("competitionResults", competitionResults);
+            request.getRequestDispatcher("/jsp/CompetitionResult.jsp").forward(request, response);
         } else {
             // Unauthorized user, redirect to competition list
+            System.out.println("Do not have permission to view competition.");
             response.sendRedirect("CompetitionController?action=list");
         }
     }
+
 
     private void deleteCompetition(HttpServletRequest request, HttpServletResponse response, Users currentUser)
             throws SQLException, IOException, ServletException, ClassNotFoundException {

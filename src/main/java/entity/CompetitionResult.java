@@ -1,6 +1,7 @@
 package entity;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class CompetitionResult {
     private int id;
@@ -8,21 +9,31 @@ public class CompetitionResult {
     private int userId;
     private int classId;
     private float score;
+    private int timeTaken;
     private Timestamp createdAt;
 
     // Constructors
     public CompetitionResult() {}
 
-    public CompetitionResult(int id, int competitionId, int userId, int classId, float score, Timestamp createdAt) {
+    public CompetitionResult(int id, int competitionId, int userId, int classId, float score, int timeTaken, Timestamp createdAt) {
         this.id = id;
         this.competitionId = competitionId;
         this.userId = userId;
         this.classId = classId;
         this.score = score;
+        this.timeTaken = timeTaken;
         this.createdAt = createdAt;
     }
 
     // Getters and Setters
+    public int getTimeTaken() {
+        return timeTaken;
+    }
+
+    public void setTimeTaken(int timeTaken) {
+        this.timeTaken = timeTaken;
+    }
+
 
     public int getId() {
         return id;
