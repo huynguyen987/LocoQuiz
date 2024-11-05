@@ -169,24 +169,106 @@ public class UsersDAO {
         return isUpdated;
     }
 
-    // Delete user
+    // Delete user and related data
     public boolean deleteUser(int id) throws SQLException, ClassNotFoundException {
-        String sql = "DELETE FROM users WHERE id = ?";
+        // Define SQL delete statements for all related tables
+        String deleteCompetitionResults = "DELETE FROM competition_results WHERE user_id = ?";
+        String deleteCompetitions = "DELETE FROM competitions WHERE quiz_id IN (SELECT id FROM quiz WHERE user_id = ?)";
+        String deleteQuizTags = "DELETE FROM quiz_tag WHERE quiz_id IN (SELECT id FROM quiz WHERE user_id = ?)";
+        String deleteUserLibrary = "DELETE FROM user_library WHERE user_id = ?";
+        String deleteResults = "DELETE FROM result WHERE user_id = ?";
+        String deleteUserQuiz = "DELETE FROM user_quiz WHERE user_id = ?";
+        String deleteClassQuizzes = "DELETE FROM class_quiz WHERE class_id IN (SELECT id FROM class WHERE teacher_id = ?)";
+        String deleteClassUser = "DELETE FROM class_user WHERE user_id = ?";
+        String deleteClasses = "DELETE FROM class WHERE teacher_id = ?";
+        String deleteQuiz = "DELETE FROM quiz WHERE user_id = ?";
+        String deleteUser = "DELETE FROM users WHERE id = ?";
         boolean isDeleted = false;
 
-        try (Connection connection = new DBConnect().getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (Connection connection = new DBConnect().getConnection()) {
+            // Start transaction
+            connection.setAutoCommit(false);
 
-            ps.setInt(1, id);
-            int affectedRows = ps.executeUpdate();
-            isDeleted = affectedRows > 0;
+            try (
+                    PreparedStatement psCompetitionResults = connection.prepareStatement(deleteCompetitionResults);
+                    PreparedStatement psCompetitions = connection.prepareStatement(deleteCompetitions);
+                    PreparedStatement psQuizTags = connection.prepareStatement(deleteQuizTags);
+                    PreparedStatement psUserLibrary = connection.prepareStatement(deleteUserLibrary);
+                    PreparedStatement psResults = connection.prepareStatement(deleteResults);
+                    PreparedStatement psUserQuiz = connection.prepareStatement(deleteUserQuiz);
+                    PreparedStatement psClassQuizzes = connection.prepareStatement(deleteClassQuizzes);
+                    PreparedStatement psClassUser = connection.prepareStatement(deleteClassUser);
+                    PreparedStatement psClasses = connection.prepareStatement(deleteClasses);
+                    PreparedStatement psQuiz = connection.prepareStatement(deleteQuiz);
+                    PreparedStatement psUser = connection.prepareStatement(deleteUser)
+            ) {
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+                // Set user ID for all queries
+                psCompetitionResults.setInt(1, id);
+                psCompetitions.setInt(1, id);
+                psQuizTags.setInt(1, id);
+                psUserLibrary.setInt(1, id);
+                psResults.setInt(1, id);
+                psUserQuiz.setInt(1, id);
+                psClassQuizzes.setInt(1, id);
+                psClassUser.setInt(1, id);
+                psClasses.setInt(1, id);
+                psQuiz.setInt(1, id);
+                psUser.setInt(1, id);
+
+                // Execute delete statements in the correct order
+                // 1. Delete competition_results related to the user
+                psCompetitionResults.executeUpdate();
+
+                // 2. Delete competitions related to the user's quizzes
+                psCompetitions.executeUpdate();
+
+                // 3. Delete quiz_tags related to the user's quizzes
+                psQuizTags.executeUpdate();
+
+                // 4. Delete user_library entries related to the user
+                psUserLibrary.executeUpdate();
+
+                // 5. Delete results related to the user
+                psResults.executeUpdate();
+
+                // 6. Delete user_quiz related to the user
+                psUserQuiz.executeUpdate();
+
+                // 7. Delete class_quiz related to classes taught by the user
+                psClassQuizzes.executeUpdate();
+
+                // 8. Delete class_user records related to the user
+                psClassUser.executeUpdate();
+
+                // 9. Delete classes taught by the user
+                psClasses.executeUpdate();
+
+                // 10. Delete quizzes created by the user
+                psQuiz.executeUpdate();
+
+                // 11. Finally, delete the user
+                int affectedRows = psUser.executeUpdate();
+
+                // Commit transaction if user deletion succeeded
+                isDeleted = affectedRows > 0;
+                connection.commit();
+
+            } catch (SQLException e) {
+                // Rollback transaction in case of error
+                connection.rollback();
+                e.printStackTrace();
+            } finally {
+                // Restore default commit behavior
+                connection.setAutoCommit(true);
+            }
         }
 
         return isDeleted;
-    }// Get all students not in class
+    }
+
+
+    // Get all students not in class
     public List<Users> getAllStudentsNotInClass(int classId) throws SQLException, ClassNotFoundException {
         String sql = "SELECT * FROM users WHERE role_id = 2 AND id NOT IN (SELECT user_id FROM class_user WHERE class_id = ?)";
         List<Users> students = new ArrayList<>();
