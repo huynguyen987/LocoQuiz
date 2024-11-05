@@ -401,3 +401,12 @@ INSERT INTO result (user_id, quiz_id, class_id, score) VALUES
 INSERT INTO type (name, description) VALUES
 ('Essay', 'Quizzes requiring detailed written answers'),
 ('Matching', 'Quizzes where items must be matched');
+
+CREATE TABLE user_library (
+  user_id INT NOT NULL,
+  quiz_id INT NOT NULL,
+  added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, quiz_id),
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (quiz_id) REFERENCES quiz(id)
+);
