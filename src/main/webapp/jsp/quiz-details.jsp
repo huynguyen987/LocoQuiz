@@ -2,6 +2,8 @@
 <%@ page import="entity.quiz, entity.Tag, entity.Users" %>
 <%@ page import="dao.QuizDAO" %>
 <%@ page import="java.util.List" %>
+<%@ page import="dao.UserLibraryDAO" %>
+
 <%
   // Kiểm tra xem tham số "id" có tồn tại và hợp lệ hay không
   String idParam = request.getParameter("id");
@@ -36,6 +38,13 @@
   // Lấy thông tin người dùng từ session để kiểm tra quyền hạn
   Users currentUser = (Users) session.getAttribute("user");
   String userRole = (currentUser != null) ? currentUser.getRoleName() : "";
+
+  // Kiểm tra xem người dùng đã thêm bài kiểm tra này vào thư viện của mình chưa
+  UserLibraryDAO userLibraryDAO = new UserLibraryDAO();
+  boolean isInLibrary = false;
+  if (currentUser != null) {
+    isInLibrary = userLibraryDAO.isQuizInLibrary(currentUser.getId(), quizId);
+  }
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,7 +60,7 @@
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <style>
     /* Bạn có thể thêm các kiểu CSS tùy chỉnh tại đây hoặc trong tệp quiz-details.css */
-    .btn-edit, .btn-delete, .btn-quiz {
+    .btn-edit, .btn-delete, .btn-quiz, .btn-add {
       display: inline-block;
       padding: 10px 20px;
       margin: 5px;
@@ -77,6 +86,12 @@
     }
     .btn-quiz:hover {
       background-color: #218838;
+    }
+    .btn-add {
+      background-color: #17a2b8;
+    }
+    .btn-add:hover {
+      background-color: #117a8b;
     }
     .active {
       color: #28a745;
@@ -143,6 +158,32 @@
       <a href="<%= request.getContextPath() %>/TakeQuizServlet?id=<%= q.getId() %>" class="btn-quiz">
         <i class="fas fa-play"></i> Take Quiz
       </a>
+
+      <!-- Thêm phần chức năng Thư viện -->
+      <% if (currentUser != null) { %>
+      <% if (isInLibrary) { %>
+      <!-- Hiển thị nút "Remove from Library" -->
+      <form action="<%= request.getContextPath() %>/RemoveFromLibraryServlet" method="post" style="display:inline;">
+        <input type="hidden" name="quizId" value="<%= q.getId() %>">
+        <button type="submit" class="btn-delete">
+          <i class="fas fa-minus"></i> Remove from Library
+        </button>
+      </form>
+      <% } else { %>
+      <!-- Hiển thị nút "Add to Library" -->
+      <form action="<%= request.getContextPath() %>/AddToLibraryServlet" method="post" style="display:inline;">
+        <input type="hidden" name="quizId" value="<%= q.getId() %>">
+        <button type="submit" class="btn-add">
+          <i class="fas fa-plus"></i> Add to Library
+        </button>
+      </form>
+      <% } %>
+      <% } else { %>
+      <!-- Hiển thị lời nhắc đăng nhập để thêm vào thư viện -->
+      <p><a href="<%= request.getContextPath() %>/login.jsp">Log in</a> to add this quiz to your library.</p>
+      <% } %>
+
+      <%-- Hiển thị nút "Edit" và "Delete" nếu người dùng là admin hoặc teacher --%>
       <%
         // Display Edit and Delete buttons if user is admin or teacher
         if (currentUser != null) {

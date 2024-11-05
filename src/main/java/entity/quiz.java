@@ -6,6 +6,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.sql.Timestamp;
 
 public class quiz extends Competition {
 
@@ -20,6 +21,7 @@ public class quiz extends Competition {
     private boolean status;
     private int views;
     private List<Tag> tag;
+    private Timestamp addedAt;
 
     private static final Gson gson = new Gson();
 
@@ -197,6 +199,14 @@ public class quiz extends Competition {
     // New method to get the creator ID
     public int getCreatorId() {
         return user_id;
+    }
+
+    public void setAddedAt(Timestamp addedAt) {
+        this.addedAt = addedAt;
+    }
+
+    public Timestamp getAddedAt() {
+        return addedAt;
     }
 
     @Override

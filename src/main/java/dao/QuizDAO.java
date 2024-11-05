@@ -537,7 +537,7 @@ public class QuizDAO {
     }
 
     // Helper method to extract quiz from ResultSet
-    private quiz extractQuizFromResultSet(ResultSet rs) throws SQLException {
+    public quiz extractQuizFromResultSet(ResultSet rs) throws SQLException {
         quiz q = new quiz();
         q.setId(rs.getInt("id"));
         q.setName(rs.getString("name"));
