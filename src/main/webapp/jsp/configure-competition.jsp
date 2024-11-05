@@ -98,7 +98,7 @@
 
     <div class="form-actions">
       <button type="submit"><c:out value="${competition != null ? 'Cập Nhật' : 'Tạo'}" /></button>
-      <a href="${pageContext.request.contextPath}/TakeCompetitionServlet?action=list">Hủy</a>
+      <a href="${pageContext.request.contextPath}/jsp/teacher.jsp">Hủy</a>
     </div>
   </form>
 </div>

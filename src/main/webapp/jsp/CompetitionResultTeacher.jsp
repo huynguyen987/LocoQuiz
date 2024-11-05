@@ -1,9 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="/jsp/components/header.jsp" %>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%-- No scriptlet imports or code --%>
-
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/competition_result.css">
 <%-- Show results of all students in a class --%>
 <c:choose>
     <c:when test="${empty competitionResults}">
@@ -46,4 +46,4 @@
     </c:otherwise>
 </c:choose>
 
-<%@ include file="/jsp/components/footer.jsp" %>
+

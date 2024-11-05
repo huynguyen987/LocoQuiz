@@ -76,11 +76,6 @@
                     <h3>Tổng Số Lớp</h3>
                     <p>${fn:length(classes)}</p>
                 </div>
-                <div class="stat-actions">
-                    <a href="${pageContext.request.contextPath}/jsp/classList.jsp?user=${teacher.getId()}" class="view-button">
-                        <i class="fas fa-eye"></i> Xem Chi Tiết
-                    </a>
-                </div>
             </div>
 
             <div class="stat-card">

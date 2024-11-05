@@ -1,0 +1,142 @@
+/* competition_result.css */
+
+/* Base Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 80px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Headings */
+.container h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 2em;
+    position: relative;
+}
+
+.container h2::after {
+    content: '';
+    width: 60px;
+    height: 4px;
+    background-color: #3498db;
+    display: block;
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+/* Table Styles */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.table thead {
+    background-color: #3498db;
+    color: #ffffff;
+}
+
+.table thead th {
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 1.1em;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.table tbody tr:hover {
+    background-color: #e1f5fe;
+    transition: background-color 0.3s ease;
+}
+
+.table tbody td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #dddddd;
+    font-size: 1em;
+    color: #555555;
+}
+
+/* No Results Message */
+.container .no-results {
+    text-align: center;
+    font-size: 1.2em;
+    color: #7f8c8d;
+    padding: 40px 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        margin: 60px auto;
+    }
+
+    .container h2 {
+        font-size: 1.5em;
+    }
+
+    .table thead {
+        display: none;
+    }
+
+    .table, .table tbody, .table tr, .table td {
+        display: block;
+        width: 100%;
+    }
+
+    .table tr {
+        margin-bottom: 15px;
+    }
+
+    .table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+
+    .table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+}
+
+/* Accessibility Enhancements */
+.table th, .table td {
+    text-align: left;
+}
+
+.table th {
+    scope: col;
+}
+
+/* Utility Classes */
+.text-center {
+    text-align: center;
+}
+
+.hidden {
+    display: none;
+}
