@@ -1,42 +1,32 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package Servlet;
 
 import dao.QuizDAO;
+import dao.UserLibraryDAO;
 import entity.Users;
 import entity.quiz;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.SQLException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-/**
- *
- * @author hient
- */
 @WebServlet(name = "QuizDetailsServlet", urlPatterns = {"/QuizDetailsServlet"})
 public class QuizDetailsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String quizIdParam = request.getParameter("quizId");
-        if (quizIdParam == null || quizIdParam.trim().isEmpty()) {
+        String idParam = request.getParameter("id"); // Sử dụng "id" thay vì "quizId"
+        if (idParam == null || idParam.trim().isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/error.jsp?message=Invalid Quiz ID");
             return;
         }
 
         int quizId;
         try {
-            quizId = Integer.parseInt(quizIdParam);
+            quizId = Integer.parseInt(idParam);
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/error.jsp?message=Invalid Quiz ID Format");
             return;
@@ -44,9 +34,9 @@ public class QuizDetailsServlet extends HttpServlet {
 
         try {
             QuizDAO quizDAO = new QuizDAO();
-            quiz quiz = quizDAO.getQuizById(quizId);
+            quiz q = quizDAO.getQuizById(quizId);
 
-            if (quiz == null) {
+            if (q == null) {
                 response.sendRedirect(request.getContextPath() + "/error.jsp?message=Quiz Not Found");
                 return;
             }
@@ -55,9 +45,16 @@ public class QuizDetailsServlet extends HttpServlet {
             HttpSession session = request.getSession();
             Users currentUser = (Users) session.getAttribute("user");
 
-            // Đặt đối tượng quiz vào request
-            request.setAttribute("quiz", quiz);
-            request.setAttribute("currentUser", currentUser);
+            // Kiểm tra xem quiz có trong thư viện của người dùng hay không
+            boolean isInLibrary = false;
+            if (currentUser != null) {
+                UserLibraryDAO userLibraryDAO = new UserLibraryDAO();
+                isInLibrary = userLibraryDAO.isQuizInLibrary(currentUser.getId(), quizId);
+            }
+
+            // Đặt đối tượng quiz và isInLibrary vào request
+            request.setAttribute("quiz", q);
+            request.setAttribute("isInLibrary", isInLibrary);
 
             // Chuyển tiếp đến trang JSP
             request.getRequestDispatcher("/jsp/quiz-details.jsp").forward(request, response);
