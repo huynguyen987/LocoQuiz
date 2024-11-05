@@ -54,7 +54,7 @@
 
       // Lấy danh sách yêu cầu tham gia (chỉ khi người dùng là giáo viên)
       List<JoinRequest> pendingRequests = null;
-       currentUser = (Users) session.getAttribute("user");
+      Users currentUser = (Users) session.getAttribute("user");
       boolean isTeacher = currentUser != null && (currentUser.getRole_id() == Users.ROLE_TEACHER || currentUser.getRole_id() == Users.ROLE_ADMIN);
 
       if (isTeacher) {

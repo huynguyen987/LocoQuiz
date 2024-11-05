@@ -11,7 +11,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Danh Sách Lớp Học</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/classList.css">
+<%--  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/classList.css">--%>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/common.css">
+<%--    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/common2.css">--%>
 </head>
 <body>
 <%@ include file="components/header.jsp" %>
