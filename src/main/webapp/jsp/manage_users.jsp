@@ -53,23 +53,21 @@
       <div class="alert error">${param.error}</div>
     </c:if>
 
-    <!-- User Filters -->
     <div class="user-filters">
       <input type="text" id="searchUser" placeholder="Search by name or role">
-      <button onclick="filterUsers()">Search</button>
-      <button onclick="resetSearch()">Reset</button>
+      <button type="button" onclick="filterUsers()">Search</button>
+      <button type="button" onclick="resetSearch()">Reset</button>
       <a href="${pageContext.request.contextPath}/jsp/add_user.jsp" class="button add-user-btn">Add New User</a>
     </div>
 
     <!-- User Table -->
     <div class="table-responsive">
-      <table>
+      <table id="userTable">
         <thead>
         <tr>
           <th>User ID</th>
           <th>Username</th>
           <th>Role</th>
-          <th>Status</th>
           <th>Email</th>
           <th>Actions</th>
         </tr>
@@ -85,19 +83,14 @@
                     (user.getRole_id() == Users.ROLE_TEACHER ? "Teacher" : "Student")
             %>
           </td>
-          <td>
-            <%=
-            user.getRole_id() == Users.ROLE_ADMIN ? "Active" :
-                    (user.getRole_id() == Users.ROLE_TEACHER ? "Teacher" : "Student")
-            %>
-          </td>
           <td><%= user.getEmail() %></td>
           <td class="actions">
             <form action="${pageContext.request.contextPath}/UserServlet" method="post">
               <input type="hidden" name="userId" value="<%= user.getId() %>">
               <button type="submit" name="action" value="updateRole" class="action-btn update">Update Role</button>
               <button type="submit" name="action" value="toggleStatus" class="action-btn toggle">
-                <%= user.getRole_id() == Users.ROLE_ADMIN ? "Demote to Teacher" :
+                <%=
+                user.getRole_id() == Users.ROLE_ADMIN ? "Demote to Teacher" :
                         (user.getRole_id() == Users.ROLE_TEACHER ? "Promote to Student" : "Promote to Admin")
                 %>
               </button>
@@ -109,8 +102,6 @@
         </tbody>
       </table>
     </div>
-  </main>
-</div>
 
 <!-- Footer Section -->
 <footer>
