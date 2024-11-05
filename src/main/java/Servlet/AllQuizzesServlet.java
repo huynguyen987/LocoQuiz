@@ -16,11 +16,11 @@ public class AllQuizzesServlet extends HttpServlet {
         QuizDAO quizDAO = new QuizDAO();
         try {
             // Fetch Latest Quizzes
-            List<quiz> latestQuizzes = quizDAO.getLatestQuizzes();
+            List<quiz> latestQuizzes = quizDAO.getLatestQuizzes(5);
             request.setAttribute("latestQuizzes", latestQuizzes);
 
             // Fetch Popular Quizzes
-            List<quiz> popularQuizzes = quizDAO.getPopularQuizzes();
+            List<quiz> popularQuizzes = quizDAO.getPopularQuizzes(5);
             request.setAttribute("popularQuizzes", popularQuizzes);
 
             // Fetch All Quizzes with Pagination
@@ -31,7 +31,7 @@ public class AllQuizzesServlet extends HttpServlet {
                 page = Integer.parseInt(pageParam);
             }
             int offset = (page - 1) * recordsPerPage;
-            List<quiz> allQuizzes = quizDAO.getAllQuizzes(offset, recordsPerPage);
+            List<quiz> allQuizzes = quizDAO.getAllVisibleQuizzes(offset, recordsPerPage);
             int totalQuizzes = quizDAO.getTotalQuizCount();
             int totalPages = (int) Math.ceil(totalQuizzes * 1.0 / recordsPerPage);
             request.setAttribute("allQuizzes", allQuizzes);

@@ -9,6 +9,8 @@
         <entry key="file://$PROJECT_DIR$/src/main/webapp/jsp/blog-lists.jsp" value="file://$PROJECT_DIR$/src/main/webapp/jsp" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/jsp/components/header.jsp" value="file://$PROJECT_DIR$/src/main/webapp/jsp/components" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/jsp/components/sidebar.jsp" value="file://$PROJECT_DIR$/src/main/webapp/jsp/components" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/jsp/flashcard.jsp" value="file://$PROJECT_DIR$/src/main/webapp/jsp" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/jsp/manage_quizzes.jsp" value="file://$PROJECT_DIR$/src/main/webapp/jsp" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/jsp/quiz-creator.jsp" value="file://$PROJECT_DIR$/src/main/webapp/jsp" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/jsp/quiz-details.jsp" value="file://$PROJECT_DIR$/src/main/webapp/jsp" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/jsp/quiz.jsp" value="file://$PROJECT_DIR$/src/main/webapp/jsp" />

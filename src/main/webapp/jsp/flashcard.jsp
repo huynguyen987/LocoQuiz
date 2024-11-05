@@ -150,7 +150,8 @@
           </div>
           <div class="input-group">
             <label for="quiz-time-input">Set Time (minutes):</label>
-            <input type="number" id="quiz-time-input" min="1" max="60" value="5" aria-label="Set Quiz Time">
+            <input type="number" id="quiz-time-input" min="0" max="60" value="5" aria-label="Set Quiz Time">
+            <small>Set to <strong>0</strong> for no time limit.</small>
           </div>
           <div class="input-group">
             <label for="quiz-amount-input">Number of Questions:</label>
@@ -171,6 +172,7 @@
           <div id="quiz-feedback" class="quiz-feedback"></div>
           <div class="button-group">
             <button class="secondary-button" id="next-quiz-question" disabled>Next ➡️</button>
+            <button class="danger-button" id="exit-quiz-session">Exit 🛑</button>
           </div>
         </div>
       </div>

@@ -14,7 +14,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Chi tiết lớp học - QuizLoco</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/common.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/common.css">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 </head>
@@ -73,12 +73,12 @@
     %>
 
     <!-- Hiển thị thông báo -->
-    <% if (message != null) { %>
-    <div class="success-message"><%= message %></div>
-    <% } %>
-    <% if (error != null) { %>
-    <div class="error-message"><%= error %></div>
-    <% } %>
+    <c:if test="${not empty message}">
+      <div class="success-message">${message}</div>
+    </c:if>
+    <c:if test="${not empty error}">
+      <div class="error-message">${error}</div>
+    </c:if>
 
     <div class="class-info-container">
       <!-- Hộp thông tin lớp học -->
@@ -93,32 +93,28 @@
       <% if (isTeacher) { %>
       <div class="class-action-buttons">
         <!-- Nút chỉnh sửa lớp học -->
-        <a href="<%= request.getContextPath() %>/EditClassServlet?classId=<%= classEntity.getId() %>" class="button edit-class-btn">
+        <a href="${pageContext.request.contextPath}/EditClassServlet?classId=<%= classEntity.getId() %>" class="button edit-class-btn">
           <i class="fas fa-edit"></i> Chỉnh Sửa Lớp
         </a>
         <!-- Nút gán quiz -->
-        <a href="<%= request.getContextPath() %>/AssignQuizServlet?classId=<%= classEntity.getId() %>" class="button assign-quiz-btn">
+        <a href="${pageContext.request.contextPath}/AssignQuizServlet?classId=<%= classEntity.getId() %>" class="button assign-quiz-btn">
           <i class="fas fa-plus"></i> Gán Quiz
         </a>
         <!-- Nút tạo cuộc thi -->
-        <a href="<%= request.getContextPath() %>/TakeCompetitionServlet?action=configure&classId=<%= classEntity.getId() %>" class="button create-competition-btn">
+        <a href="${pageContext.request.contextPath}/TakeCompetitionServlet?action=configure&classId=<%= classEntity.getId() %>" class="button create-competition-btn">
           <i class="fas fa-trophy"></i> Tạo Cuộc Thi
         </a>
-<%--        <!-- Nút tạo quiz -->--%>
-<%--        <a href="<%= request.getContextPath() %>/CreateQuizServlet?classId=<%= classEntity.getId() %>" class="button create-quiz-btn">--%>
-<%--          <i class="fas fa-plus"></i> Tạo Quiz--%>
-<%--        </a>--%>
       </div>
       <% } %>
 
       <!-- Ô thông báo -->
       <div class="notification-area">
-        <% if (message != null) { %>
-        <div class="success-message"><%= message %></div>
-        <% } %>
-        <% if (error != null) { %>
-        <div class="error-message"><%= error %></div>
-        <% } %>
+        <c:if test="${not empty message}">
+          <div class="success-message">${message}</div>
+        </c:if>
+        <c:if test="${not empty error}">
+          <div class="error-message">${error}</div>
+        </c:if>
       </div>
     </div>
 
@@ -143,10 +139,10 @@
           <td><%= jr.getUserId() %></td>
           <td><%= jr.getUsername() %></td>
           <td><%= jr.getEmail() %></td>
-          <td><fmt:formatDate value="<%= jr.getRequestedAt() %>" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+          <td><fmt:formatDate value="${jr.requestedAt}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
           <td>
             <!-- Nút chấp nhận -->
-            <form action="<%= request.getContextPath() %>/HandleJoinRequestServlet" method="post" style="display:inline;">
+            <form action="${pageContext.request.contextPath}/HandleJoinRequestServlet" method="post" style="display:inline;">
               <input type="hidden" name="classId" value="<%= jr.getClassId() %>">
               <input type="hidden" name="userId" value="<%= jr.getUserId() %>">
               <input type="hidden" name="action" value="approve">
@@ -155,7 +151,7 @@
               </button>
             </form>
             <!-- Nút từ chối -->
-            <form action="<%= request.getContextPath() %>/HandleJoinRequestServlet" method="post" style="display:inline;">
+            <form action="${pageContext.request.contextPath}/HandleJoinRequestServlet" method="post" style="display:inline;">
               <input type="hidden" name="classId" value="<%= jr.getClassId() %>">
               <input type="hidden" name="userId" value="<%= jr.getUserId() %>">
               <input type="hidden" name="action" value="reject">
@@ -185,7 +181,7 @@
             <h3><%= q.getName() %></h3>
             <p><%= q.getDescription() %></p>
             <!-- Nút làm quiz -->
-            <form action="<%= request.getContextPath() %>/TakeQuizServlet" method="get">
+            <form action="${pageContext.request.contextPath}/TakeQuizServlet" method="get">
               <input type="hidden" name="id" value="<%= q.getId() %>">
               <button type="submit" class="button">Làm Quiz</button>
             </form>
@@ -219,7 +215,7 @@
             <% if (isTeacher) { %>
             <td>
               <!-- Nút xóa sinh viên khỏi lớp học -->
-              <form action="<%= request.getContextPath() %>/DeleteStudentServlet" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sinh viên này khỏi lớp học?');">
+              <form action="${pageContext.request.contextPath}/DeleteStudentServlet" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sinh viên này khỏi lớp học?');">
                 <input type="hidden" name="classId" value="<%= classEntity.getId() %>">
                 <input type="hidden" name="userId" value="<%= student.getId() %>">
                 <button type="submit" class="button delete-button">
@@ -240,7 +236,7 @@
 
     <!-- Nút quay lại danh sách lớp học -->
     <div class="action-buttons">
-      <a href="<%= request.getContextPath() %>/jsp/teacher.jsp" class="button back-btn">
+      <a href="${pageContext.request.contextPath}/jsp/teacher.jsp" class="button back-btn">
         <i class="fas fa-arrow-left"></i> Quay lại Lớp học
       </a>
     </div>
@@ -291,6 +287,6 @@
 <%@ include file="components/footer.jsp" %>
 
 <!-- JavaScript -->
-<script src="<%= request.getContextPath() %>/js/common.js"></script>
+<script src="${pageContext.request.contextPath}/js/common.js"></script>
 </body>
 </html>
