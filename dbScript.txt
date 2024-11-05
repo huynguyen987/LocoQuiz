@@ -146,6 +146,15 @@ CREATE TABLE competition_results (
     FOREIGN KEY (class_id) REFERENCES class(id)
 );
 
+CREATE TABLE user_library (
+  user_id INT NOT NULL,
+  quiz_id INT NOT NULL,
+  added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, quiz_id),
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (quiz_id) REFERENCES quiz(id)
+);
+
 
 
 -- 10. Chèn dữ liệu mẫu
