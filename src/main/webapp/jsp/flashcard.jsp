@@ -34,13 +34,17 @@
     <section id="create-tab" class="tab-content active" role="tabpanel">
       <!-- Controls -->
       <div class="controls">
-        <input type="text" id="search-input" placeholder="Search cards..." aria-label="Search Cards">
+        <input type="text" id="search-input" placeholder="Search cards...">
         <div class="control-buttons">
-          <button id="export-button" class="secondary-button">Export 📤</button>
-          <button id="import-button" class="secondary-button">Import 📥</button>
-          <input type="file" accept=".json" id="import-file" class="file-input" aria-hidden="true">
+          <button class="secondary-button" id="import-button">Import Cards 📥</button>
+          <button class="primary-button" id="export-button">Export Cards 📤</button>
+          <button class="danger-button" id="delete-all-cards">Delete All Cards 🗑️</button>
+          <button class="secondary-button" id="refresh-cards">Refresh Cards 🔄</button>
         </div>
       </div>
+
+      <!-- File Input for Importing Cards -->
+      <input type="file" id="import-file" accept=".json,.txt,.csv" style="display: none;">
 
       <!-- Stats Summary -->
       <div class="stats-summary">
@@ -49,7 +53,7 @@
           <div class="stat-label">Total Cards</div>
         </div>
         <div class="stat-item">
-          <div class="stat-value" id="last-added">-</div>
+          <div class="stat-value" id="last-added">--:--</div>
           <div class="stat-label">Last Added</div>
         </div>
         <div class="stat-item">
@@ -62,76 +66,78 @@
         </div>
       </div>
 
-      <!-- Input Group -->
+      <!-- Add Card Form -->
       <div class="input-group">
-        <input type="text" id="front-input" placeholder="Front of card" aria-label="Front of Card">
-        <input type="text" id="back-input" placeholder="Back of card" aria-label="Back of Card">
-        <input type="text" id="category-input" placeholder="Category (optional)" aria-label="Category">
+        <label for="front-input">Front:</label>
+        <input type="text" id="front-input" placeholder="Enter front text">
+        <label for="back-input">Back:</label>
+        <input type="text" id="back-input" placeholder="Enter back text">
+        <label for="category-input">Category:</label>
+        <input type="text" id="category-input" placeholder="Enter category (optional)">
+        <div class="button-group">
+          <button class="primary-button" id="add-card">Add Card ➕</button>
+          <label for="file-input" class="secondary-button">Import from File 📂</label>
+          <input type="file" id="file-input" accept=".json,.txt,.csv" class="file-input">
+        </div>
       </div>
 
-      <!-- Button Group -->
-      <div class="button-group">
-        <button class="primary-button" id="add-card">
-          Add Card ➕
-        </button>
-        <label class="secondary-button">
-          Import File 📁
-          <input type="file" accept=".txt,.csv" id="file-input" class="file-input" aria-hidden="true">
-        </label>
-        <button class="danger-button" id="delete-all-cards">
-          Delete All Cards 🗑️
-        </button>
-        <button class="secondary-button" id="refresh-cards">
-          Refresh List 🔄
-        </button>
-      </div>
-
-      <!-- Additional Information Above Flashcard List -->
-      <div class="pagination-info" id="pagination-info">Showing 1-10 of 0 flashcards</div>
-      <div class="pagination-controls">
-        <button id="prev-page" class="secondary-button">Previous</button>
-        <button id="next-page" class="secondary-button">Next</button>
-      </div>
-
-      <!-- Card List -->
-      <div class="card-list" id="card-list">
+      <!-- Created Cards List -->
+      <div class="card-list">
         <h3>Created Cards (0)</h3>
-        <div id="cards-container"></div>
+        <div id="cards-container">
+          <!-- Cards will be dynamically inserted here -->
+        </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-info" id="pagination-info">Showing 0-0 of 0 flashcards</div>
+        <div class="pagination-controls">
+          <button id="prev-page" class="secondary-button">Previous</button>
+          <button id="next-page" class="secondary-button">Next</button>
+        </div>
       </div>
     </section>
 
     <!-- Practice Tab -->
     <section id="practice-tab" class="tab-content" role="tabpanel">
+      <!-- Category Filter -->
+      <div class="input-group">
+        <label for="practice-category-filter">Filter by Category:</label>
+        <select id="practice-category-filter">
+          <option value="all">All Categories</option>
+          <!-- Categories will be dynamically populated here -->
+        </select>
+      </div>
+      <!-- Flashcard Practice Container -->
       <div id="practice-container">
-        <div class="button-group">
-          <button class="secondary-button" id="shuffle-button">Shuffle 🔀</button>
-          <div class="dropdown">
-            <label for="practice-category-filter" class="dropdown-label">Filter by Category:</label>
-            <select id="practice-category-filter" aria-label="Filter by Category">
-              <option value="all">All Categories</option>
-              <!-- Categories will be populated dynamically -->
-            </select>
-          </div>
-        </div>
-        <div class="flashcard" id="flashcard" tabindex="0" aria-label="Flashcard">
+        <!-- Flashcard -->
+        <div id="flashcard" class="flashcard">
           <div class="flashcard-inner">
-            <div class="flashcard-front">Front</div>
-            <div class="flashcard-back">Back</div>
+            <div class="flashcard-front">
+              <!-- Front text will appear here -->
+            </div>
+            <div class="flashcard-back">
+              <!-- Back text will appear here -->
+            </div>
           </div>
         </div>
+        <!-- Navigation -->
         <div class="navigation">
           <button class="secondary-button" id="prev-button">⬅️ Previous</button>
-          <span id="card-counter">0 / 0</span>
+          <div id="card-counter">1 / 10</div>
           <button class="secondary-button" id="next-button">Next ➡️</button>
         </div>
-        <!-- Updated Answer Buttons -->
+        <!-- Answer Buttons -->
         <div class="answer-buttons">
-          <button class="remember-button">Remember ✅</button>
+          <button class="remember-button">Remembered ✅</button>
           <button class="did-not-remember-button">Did Not Remember Yet ❌</button>
         </div>
+        <!-- Shuffle Button -->
+        <div class="button-group">
+          <button class="secondary-button" id="shuffle-button">Shuffle Cards 🔀</button>
+        </div>
       </div>
+      <!-- Empty State -->
       <div id="empty-state" class="empty-state">
-        No flashcards yet. Create some cards to start practicing!
+        No flashcards available for practice. Create some cards first!
       </div>
     </section>
 
@@ -164,16 +170,33 @@
 
         <!-- Quiz Session Interface -->
         <div id="quiz-session" class="quiz-session" style="display: none;">
-          <div id="quiz-timer" class="quiz-timer">Time Left: 05:00</div>
+          <div class="quiz-header">
+            <div id="quiz-timer" class="quiz-timer">Time Left: 05:00</div>
+            <div id="quiz-progress">Question 1 of 10</div>
+            <div class="progress-bar">
+              <div id="progress-fill" class="progress-fill" style="width: 0%;"></div>
+            </div>
+          </div>
           <div id="quiz-question" class="quiz-question">Question will appear here</div>
           <div id="quiz-options" class="quiz-options">
             <!-- Options will be dynamically inserted here -->
           </div>
+          <!-- Added quiz-feedback element -->
           <div id="quiz-feedback" class="quiz-feedback"></div>
           <div class="button-group">
             <button class="secondary-button" id="next-quiz-question" disabled>Next ➡️</button>
             <button class="danger-button" id="exit-quiz-session">Exit 🛑</button>
           </div>
+        </div>
+
+        <!-- Quiz Result Screen -->
+        <div id="quiz-result" class="quiz-result" style="display: none;">
+          <h2>Quiz Completed!</h2>
+          <p id="result-score">You scored 0%</p>
+          <p id="result-correct">Correct Answers: 0</p>
+          <p id="result-incorrect">Incorrect Answers: 0</p>
+          <p id="result-time">Total Time: 0 seconds</p>
+          <button class="primary-button" id="restart-quiz-button">Restart Quiz 🔄</button>
         </div>
       </div>
       <div id="quiz-empty-state" class="empty-state">
@@ -185,6 +208,7 @@
     <section id="stats-tab" class="tab-content" role="tabpanel">
       <div class="stats-details">
         <h2>Statistics</h2>
+        <!-- Stats Overview -->
         <div class="stats-overview">
           <div class="stat-item">
             <div class="stat-value" id="total-cards-stats">0</div>
@@ -199,6 +223,7 @@
             <div class="stat-label">Did Not Remember Yet</div>
           </div>
         </div>
+        <!-- Stats Charts -->
         <div class="stats-charts">
           <div class="stats-chart">
             <canvas id="performanceChart"></canvas>
@@ -207,37 +232,39 @@
             <canvas id="quizPerformanceChart"></canvas>
           </div>
         </div>
+        <!-- Quiz History -->
         <div class="stats-quiz-history">
-          <h3>Quiz Session History</h3>
+          <h3>Quiz History</h3>
           <table id="quiz-history-table">
             <thead>
             <tr>
               <th>Date</th>
               <th>Category</th>
-              <th>Time (mins)</th>
+              <th>Time (min)</th>
               <th>Questions</th>
               <th>Correct</th>
               <th>Incorrect</th>
             </tr>
             </thead>
             <tbody>
-            <!-- Quiz sessions will be populated dynamically -->
+            <!-- Quiz history will be dynamically populated here -->
             </tbody>
           </table>
         </div>
-        <button class="secondary-button" id="reset-stats">Reset Statistics</button>
+        <!-- Reset Statistics Button -->
+        <button class="danger-button" id="reset-stats">Reset Statistics 🗑️</button>
       </div>
     </section>
   </main>
 </div>
 
 <!-- Edit Modal -->
-<div class="modal" id="edit-modal" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+<div id="edit-modal" class="modal">
   <div class="modal-content">
-    <h2 id="edit-modal-title">Edit Card</h2>
-    <input type="text" id="edit-front" placeholder="Front of card" aria-label="Edit Front of Card" class="mb-3">
-    <input type="text" id="edit-back" placeholder="Back of card" aria-label="Edit Back of Card" class="mb-3">
-    <input type="text" id="edit-category" placeholder="Category (optional)" aria-label="Edit Category" class="mb-3">
+    <h2 class="modal-title">Edit Flashcard</h2>
+    <input type="text" id="edit-front" placeholder="Front text">
+    <input type="text" id="edit-back" placeholder="Back text">
+    <input type="text" id="edit-category" placeholder="Category (optional)">
     <div class="button-group">
       <button class="secondary-button" id="cancel-edit">Cancel</button>
       <button class="primary-button" id="save-edit">Save Changes</button>
@@ -246,7 +273,7 @@
 </div>
 
 <!-- Notification -->
-<div id="notification" class="notification" style="display: none;"></div>
+<div id="notification" class="notification"></div>
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

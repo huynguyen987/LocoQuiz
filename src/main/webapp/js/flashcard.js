@@ -96,6 +96,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextPageButton = document.getElementById('next-page');
     const notificationDiv = document.getElementById('notification');
     const quizHistoryTableBody = document.querySelector('#quiz-history-table tbody');
+    const quizResultDiv = document.getElementById('quiz-result');
+    const resultScore = document.getElementById('result-score');
+    const resultCorrect = document.getElementById('result-correct');
+    const resultIncorrect = document.getElementById('result-incorrect');
+    const resultTime = document.getElementById('result-time');
+    const restartQuizButton = document.getElementById('restart-quiz-button');
+    const quizProgressText = document.getElementById('quiz-progress');
+    const progressFill = document.getElementById('progress-fill');
+    const quizTimerDiv = document.getElementById('quiz-timer');
 
     // Load Data from localStorage
     function loadData() {
@@ -940,10 +949,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupQuizSession() {
         quizConfig.style.display = 'block';
         quizSessionDiv.style.display = 'none';
+        quizResultDiv.style.display = 'none';
         quizFeedback.textContent = '';
         quizQuestion.textContent = 'Configure your quiz session to begin.';
         quizOptionsContainer.innerHTML = '';
         nextQuizButton.disabled = true;
+        progressFill.style.width = '0%';
     }
 
     // Start Quiz Session
@@ -1020,7 +1031,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update Quiz Timer Display
     function updateQuizTimerDisplay() {
-        const quizTimerDiv = document.getElementById('quiz-timer');
         if (quizSessionDuration === 0) {
             quizTimerDiv.textContent = `Time Left: Unlimited`;
             return;
@@ -1035,9 +1045,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function endQuizSession() {
         clearInterval(quizSessionTimer);
         quizSessionActive = false;
-
-        quizFeedback.textContent = `Quiz Session Ended! Correct: ${quizSessionCorrect}, Incorrect: ${quizSessionIncorrect}`;
-        nextQuizButton.disabled = true;
 
         // Save quiz session results
         stats.quizSessions.push({
@@ -1058,9 +1065,33 @@ document.addEventListener('DOMContentLoaded', () => {
         renderStatsCharts();
         populateQuizHistoryTable();
 
-        showNotification(`Quiz Session Completed!\nCorrect: ${quizSessionCorrect}\nIncorrect: ${quizSessionIncorrect}`, 'success');
-        setupQuizSession(); // Reset the quiz session interface
+        // Show Result Screen
+        showQuizResult();
+
         disableNavigationTabs(false);
+    }
+
+    // Show Quiz Result Screen
+    function showQuizResult() {
+        quizSessionDiv.style.display = 'none';
+        quizResultDiv.style.display = 'block';
+
+        const totalAnswered = quizSessionCorrect + quizSessionIncorrect;
+        const scorePercentage = totalAnswered > 0 ? Math.round((quizSessionCorrect / totalAnswered) * 100) : 0;
+
+        resultScore.textContent = `You scored ${scorePercentage}%`;
+        resultCorrect.textContent = `Correct Answers: ${quizSessionCorrect}`;
+        resultIncorrect.textContent = `Incorrect Answers: ${quizSessionIncorrect}`;
+
+        const totalTimeTaken = quizSessionDuration > 0 ? (quizSessionDuration - quizSessionTimeLeft) : quizSessionTimeLeft;
+        resultTime.textContent = `Total Time: ${formatTime(totalTimeTaken)}`;
+    }
+
+    // Format Time in seconds to MM:SS
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${minutes} minutes ${secs} seconds`;
     }
 
     // Generate a Quiz Question
@@ -1082,6 +1113,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Generate options
         const options = generateQuizOptions(quizCorrectAnswer);
         displayQuizQuestion(card.front, options);
+
+        // Update Progress
+        updateQuizProgress();
     }
 
     // Generate Multiple-Choice Options
@@ -1109,7 +1143,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const button = document.createElement('button');
             button.className = 'quiz-option-button secondary-button';
             button.textContent = option;
-            button.addEventListener('click', () => handleQuizAnswer(option));
+            button.addEventListener('click', () => handleQuizAnswer(button, option));
             quizOptionsContainer.appendChild(button);
         });
 
@@ -1117,11 +1151,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Handle Quiz Answer Selection
-    function handleQuizAnswer(selectedOption) {
+    function handleQuizAnswer(button, selectedOption) {
         if (!quizSessionActive) return;
 
+        // Disable all option buttons after selection
+        const optionButtons = quizOptionsContainer.querySelectorAll('.quiz-option-button');
+        optionButtons.forEach(btn => btn.disabled = true);
+
         if (selectedOption === quizCorrectAnswer) {
-            quizFeedback.textContent = '✅ Remembered Correctly!';
             quizSessionCorrect += 1;
             stats.currentStreak += 1;
             if (stats.currentStreak > stats.bestStreak) {
@@ -1136,9 +1173,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.nextReview = nextReviewDate.toISOString();
                 card.lastReviewed = new Date().toISOString();
             }
-            showNotification('Great! You remembered correctly.', 'success');
+            button.classList.add('selected', 'correct');
         } else {
-            quizFeedback.textContent = `❌ Did Not Remember! Correct Answer: ${quizCorrectAnswer}`;
             quizSessionIncorrect += 1;
             stats.currentStreak = 0;
             // Reset card's spaced repetition interval
@@ -1150,10 +1186,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.nextReview = nextReviewDate.toISOString();
                 card.lastReviewed = new Date().toISOString();
             }
-            showNotification(`Oops! The correct answer was: ${quizCorrectAnswer}`, 'error');
-        }
+            button.classList.add('selected', 'incorrect');
 
-        stats.quizSessions[stats.quizSessions.length - 1].questions = quizQuestionsAsked + 1;
+            // Highlight the correct answer
+            optionButtons.forEach(btn => {
+                if (btn.textContent === quizCorrectAnswer) {
+                    btn.classList.add('selected', 'correct');
+                }
+            });
+        }
 
         saveData();
         updateStatsElements();
@@ -1163,9 +1204,15 @@ document.addEventListener('DOMContentLoaded', () => {
         nextQuizButton.disabled = false;
     }
 
+    // Update Quiz Progress
+    function updateQuizProgress() {
+        quizProgressText.textContent = `Question ${quizQuestionsAsked + 1} of ${quizTotalQuestions}`;
+        const progressPercentage = ((quizQuestionsAsked) / quizTotalQuestions) * 100;
+        progressFill.style.width = `${progressPercentage}%`;
+    }
+
     // Next Quiz Question
     nextQuizButton.addEventListener('click', () => {
-        quizFeedback.textContent = '';
         nextQuizButton.disabled = true;
         generateQuizQuestion();
     });
@@ -1175,6 +1222,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (confirm('Are you sure you want to exit the quiz session early?')) {
             endQuizSession();
         }
+    });
+
+    // Restart Quiz
+    restartQuizButton.addEventListener('click', () => {
+        setupQuizSession();
     });
 
     // ------------------- End of Quiz Mode Functionality -------------------
