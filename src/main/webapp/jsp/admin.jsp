@@ -30,7 +30,7 @@
     // Fetch quizzes with default parameters if needed
     List<quiz> quizList;
     try {
-        quizList = quizDAO.getAllQuizzes(0, 10);
+        quizList = quizDAO.getAllQuiz();
     } catch (SQLException | ClassNotFoundException e) {
         throw new RuntimeException(e);
     }

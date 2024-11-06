@@ -22,6 +22,8 @@
   } catch (SQLException | ClassNotFoundException e) {
     throw new RuntimeException(e);
   }
+
+
 %>
 
 <div class="container">
