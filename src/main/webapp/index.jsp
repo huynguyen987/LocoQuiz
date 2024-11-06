@@ -80,10 +80,7 @@
             <h1 class="fade-in-up">Welcome to QuizLoco</h1>
             <p class="fade-in-up">Challenge yourself, learn, and have fun with our interactive quizzes and study
                 tools!</p>
-            <div class="cta-buttons fade-in-up">
-                <a href="#subjects" class="cta-button">Start Quizzing Now</a>
-                <a href="#create-quiz" class="cta-button secondary">Create Your Own Quiz</a>
-            </div>
+
         </div>
     </section>
 

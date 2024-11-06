@@ -225,12 +225,12 @@
                     </a>
                 </div>
 
-                <!-- Recent Quizzes Card -->
+                <!-- Library -->
                 <div class="card">
-                    <h2>Recent Quizzes</h2>
-                    <p>Continue where you left off.</p>
-                    <a href="<%= request.getContextPath() %>/AllQuizzesServlet?action=viewRecent" class="button">
-                        <i class="fas fa-pencil-alt"></i> View Quizzes
+                    <h2>Library</h2>
+                    <p>Library time, open the door!</p>
+                    <a href="<%= request.getContextPath() %>/LibraryServlet" class="button">
+                        <i class="fas fa-pencil-alt"></i> View Library
                     </a>
                 </div>
 
