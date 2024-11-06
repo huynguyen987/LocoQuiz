@@ -62,6 +62,23 @@
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <style>
     /* Bạn có thể thêm các kiểu CSS tùy chỉnh tại đây hoặc trong tệp quiz-details.css */
+    .btn-back-home {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007bff; /* Grey color */
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 1rem;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .btn-back-home:hover {
+      background-color: #0056b3; /* Darker grey */
+      color: #f8f9fa;
+    }
+
     .btn-edit, .btn-delete, .btn-quiz, .btn-add {
       display: inline-block;
       padding: 10px 20px;

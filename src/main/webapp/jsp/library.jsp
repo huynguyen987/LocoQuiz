@@ -20,6 +20,28 @@
   <title>Quiz Library</title>
   <link rel="stylesheet" href="<%= request.getContextPath() %>/css/library.css">
   <script src="<%= request.getContextPath() %>/js/library.js" defer></script>
+  <style>
+    .btn-back-home {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 1rem;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .btn-back-home:hover {
+      background-color: #0056b3;
+      color: #f8f9fa;
+    }
+
+
+  </style>
 </head>
 <body>
 <div class="library-container">
