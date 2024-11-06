@@ -4,9 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Competition Participation - QuizLoco</title>
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/bootstrap.min.css">
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/common.css">
-  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/common2.css">
+  <link rel="stylesheet" href="<%= request.getContextPath() %>/css/comp.css">
+
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
   <!-- Pass contextPath to JavaScript -->
@@ -15,8 +14,7 @@
   </script>
 </head>
 <body>
-<%@ include file="components/header.jsp" %>
-<%@ include file="components/sidebar.jsp" %>
+
 <main>
   <div class="competition-container">
     <h1>Competition Details</h1>
@@ -29,7 +27,7 @@
     </button>
   </div>
 </main>
-<%@ include file="components/footer.jsp" %>
+
 
 <!-- Include Bootstrap JS và các script tùy chỉnh -->
 <script src="<%= request.getContextPath() %>/js/bootstrap.bundle.min.js"></script>
