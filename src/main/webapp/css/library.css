@@ -32,7 +32,7 @@ body.dark-mode {
     --search-border: #555;
 }
 
-/* Reset and Base Styles */
+/* Base Styles */
 * {
     margin: 0;
     padding: 0;
@@ -55,6 +55,26 @@ ul {
     list-style-type: none;
 }
 
+/* Back to Home Button */
+.btn-back-home {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-back-home:hover {
+    background-color: var(--button-hover-primary);
+    color: #f8f9fa;
+}
+
 /* Library Container */
 .library-container {
     width: 90%;
@@ -65,9 +85,10 @@ ul {
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
 }
 
-/* Header within Library */
+/* Header */
 .library-container header {
     display: flex;
     flex-direction: column;
@@ -93,303 +114,18 @@ ul {
     border-radius: 2px;
 }
 
-/* Controls Section */
-.library-container .controls {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    width: 100%;
-}
+/* Other existing styles here */
 
-.sort-box {
-    padding: 10px 15px;
-    border: 1px solid var(--search-border);
-    border-radius: 5px;
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.3s ease;
-    min-width: 150px;
-}
-
-.sort-box:focus {
-    border-color: var(--primary-color);
-}
-
-.search-box {
-    padding: 10px 15px;
-    border: 1px solid var(--search-border);
-    border-radius: 5px;
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.3s ease;
-    min-width: 200px;
-}
-
-.search-box:focus {
-    border-color: var(--primary-color);
-}
-
-.add-quiz-btn {
-    padding: 10px 20px;
-    background-color: var(--secondary-color);
-    color: #fff;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.add-quiz-btn:hover {
-    background-color: var(--button-hover-secondary);
-}
-
-/* Quiz Cards Container */
-.quiz-cards-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 25px;
-}
-
-/* Quiz Card Styles */
-.quiz-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.quiz-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-.quiz-title {
-    font-size: 1.5rem;
-    color: var(--text-color);
-    margin-bottom: 10px;
-}
-
-.quiz-description {
-    font-size: 1rem;
-    color: #555;
-    margin-bottom: 20px;
-}
-
-.quiz-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-}
-
-.view-quiz-btn {
-    padding: 8px 15px;
-    background-color: var(--primary-color);
-    color: #fff;
-    border-radius: 5px;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.view-quiz-btn:hover {
-    background-color: var(--button-hover-primary);
-}
-
-.remove-quiz-btn {
-    padding: 8px 15px;
-    background-color: #e74c3c;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.remove-quiz-btn:hover {
-    background-color: var(--button-hover-remove);
-}
-
-/* Empty State */
-.library-container p {
-    text-align: center;
-    color: #888;
-    font-size: 1.2rem;
-    padding: 60px 0;
-}
-
-/* Footer Styles (If Needed) */
-/* Uncomment the following block if you decide to add a footer in the future */
-/*
-footer {
-    background-color: var(--primary-color);
-    color: #ecf0f1;
-    padding: 20px 0;
-    text-align: center;
-    border-top: 1px solid var(--border-color);
-    margin-top: 50px;
-}
-
-footer .social-links {
-    margin-top: 10px;
-}
-
-footer .social-links a {
-    color: #ecf0f1;
-    margin: 0 10px;
-    font-size: 1.2rem;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-footer .social-links a:hover {
-    color: #fff;
-}
-
-footer p {
-    font-size: 0.9rem;
-    margin-top: 10px;
-}
-*/
-
-/* Utility Classes */
-.text-center {
-    text-align: center;
-}
-
-.hidden {
-    display: none;
-}
-
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 768px) {
+    .btn-back-home {
+        position: relative;
+        margin-bottom: 15px;
+        left: auto;
+        top: auto;
+    }
     .library-container .controls {
         flex-direction: column;
         align-items: center;
     }
-
-    .sort-box, .search-box, .add-quiz-btn {
-        width: 100%;
-        max-width: 300px;
-    }
-
-    .quiz-cards-container {
-        grid-template-columns: 1fr;
-    }
-
-    .quiz-card {
-        padding: 15px;
-    }
-
-    .quiz-title {
-        font-size: 1.3rem;
-    }
-
-    .quiz-description {
-        font-size: 0.95rem;
-        margin-bottom: 15px;
-    }
-
-    .view-quiz-btn, .remove-quiz-btn {
-        font-size: 0.9rem;
-        padding: 6px 12px;
-    }
-}
-
-/* Dark Mode Styles */
-@media (prefers-color-scheme: dark) {
-    body {
-        background-color: #1e1e1e;
-        color: #e0e0e0;
-    }
-
-    .library-container {
-        background-color: #2c2c2c;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-    }
-
-    .library-container header h1::after {
-        background-color: #e74c3c;
-    }
-
-    .library-container form input[type="text"],
-    .library-container .sort-box {
-        background-color: #3c3c3c;
-        border: 1px solid #555;
-        color: #e0e0e0;
-    }
-
-    .library-container form input[type="text"]::placeholder {
-        color: #bbb;
-    }
-
-    .library-container form button {
-        background-color: #e74c3c;
-    }
-
-    .library-container form button:hover {
-        background-color: #c0392b;
-    }
-
-    .library-container ul li {
-        border-bottom: 1px solid #555;
-    }
-
-    .library-container ul li:hover {
-        background-color: #3a3a3a;
-    }
-
-    .library-container ul li h3,
-    .library-container ul li p {
-        color: #e0e0e0;
-    }
-
-    .library-container ul li a.view-quiz-btn {
-        background-color: var(--secondary-color);
-    }
-
-    .library-container ul li a.view-quiz-btn:hover {
-        background-color: #1e8449;
-    }
-
-    .library-container ul li a.remove-quiz-btn {
-        background-color: #c0392b;
-    }
-
-    .library-container ul li a.remove-quiz-btn:hover {
-        background-color: #e74c3c;
-    }
-
-    /* Uncomment and adjust footer styles if you add a footer in dark mode */
-    /*
-        footer {
-            background-color: #1c1c1c;
-            color: #bdc3c7;
-        }
-
-        footer .social-links a {
-            color: #bdc3c7;
-        }
-
-        footer .social-links a:hover {
-            color: #e74c3c;
-        }
-
-        footer p {
-            color: #bdc3c7;
-        }
-    */
 }
