@@ -10,6 +10,8 @@
   }
 
   List<quiz> libraryQuizzes = (List<quiz>) request.getAttribute("libraryQuizzes");
+
+    String role = (String) session.getAttribute("role");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,6 +24,7 @@
 <body>
 <div class="library-container">
   <header>
+    <a href="#" id="backToHome" class="btn-back-home">Back to Home</a>
     <h1>Quiz Library</h1>
     <div class="controls">
       <select id="sort-box" class="sort-box">
@@ -63,4 +66,21 @@
   </div>
 </div>
 </body>
+
+<script>
+  document.getElementById('backToHome').addEventListener('click', function(event) {
+    event.preventDefault();
+    var role = '<%= role %>';
+    if (role === 'student') {
+      window.location.href = '<%= request.getContextPath() %>/jsp/student.jsp';
+    } else if (role === 'teacher') {
+      window.location.href = '<%= request.getContextPath() %>/jsp/teacher.jsp';
+    } else if (role === 'admin') {
+      window.location.href = '<%= request.getContextPath() %>/jsp/admin.jsp';
+    } else {
+      window.location.href = '<%= request.getContextPath() %>/index.jsp';
+    }
+  });
+</script>
+
 </html>

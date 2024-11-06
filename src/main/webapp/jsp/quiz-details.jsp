@@ -45,6 +45,8 @@
   if (currentUser != null) {
     isInLibrary = userLibraryDAO.isQuizInLibrary(currentUser.getId(), quizId);
   }
+
+  String role = (String) session.getAttribute("role");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -111,6 +113,7 @@
 
 <main class="container">
   <div class="quiz-header">
+    <a href="#" id="backToHome" class="btn-back-home">Back to Home</a>
     <h1><%= q.getName() %></h1>
     <div class="quiz-meta">
       <span><i class="fas fa-calendar-alt"></i> Created At: <%= q.getCreated_at() %></span>
@@ -180,15 +183,15 @@
       <% } %>
       <% } else { %>
       <!-- Hiển thị lời nhắc đăng nhập để thêm vào thư viện -->
-      <p><a href="<%= request.getContextPath() %>/login.jsp">Log in</a> to add this quiz to your library.</p>
+      <p><a href="<%= request.getContextPath() %>/jsp/login.jsp">Log in</a> to add this quiz to your library.</p>
       <% } %>
 
       <%-- Hiển thị nút "Edit" và "Delete" nếu người dùng là admin hoặc teacher --%>
       <%
         // Display Edit and Delete buttons if user is admin or teacher
         if (currentUser != null) {
-          String role = currentUser.getRoleName();
-          if (role != null && (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("teacher"))) {
+          String roles = currentUser.getRoleName();
+          if (roles != null && (roles.equalsIgnoreCase("admin") || roles.equalsIgnoreCase("teacher"))) {
       %>
       <a href="<%= request.getContextPath() %>/EditQuizServlet?quizId=<%= q.getId() %>" class="btn-edit">
         <i class="fas fa-edit"></i> Edit Quiz
@@ -207,5 +210,20 @@
 
 <!-- Include JavaScript -->
 <script src="<%= request.getContextPath() %>/js/quiz-details.js"></script>
+<script>
+  document.getElementById('backToHome').addEventListener('click', function(event) {
+    event.preventDefault();
+    var role = '<%= role %>';
+    if (role === 'student') {
+      window.location.href = '<%= request.getContextPath() %>/jsp/student.jsp';
+    } else if (role === 'teacher') {
+      window.location.href = '<%= request.getContextPath() %>/jsp/teacher.jsp';
+    } else if (role === 'admin') {
+      window.location.href = '<%= request.getContextPath() %>/jsp/admin.jsp';
+    } else {
+      window.location.href = '<%= request.getContextPath() %>/index.jsp';
+    }
+  });
+</script>
 </body>
 </html>
