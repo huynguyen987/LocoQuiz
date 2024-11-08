@@ -3,7 +3,6 @@ package Servlet;
 
 import dao.QuizDAO;
 import dao.TagDAO;
-import dao.userQuizDAO;
 import entity.Question;
 import entity.Tag;
 import entity.quiz;
@@ -118,7 +117,6 @@ public class EditQuizServlet extends HttpServlet {
                         question.setOptions(options);
                     }
                     if (questionObj.has("correct")) {
-                        // Corrected method name from 'correct' to 'setCorrect'
                         question.setCorrect(questionObj.getString("correct"));
                     }
                     questions.add(question);
@@ -266,6 +264,10 @@ public class EditQuizServlet extends HttpServlet {
                             }
                             String[] answers = answerList.toArray(new String[0]);
 
+                            if (answers.length == 0) {
+                                continue; // Skip this question if no answers are provided
+                            }
+
                             String correctAnswerIndexStr = request.getParameter("correctAnswer" + i);
                             int correctAnswerIndex = 1; // Default to first answer
                             if (correctAnswerIndexStr != null && !correctAnswerIndexStr.trim().isEmpty()) {
@@ -276,7 +278,11 @@ public class EditQuizServlet extends HttpServlet {
                                     correctAnswerIndex = 1;
                                 }
                             }
-                            String correctAnswerText = answers.length >= correctAnswerIndex ? answers[correctAnswerIndex - 1] : answers[0];
+
+                            if (correctAnswerIndex <= 0 || correctAnswerIndex > answers.length) {
+                                correctAnswerIndex = 1;
+                            }
+                            String correctAnswerText = answers[correctAnswerIndex - 1];
 
                             // Build the question JSON object
                             questionObjJSON.put("sequence", i);
@@ -286,7 +292,9 @@ public class EditQuizServlet extends HttpServlet {
 
                             // If it's a matching question, ensure options array has only one element
                             if (quizType.equals("matching")) {
-                                // Combine all options into a single string
+                                if (answers.length == 0) {
+                                    continue; // Skip if no matching pairs
+                                }
                                 String matchingOption = String.join("; ", answers);
                                 questionObjJSON.put("options", Collections.singletonList(matchingOption));
                                 questionObjJSON.put("correct", matchingOption);
@@ -294,6 +302,9 @@ public class EditQuizServlet extends HttpServlet {
                         } else if (quizType.equals("fill-in-the-blank")) {
                             // Handle fill-in-the-blank questions
                             String correctAnswer = request.getParameter("correctAnswer" + i);
+                            if (correctAnswer == null || correctAnswer.trim().isEmpty()) {
+                                continue; // Skip if no correct answer provided
+                            }
                             questionObjJSON.put("sequence", i);
                             questionObjJSON.put("question", questionContent);
                             questionObjJSON.put("correct", correctAnswer);
@@ -327,8 +338,13 @@ public class EditQuizServlet extends HttpServlet {
                     questionObjJSON.put("question", question.getQuestion());
 
                     if (quizType.equals("multiple-choice") || quizType.equals("matching")) {
-                        questionObjJSON.put("options", question.getOptions());
-                        questionObjJSON.put("correct", question.getCorrect());
+                        if (question.getOptions() != null && !question.getOptions().isEmpty()) {
+                            questionObjJSON.put("options", question.getOptions());
+                            questionObjJSON.put("correct", question.getCorrect());
+                        } else {
+                            // Skip questions without options
+                            continue;
+                        }
                     } else if (quizType.equals("fill-in-the-blank")) {
                         questionObjJSON.put("correct", question.getCorrect());
                     }
@@ -432,9 +448,11 @@ public class EditQuizServlet extends HttpServlet {
                     currentQuestion.setCorrect(correctAnswer);
                 } else if (quizType.equals("matching")) {
                     // For matching, combine options into a single string
-                    String matchingOption = String.join("; ", currentQuestion.getOptions());
-                    currentQuestion.setOptions(Collections.singletonList(matchingOption));
-                    currentQuestion.setCorrect(matchingOption);
+                    if (currentQuestion.getOptions() != null && !currentQuestion.getOptions().isEmpty()) {
+                        String matchingOption = String.join("; ", currentQuestion.getOptions());
+                        currentQuestion.setOptions(Collections.singletonList(matchingOption));
+                        currentQuestion.setCorrect(matchingOption);
+                    }
                 }
             }
         }
@@ -529,7 +547,6 @@ public class EditQuizServlet extends HttpServlet {
                         return String.valueOf(numericValue);
                     }
                 }
-                // Handle other cell types as needed
             default:
                 return "";
         }
