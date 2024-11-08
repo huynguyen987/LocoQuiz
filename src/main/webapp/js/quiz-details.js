@@ -313,6 +313,9 @@ document.addEventListener('DOMContentLoaded', function () {
     function addAnswerOption(questionNum) {
         const questionSection = document.getElementById(`question${questionNum}`);
         let answerCount = parseInt(questionSection.getAttribute('data-answer-count'), 10);
+        if (isNaN(answerCount)) {
+            answerCount = 0;
+        }
         answerCount++;
         questionSection.setAttribute('data-answer-count', answerCount);
 
