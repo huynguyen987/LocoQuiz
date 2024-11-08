@@ -20,6 +20,9 @@ import static Module.HashPassword.hashPassword;
 
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
+
+    Validation validation = new Validation();
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession(true);
@@ -30,6 +33,13 @@ public class RegisterServlet extends HttpServlet {
         String email = request.getParameter("email");
         String gender = request.getParameter("gender");
         int roleId = Integer.parseInt(request.getParameter("role_id"));
+
+        // Kiểm tra xem các dữ liệu match với validation không
+        if (!validation.validateEmail(email) || !validation.validatePassword(password) || !validation.validateUsername(username)) {
+            request.setAttribute("error", "Dữ liệu không hợp lệ.");
+            response.sendRedirect(request.getContextPath() + "/jsp/register.jsp");
+            return;
+        }
 
         Connection connection = null;
         PreparedStatement stmt = null;

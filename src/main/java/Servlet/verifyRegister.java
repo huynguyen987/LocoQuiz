@@ -19,6 +19,8 @@ import Module.*;
 @WebServlet("/verify-register")
 public class verifyRegister extends HttpServlet { // Đổi tên lớp theo chuẩn CamelCase
 
+    Validation validation = new Validation(); // Tạo đối tượng Validation để sử dụng các phương thức kiểm tra dữ liệu
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Thiết lập mã hóa cho request và response
         request.setCharacterEncoding("UTF-8");
@@ -38,6 +40,12 @@ public class verifyRegister extends HttpServlet { // Đổi tên lớp theo chu�
         Integer roleId = (Integer) session.getAttribute("role_id"); // Sử dụng Integer để tránh NullPointerException
         String sessionCaptcha = (String) session.getAttribute("captcha");
 
+//      if any of the data is not matching the validation, redirect to register.jsp
+        if (!validation.validateEmail(email) || !validation.validatePassword(password) || !validation.validateUsername(username)) {
+            response.sendRedirect(request.getContextPath() + "/jsp/register.jsp");
+            return;
+        }
+
         System.out.println("User data from session: ");
         System.out.println("username: " + username);
         System.out.println("password: " + password);
@@ -50,6 +58,7 @@ public class verifyRegister extends HttpServlet { // Đổi tên lớp theo chu�
         // Kiểm tra xem các dữ liệu cần thiết có tồn tại trong session không
         if (username == null || password == null || email == null || gender == null || roleId == null || sessionCaptcha == null) {
             // Nếu thiếu dữ liệu, chuyển hướng về trang đăng ký
+            request.setAttribute("error", "Dữ liệu không hợp lệ. Vui lòng thử lại.");
             response.sendRedirect(request.getContextPath() + "/jsp/register.jsp");
             return;
         }

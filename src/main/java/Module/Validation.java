@@ -30,6 +30,27 @@ public class Validation {
         return fullName.matches("^[a-zA-Z ]{5,}$");
     }
 
+    // Validate all String ( max 20 characters)
+    public static boolean validateString20(String string) {
+        return string.matches("^[a-zA-Z0-9 ]{1,20}$");
+    }
+
+//    Validate all String ( max 50 characters)
+    public static boolean validateString50(String string) {
+        return string.matches("^[a-zA-Z0-9 ]{1,50}$");
+    }
+
+    // Validate all String ( max 100 characters)
+    public static boolean validateString100(String string) {
+        return string.matches("^[a-zA-Z0-9 ]{1,100}$");
+    }
+
+    // Validate all String ( max 200 characters)
+    public static boolean validateString200(String string) {
+        return string.matches("^[a-zA-Z0-9 ]{1,200}$");
+    }
+
+
     // Test validation
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -49,8 +70,5 @@ public class Validation {
         String username = sc.nextLine();
         System.out.println("Username is valid: " + validateUsername(username));
 
-        System.out.println("Enter full name: ");
-        String fullName = sc.nextLine();
-        System.out.println("Full name is valid: " + validateFullName(fullName));
     }
 }

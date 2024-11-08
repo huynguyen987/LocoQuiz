@@ -48,7 +48,7 @@ function displayExamDetails(data) {
     examInfo.classList.add('exam-info');
 
     examInfo.innerHTML = `
-        <h2>${data.competitionId ? `Competition ID: ${data.competitionId}` : 'Competition'}</h2>
+        <h2>${data.competitionName ? `Competition name: ${data.competitionName}` : 'Competition'}</h2>
         <p><strong>Total Questions:</strong> ${data.totalQuestions}</p>
         <p><strong>Time Limit:</strong> ${data.timeLimit / 60} minutes</p>
     `;
