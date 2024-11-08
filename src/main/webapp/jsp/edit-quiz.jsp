@@ -142,8 +142,18 @@
         <!-- Dynamic question sections will be added here -->
         <% if (questions != null && !questions.isEmpty()) {
           int qNum = 1;
-          for (Question question : questions) { %>
-        <div class="question-section <%= qNum == 1 ? "active" : "" %>" id="question<%= qNum %>">
+          for (Question question : questions) {
+            int answerCount = 0;
+            if ("multiple-choice".equals(quizType)) {
+              List<String> options = question.getOptions();
+              answerCount = options != null ? options.size() : 0;
+            } else if ("fill-in-the-blank".equals(quizType)) {
+              answerCount = 1;
+            } else if ("matching".equals(quizType)) {
+              answerCount = 1;
+            }
+        %>
+        <div class="question-section <%= qNum == 1 ? "active" : "" %>" id="question<%= qNum %>" data-answer-count="<%= answerCount %>">
           <h3>Question <%= qNum %> (<%= formatQuizType(quizType) %>)</h3>
           <!-- Remove Question Button -->
           <button type="button" class="remove-btn" data-num="<%= qNum %>">Remove Question</button>

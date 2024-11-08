@@ -19,6 +19,45 @@ import java.util.List;
 
 public class CompetitionDAO {
 
+    public List<Competition> searchCompetitionsByTeacher(String searchTerm, int teacherId) throws SQLException, ClassNotFoundException {
+        String sql = "SELECT c.* FROM `competitions` c JOIN `class` cl ON c.class_id = cl.id WHERE cl.teacher_id = ? AND c.name LIKE ?";
+        List<Competition> competitions = new ArrayList<>();
+
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, teacherId);
+            ps.setString(2, "%" + searchTerm + "%");
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Competition competition = new Competition();
+                    competition.setId(rs.getInt("id"));
+                    competition.setName(rs.getString("name"));
+                    competition.setDescription(rs.getString("description"));
+                    competition.setClassId(rs.getInt("class_id"));
+                    competition.setQuizId(rs.getInt("quiz_id"));
+                    competition.setTimeLimit(rs.getInt("time_limit"));
+                    competition.setQuestionCount(rs.getInt("question_count"));
+                    competition.setShuffleQuestions(rs.getBoolean("shuffle_questions"));
+
+                    Timestamp startTS = rs.getTimestamp("access_start_time");
+                    Timestamp endTS = rs.getTimestamp("access_end_time");
+
+                    competition.setAccessStartTime(startTS != null ? new Date(startTS.getTime()) : null);
+                    competition.setAccessEndTime(endTS != null ? new Date(endTS.getTime()) : null);
+
+                    competition.setCreatedAt(rs.getTimestamp("created_at"));
+
+                    competitions.add(competition);
+                }
+            }
+        }
+
+        return competitions;
+    }
+
+
     //    getClassInfo
     public classs getClassInfo(int competitionId) throws SQLException, ClassNotFoundException {
         String sql = "SELECT cl.* FROM `class` cl JOIN `competitions` c ON cl.id = c.class_id WHERE c.id = ?";

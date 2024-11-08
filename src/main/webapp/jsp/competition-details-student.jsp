@@ -74,8 +74,8 @@
     </table>
 
     <div class="actions">
-        <form action="${pageContext.request.contextPath}/jsp/competition-take.jsp" method="get">
-            <input type="hidden" name="id" value="${competition.id}" />
+        <form action="${pageContext.request.contextPath}/jsp/competition-participation.jsp?" method="get">
+            <input type="hidden" name="competitionId" value="${competition.id}" />
             <button type="submit">Tham Gia Cuộc Thi</button>
         </form>
     </div>

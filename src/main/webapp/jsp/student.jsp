@@ -19,13 +19,12 @@
     </script>
 </head>
 <body>
-<%@ include file="components/header.jsp" %>
-<%@ include file="components/sidebar.jsp" %>
+<%@ include file="/jsp/components/header.jsp" %>
+<%@ include file="/jsp/components/sidebar.jsp" %>
 <%
     // Đảm bảo rằng currentUser được lấy từ session trước khi sử dụng
     Users currentUser = null;
     // HttpSession session = request.getSession(false); // Giữ lại nếu cần
-    System.out.println("session: " + session);
     if (session != null) {
         currentUser = (Users) session.getAttribute("user");
     }
@@ -39,7 +38,7 @@
         <%
             // Verify user
             if (currentUser == null || !"student".equalsIgnoreCase(currentUser.getRoleName())) {
-                response.sendRedirect(request.getContextPath() + "/unauthorized.jsp");
+                response.sendRedirect(request.getContextPath() + "/jsp/unauthorized.jsp");
                 return;
             }
 
@@ -79,27 +78,16 @@
                 <div class="classes-grid" id="classesGrid">
                     <% if (classList != null && !classList.isEmpty()) {
                         for (classs cls : classList) {
-                            // Lấy danh sách cuộc thi cho lớp học hiện tại
-                            List<Competition> competitions = null;
-                            try {
-                                competitions = new ClassDAO().getCompetitionsByClassId(cls.getId());
-                            } catch (SQLException | ClassNotFoundException e) {
-                                e.printStackTrace();
-                            }
                     %>
                     <div class="class-card">
                         <h3><%= cls.getName() %></h3>
                         <p><strong>Teacher:</strong> <%= cls.getTeacher_name() %></p>
                         <div class="class-actions">
-                            <% if (competitions != null && !competitions.isEmpty()) { %>
-                            <% for (Competition competition : competitions) { %>
-                            <a href="<%= request.getContextPath() %>/jsp/competition-participation.jsp?competitionId=<%= competition.getId() %>" class="button">
-                                <i class="fas fa-tasks"></i> Take Competition: <%= competition.getName() %>
+                            <a href="<%= request.getContextPath() %>/ClassDetailsStudentServlet?classId=<%= cls.getId() %>" class="button">
+<%--                                send classId to ClassDetailsServlet --%>
+
+                                <i class="fas fa-eye"></i> View Class Details
                             </a>
-                            <% } %>
-                            <% } else { %>
-                            <p>No competitions assigned.</p>
-                            <% } %>
                         </div>
                     </div>
                     <% } } else { %>
@@ -182,8 +170,8 @@
                             <strong>Competition:</strong> <%= competition.getName() %><br>
                             <strong>Time Limit:</strong> <%= competition.getTimeLimit() / 60 %> minutes
                             <!-- Sử dụng liên kết để tham gia cuộc thi -->
-                            <a href="<%= request.getContextPath() %>/jsp/competition-participation.jsp?competitionId=<%= competition.getId() %>" class="button">
-                                <i class="fas fa-tasks"></i> Take Competition
+                            <a href="<%= request.getContextPath() %>/TakeCompetitionController?competitionId=<%= competition.getId() %>" class="button">
+                                <i class="fas fa-tasks"></i> Take Quiz
                             </a>
                         </li>
                         <% } %>
@@ -260,12 +248,12 @@
     </div>
 </main>
 
-<%@ include file="components/footer.jsp" %>
+<%@ include file="/jsp/components/footer.jsp" %>
 
-<!-- JavaScript -->
+
 <script src="<%= request.getContextPath() %>/js/common.js"></script>
 <script src="<%= request.getContextPath() %>/js/student.js"></script>
-<!-- New JavaScript for Search Functionality -->
+
 <script>
     function filterClasses() {
         const input = document.getElementById('searchInput');

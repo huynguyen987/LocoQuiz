@@ -29,14 +29,14 @@ public class DownloadExcelServlet extends HttpServlet {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Questions");
 
-        // Tạo tiêu đề
-        Row headerRow = sheet.createRow(0);
-        headerRow.createCell(0).setCellValue("Question");
-        headerRow.createCell(1).setCellValue("Option 1");
-        headerRow.createCell(2).setCellValue("Option 2");
-        headerRow.createCell(3).setCellValue("Option 3");
-        headerRow.createCell(4).setCellValue("Option 4");
-        headerRow.createCell(5).setCellValue("Correct Answer");
+//        // Tạo tiêu đề
+//        Row headerRow = sheet.createRow(0);
+//        headerRow.createCell(0).setCellValue("Question");
+//        headerRow.createCell(1).setCellValue("Option 1");
+//        headerRow.createCell(2).setCellValue("Option 2");
+//        headerRow.createCell(3).setCellValue("Option 3");
+//        headerRow.createCell(4).setCellValue("Option 4");
+//        headerRow.createCell(5).setCellValue("Correct Answer");
 
         // Điền dữ liệu
         for (int i = 0; i < questions.length(); i++) {
