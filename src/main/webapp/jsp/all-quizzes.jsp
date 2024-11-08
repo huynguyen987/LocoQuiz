@@ -14,189 +14,114 @@
 <head>
     <meta charset="UTF-8">
     <title>All Quizzes - QuizLoco</title>
+    <!-- External CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/all-quizzes.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Font Awesome -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-
-    <!-- Include any additional CSS or JS here -->
 </head>
 <body>
 
+<header class="header">
+    <div class="header-container">
+        <h1>QuizLoco</h1>
+        <nav>
+            <ul>
+                <li><a href="${pageContext.request.contextPath}/index.jsp">Home</a></li>
+                <li><a href="#latest-quizzes">Latest</a></li>
+                <li><a href="#popular-quizzes">Popular</a></li>
+                <li><a href="#all-quizzes">All Quizzes</a></li>
+            </ul>
+        </nav>
+        <a href="#" id="backToHome" class="btn-back-home" data-role="<%= role %>">
+            <i class="fas fa-home"></i> Back to Home
+        </a>
+    </div>
+</header>
+
 <main class="container">
-    <!-- Add this inside the <main> tag, preferably at the top or bottom -->
-    <a href="#" id="backToHome" class="btn-back-home">Back to Home</a>
     <!-- Latest Quizzes Section -->
-    <section id="latest-quizzes">
-        <h2>Latest Quizzes</h2>
+    <section id="latest-quizzes" aria-labelledby="latest-quizzes-heading">
+        <h2 id="latest-quizzes-heading">Latest Quizzes</h2>
         <div class="quiz-carousel">
-            <button class="carousel-control prev" onclick="scrollCarousel('latest', -1)">&#10094;</button>
+            <button class="carousel-control prev" onclick="scrollCarousel('latest', -1)" aria-label="Previous Latest Quizzes">
+                <i class="fas fa-chevron-left"></i>
+            </button>
             <div class="carousel-wrapper" id="latest-carousel">
                 <% for (quiz q : latestQuizzes) { %>
                 <div class="quiz-card">
-                    <h3><%= q.getName() %>
-                    </h3>
-                    <p><%= q.getDescription() %>
-                    </p>
-                    <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=<%= q.getId() %>"
-                       class="btn-quiz">View Detail</a>
+                    <h3><%= q.getName() %></h3>
+                    <p><%= q.getDescription() %></p>
+                    <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=<%= q.getId() %>" class="btn-quiz">View Details</a>
                 </div>
                 <% } %>
             </div>
-            <button class="carousel-control next" onclick="scrollCarousel('latest', 1)">&#10095;</button>
+            <button class="carousel-control next" onclick="scrollCarousel('latest', 1)" aria-label="Next Latest Quizzes">
+                <i class="fas fa-chevron-right"></i>
+            </button>
         </div>
     </section>
 
     <!-- Popular Quizzes Section -->
-    <section id="popular-quizzes">
-        <h2>Popular Quizzes</h2>
+    <section id="popular-quizzes" aria-labelledby="popular-quizzes-heading">
+        <h2 id="popular-quizzes-heading">Popular Quizzes</h2>
         <div class="quiz-carousel">
-            <button class="carousel-control prev" onclick="scrollCarousel('popular', -1)">&#10094;</button>
+            <button class="carousel-control prev" onclick="scrollCarousel('popular', -1)" aria-label="Previous Popular Quizzes">
+                <i class="fas fa-chevron-left"></i>
+            </button>
             <div class="carousel-wrapper" id="popular-carousel">
                 <% for (quiz q : popularQuizzes) { %>
                 <div class="quiz-card">
-                    <h3><%= q.getName() %>
-                    </h3>
-                    <p><%= q.getDescription() %>
-                    </p>
-                    <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=<%= q.getId() %>"
-                       class="btn-quiz">View Detail</a>
+                    <h3><%= q.getName() %></h3>
+                    <p><%= q.getDescription() %></p>
+                    <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=<%= q.getId() %>" class="btn-quiz">View Details</a>
                 </div>
                 <% } %>
             </div>
-            <button class="carousel-control next" onclick="scrollCarousel('popular', 1)">&#10095;</button>
+            <button class="carousel-control next" onclick="scrollCarousel('popular', 1)" aria-label="Next Popular Quizzes">
+                <i class="fas fa-chevron-right"></i>
+            </button>
         </div>
     </section>
 
     <!-- All Quizzes Section -->
-    <section id="all-quizzes">
-        <h2>All Quizzes</h2>
+    <section id="all-quizzes" aria-labelledby="all-quizzes-heading">
+        <h2 id="all-quizzes-heading">All Quizzes</h2>
         <div class="quiz-list">
             <% for (quiz q : allQuizzes) { %>
             <div class="quiz-card">
-                <h3><%= q.getName() %>
-                </h3>
-                <p><%= q.getDescription() %>
-                </p>
-                <p><strong>Views:</strong> <%= q.getViews() %>
-                </p>
-                <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=<%= q.getId() %>" class="btn-quiz">View
-                    Detail</a>
+                <h3><%= q.getName() %></h3>
+                <p><%= q.getDescription() %></p>
+                <p><strong>Views:</strong> <%= q.getViews() %></p>
+                <a href="${pageContext.request.contextPath}/jsp/quiz-details.jsp?id=<%= q.getId() %>" class="btn-quiz">View Details</a>
             </div>
             <% } %>
         </div>
 
         <!-- Pagination Controls -->
-        <div class="pagination">
+        <div class="pagination" aria-label="Quiz Pagination">
             <% if (currentPage > 1) { %>
-            <a href="AllQuizzesServlet?page=<%= currentPage - 1 %>" class="page-link">&laquo; Previous</a>
+            <a href="AllQuizzesServlet?page=<%= currentPage - 1 %>" class="page-link" aria-label="Previous Page">&laquo; Previous</a>
             <% } %>
 
             <% for (int i = 1; i <= totalPages; i++) { %>
-            <a href="AllQuizzesServlet?page=<%= i %>"
-               class="page-link <% if (i == currentPage) { %>active<% } %>"><%= i %>
-            </a>
+            <a href="AllQuizzesServlet?page=<%= i %>" class="page-link <%= (i == currentPage) ? "active" : "" %>" aria-current="<%= (i == currentPage) ? "page" : "false" %>"><%= i %></a>
             <% } %>
 
             <% if (currentPage < totalPages) { %>
-            <a href="AllQuizzesServlet?page=<%= currentPage + 1 %>" class="page-link">Next &raquo;</a>
+            <a href="AllQuizzesServlet?page=<%= currentPage + 1 %>" class="page-link" aria-label="Next Page">Next &raquo;</a>
             <% } %>
         </div>
     </section>
-
 </main>
 
-<!-- Include any necessary JavaScript -->
-<script>
-    function scrollCarousel(section, direction) {
-        const carousel = document.getElementById(section + '-carousel');
-        const scrollWidth = carousel.offsetWidth;
-        carousel.scrollBy({
-            top: 0,
-            left: direction * scrollWidth,
-            behavior: 'smooth'
-        });
-    }
-</script>
-<script>
-    document.getElementById('backToHome').addEventListener('click', function(event) {
-        event.preventDefault();
-        var role = '<%= role %>';
-        if (role === 'student') {
-            window.location.href = '<%= request.getContextPath() %>/jsp/student.jsp';
-        } else if (role === 'teacher') {
-            window.location.href = '<%= request.getContextPath() %>/jsp/teacher.jsp';
-        } else if (role === 'admin') {
-            window.location.href = '<%= request.getContextPath() %>/jsp/admin.jsp';
-        } else {
-            window.location.href = '<%= request.getContextPath() %>/index.jsp';
-        }
-    });
-</script>
+<footer class="footer">
+    <p>&copy; <%= java.time.Year.now().getValue() %> QuizLoco. All rights reserved.</p>
+</footer>
 
+<!-- External JavaScript -->
+<script src="${pageContext.request.contextPath}/js/all-quizzes.js"></script>
 
-<style>
-    /* Add necessary styles */
-    .quiz-carousel {
-        position: relative;
-        display: flex;
-        align-items: center;
-        overflow: hidden;
-        margin-bottom: 2rem;
-    }
-
-    .carousel-wrapper {
-        display: flex;
-        overflow-x: auto;
-        scroll-behavior: smooth;
-        scrollbar-width: none; /* Firefox */
-        -ms-overflow-style: none; /* Internet Explorer 10+ */
-    }
-
-    .carousel-wrapper::-webkit-scrollbar {
-        display: none; /* Safari and Chrome */
-    }
-
-    .quiz-card {
-        min-width: 200px;
-        margin: 0 1rem;
-        background-color: #fff;
-        padding: 1rem;
-        border-radius: 5px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .carousel-control {
-        background-color: rgba(0, 0, 0, 0.5);
-        color: #fff;
-        border: none;
-        font-size: 2rem;
-        padding: 0.5rem;
-        cursor: pointer;
-    }
-
-    .quiz-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-
-    .btn-back-home {
-        display: inline-block;
-        margin: 1rem 0;
-        padding: 0.75rem 1.5rem;
-        background-color: #3498db;
-        color: #fff;
-        text-decoration: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .btn-back-home:hover {
-        background-color: #2980b9;
-    }
-
-
-</style>
 </body>
 </html>

@@ -1,33 +1,53 @@
 // all-quizzes.js
-let currentPage = 1;
 
-document.addEventListener('DOMContentLoaded', function() {
-    fetchQuizzes(currentPage);
+// Function to handle carousel scrolling
+function scrollCarousel(section, direction) {
+    const carousel = document.getElementById(`${section}-carousel`);
+    if (carousel) {
+        const scrollAmount = carousel.offsetWidth * 0.8; // Scroll 80% of the container width
+        carousel.scrollBy({
+            top: 0,
+            left: direction * scrollAmount,
+            behavior: 'smooth'
+        });
+    }
+}
+
+// Event Listener for Back to Home Button
+document.addEventListener('DOMContentLoaded', function () {
+    const backToHomeBtn = document.getElementById('backToHome');
+    if (backToHomeBtn) {
+        backToHomeBtn.addEventListener('click', function (event) {
+            event.preventDefault();
+            const role = this.getAttribute('data-role');
+            const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 2));
+            switch (role) {
+                case 'student':
+                    window.location.href = `${contextPath}/jsp/student.jsp`;
+                    break;
+                case 'teacher':
+                    window.location.href = `${contextPath}/jsp/teacher.jsp`;
+                    break;
+                case 'admin':
+                    window.location.href = `${contextPath}/jsp/admin.jsp`;
+                    break;
+                default:
+                    window.location.href = `${contextPath}/index.jsp`;
+            }
+        });
+    }
+
+    // Keyboard navigation for carousel controls
+    const carouselControls = document.querySelectorAll('.carousel-control');
+    carouselControls.forEach(control => {
+        control.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    });
 });
 
-function changePage(direction) {
-    currentPage += direction;
-    if (currentPage < 1) currentPage = 1;
-    document.getElementById('page-number').innerText = currentPage;
-    fetchQuizzes(currentPage);
-}
-
-function fetchQuizzes(page) {
-    fetch(`/api/quizzes?page=${page}`)
-        .then(response => response.json())
-        .then(data => {
-            const quizContainer = document.getElementById('quiz-container');
-            quizContainer.innerHTML = ''; // Clear previous quizzes
-            data.forEach(quiz => {
-                const quizElement = document.createElement('div');
-                quizElement.className = 'quiz';
-                quizElement.innerHTML = `
-                    <h2>${quiz.title}</h2>
-                    <p>${quiz.description}</p>
-                    <a href="/quiz/${quiz.id}" class="start-quiz">Start Quiz</a>
-                `;
-                quizContainer.appendChild(quizElement);
-            });
-        })
-        .catch(error => console.error('Error fetching quizzes:', error));
-}
+// Optional: Implement infinite scroll or snapping for better UX
+// This can be added based on further requirements
