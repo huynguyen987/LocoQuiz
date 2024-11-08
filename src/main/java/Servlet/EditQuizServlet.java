@@ -277,6 +277,7 @@ public class EditQuizServlet extends HttpServlet {
                                 }
                             }
                             String correctAnswerText = answers.length >= correctAnswerIndex ? answers[correctAnswerIndex - 1] : answers[0];
+//                            Buoc nay de sua loi khi khong co cau tra loi dung
 
                             // Build the question JSON object
                             questionObjJSON.put("sequence", i);

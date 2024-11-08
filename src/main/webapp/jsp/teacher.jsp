@@ -12,29 +12,33 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
     ClassDAO classDAO = new ClassDAO();
-    CompetitionDAO CompetitionDAO = new CompetitionDAO();
+    CompetitionDAO competitionDAO = new CompetitionDAO();
     Users teacher = (Users) session.getAttribute("user");
-    List<classs> classes = classDAO.getClassesByTeacherId(teacher.getId());
-    List<Competition> competitions = CompetitionDAO.getCompetitionsByTeacher(teacher.getId());
-    System.out.println("classes: " + classes.size());
-    System.out.println("competitions: " + competitions.size());
-    request.setAttribute("classes", classes);
-    request.setAttribute("competitions", competitions);
-%>
-<%
-    List<Competition> activeCompetitions = new ArrayList<>();
-    Date now = new Date();
-    for (Competition competition : competitions) {
-        if (competition.getAccessEndTime().after(now)) { // So sánh thời gian kết thúc
-            activeCompetitions.add(competition);
-        }
+
+    // Lấy tham số tìm kiếm từ request
+    String classSearch = request.getParameter("classSearch");
+    String competitionSearch = request.getParameter("competitionSearch");
+
+    List<classs> classes;
+    List<Competition> competitions;
+
+    if (classSearch != null && !classSearch.trim().isEmpty()) {
+        classes = classDAO.searchClassesByTeacherId2(classSearch.trim(), teacher.getId());
+    } else {
+        classes = classDAO.getClassesByTeacherId(teacher.getId());
     }
 
-    // Đặt danh sách đã lọc vào request
-    request.setAttribute("classes", classes);
-    request.setAttribute("competitions", activeCompetitions);
-%>
+    if (competitionSearch != null && !competitionSearch.trim().isEmpty()) {
+        competitions = competitionDAO.searchCompetitionsByTeacher(competitionSearch.trim(), teacher.getId());
+    } else {
+        competitions = competitionDAO.getCompetitionsByTeacher(teacher.getId());
+    }
 
+    request.setAttribute("classes", classes);
+    request.setAttribute("competitions", competitions);
+    request.setAttribute("classSearch", classSearch);
+    request.setAttribute("competitionSearch", competitionSearch);
+%>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -106,6 +110,13 @@
         <!-- Danh Sách Lớp Học -->
         <section class="classes-section">
             <h2>Lớp Học Của Bạn</h2>
+
+            <!-- Thanh tìm kiếm lớp học -->
+            <form method="get" action="">
+                <input type="text" name="classSearch" placeholder="Tìm kiếm lớp học" value="${fn:escapeXml(classSearch)}"/>
+                <button type="submit">Tìm kiếm</button>
+            </form>
+
             <c:if test="${not empty classes}">
                 <div class="classes-grid">
                     <c:forEach var="classs" items="${classes}">
@@ -130,13 +141,20 @@
                 </div>
             </c:if>
             <c:if test="${empty classes}">
-                <p>Bạn chưa tạo lớp học nào.</p>
+                <p>Không tìm thấy lớp học nào.</p>
             </c:if>
         </section>
 
         <!-- Danh Sách Cuộc Thi -->
         <section class="competitions-section">
             <h2>Cuộc Thi Của Bạn</h2>
+
+            <!-- Thanh tìm kiếm cuộc thi -->
+            <form method="get" action="">
+                <input type="text" name="competitionSearch" placeholder="Tìm kiếm cuộc thi" value="${fn:escapeXml(competitionSearch)}"/>
+                <button type="submit">Tìm kiếm</button>
+            </form>
+
             <c:if test="${not empty competitions}">
                 <div class="competitions-grid">
                     <c:forEach var="competition" items="${competitions}">
@@ -163,29 +181,24 @@
                                     </button>
                                 </form>
                             </div>
-
-
                         </div>
                     </c:forEach>
                 </div>
             </c:if>
             <c:if test="${empty competitions}">
-                <p>Bạn chưa tạo cuộc thi nào hoặc các cuộc thi đã hết hạn.</p>
+                <p>Không tìm thấy cuộc thi nào.</p>
             </c:if>
         </section>
 
     </div>
-<%--    style for trash button in class section like competition section--%>
+    <!-- Style cho nút xóa -->
     <style>
-        .button delete-button , .button delete-button:hover {
+        .button.delete-button, .button.delete-button:hover {
             background-color: #ff0000;
             color: #fff;
-            inline-size: auto;
         }
     </style>
 </main>
-
-
 
 <%@ include file="components/footer.jsp" %>
 

@@ -10,7 +10,31 @@ import Module.DBConnect;
 
 public class ClassDAO {
 
-       //getClassDetailsById
+    public List<classs> searchClassesByTeacherId2(String search, int teacherId) throws SQLException, ClassNotFoundException {
+        List<classs> classList = new ArrayList<>();
+        String sql = "SELECT * FROM class WHERE teacher_id = ? AND name LIKE ?";
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, teacherId);
+            ps.setString(2, "%" + search + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    classs cls = new classs();
+                    cls.setId(rs.getInt("id"));
+                    cls.setName(rs.getString("name"));
+                    cls.setDescription(rs.getString("description"));
+                    cls.setCreated_at(rs.getTimestamp("created_at"));
+                    cls.setUpdated_at(rs.getTimestamp("updated_at"));
+                    cls.setTeacher_id(rs.getInt("teacher_id"));
+                    classList.add(cls);
+                }
+            }
+        }
+        return classList;
+    }
+
+
+    //getClassDetailsById
     public classs getClassDetailsById(int classId) throws SQLException, ClassNotFoundException {
         String sql = "SELECT * FROM class WHERE id = ?";
         try (Connection connection = new DBConnect().getConnection();
