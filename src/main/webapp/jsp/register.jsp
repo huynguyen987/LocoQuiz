@@ -188,13 +188,17 @@
       <label for="role_id">Role:</label>
       <select id="role_id" name="role_id" required>
         <option value="">--Select Role--</option>
-        <option value="1">User</option>
-        <option value="2">Admin</option>
+        <option value="1">Teacher</option>
+        <option value="2">User</option>
       </select>
       <div id="role_idHint" class="hint"></div>
     </div>
 
     <button type="submit">Register</button>
+    <c:if test="${not empty error}">
+      <div class="error">${error}</div>
+        <c:remove var="error" scope="session"/>
+    </c:if>
   </form>
 </div>
 

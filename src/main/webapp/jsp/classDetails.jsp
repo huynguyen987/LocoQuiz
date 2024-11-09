@@ -5,6 +5,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="dao.CompetitionResultDAO" %>
 <%@ page import="dao.QuizDAO" %>
+<%@ page import="dao.CompetitionDAO" %>
 <%@ page import="java.sql.SQLException" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
@@ -33,6 +34,7 @@
   Users currentUser = (Users) request.getAttribute("currentUser");
   System.out.println("Current user view class: " + currentUser.getUsername());
 
+  // Fetch Assigned Quizzes
   List<quiz> assignedQuizzes = null;
   try {
     QuizDAO quizDAO = new QuizDAO();
@@ -42,19 +44,28 @@
     assignedQuizzes = null;
   }
 
-  // Filter out competitions the user has already taken
-  List<Competition> assignedQuizzesTemp = new ArrayList<>();
-  if (assignedQuizzes != null) {
-    for (Competition competition : assignedQuizzes) {
+  // Fetch Assigned Competitions
+  List<Competition> assignedCompetitions = null;
+    CompetitionDAO competitionDAO = new CompetitionDAO();
+    assignedCompetitions = competitionDAO.getCompetitionByClassId(classEntity.getId());
+
+    // Filter out competitions the user has already taken
+  List<Competition> filteredCompetitions = new ArrayList<>();
+  if (assignedCompetitions != null) {
+    for (Competition competition : assignedCompetitions) {
       if (!competitionResultDAO.hasUserTakenCompetition(currentUser.getId(), competition.getId())) {
-        assignedQuizzesTemp.add(competition);
+        filteredCompetitions.add(competition);
       }
     }
   }
 
+  System.out.println("User has not taken competitions: " + filteredCompetitions.size());
+
+  // Set attributes for JSP
   request.setAttribute("classEntity", classEntity);
   request.setAttribute("classmates", classmates);
-  request.setAttribute("assignedQuizzes", assignedQuizzesTemp);
+  request.setAttribute("assignedQuizzes", assignedQuizzes); // Pass quizzes directly
+  request.setAttribute("assignedCompetitions", filteredCompetitions); // Pass filtered competitions
   request.setAttribute("teacherName", teacherName);
 %>
 
@@ -144,22 +155,23 @@
                 <h4>Assigned Competitions</h4>
               </div>
               <div class="card-body">
-                <c:if test="${not empty assignedQuizzes}">
+                <c:if test="${not empty assignedCompetitions}">
                   <div class="list-group">
-                    <c:forEach var="competition" items="${assignedQuizzes}">
+                    <c:forEach var="competition" items="${assignedCompetitions}">
                       <div class="list-group-item d-flex justify-content-between align-items-center">
                         <div>
                           <h5 class="mb-1"><c:out value="${competition.name}" /></h5>
+                          <p class="mb-1"><c:out value="${competition.description}" /></p>
                         </div>
                         <a href="${pageContext.request.contextPath}/TakeCompetitionController?competitionId=${competition.id}" class="btn btn-success btn-sm">
-                          <i class="fas fa-tasks"></i> Take Quiz
+                          <i class="fas fa-tasks"></i> Take Competition
                         </a>
                       </div>
                     </c:forEach>
                   </div>
                 </c:if>
-                <c:if test="${empty assignedQuizzes}">
-                  <p class="text-muted">No competitions assigned.</p>
+                <c:if test="${empty assignedCompetitions}">
+                  <p class="text-muted">No competitions assigned or you've already completed them.</p>
                 </c:if>
               </div>
             </div>

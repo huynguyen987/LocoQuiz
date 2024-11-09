@@ -367,4 +367,43 @@ public class CompetitionDAO {
 
         return quizInfo;
     }
+
+    public List<Competition> getCompetitionByClassId(int id) {
+        String sql = "SELECT * FROM `competitions` WHERE class_id = ?";
+        List<Competition> competitions = new ArrayList<>();
+
+        try (Connection conn = new DBConnect().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Competition competition = new Competition();
+                    competition.setId(rs.getInt("id"));
+                    competition.setName(rs.getString("name"));
+                    competition.setDescription(rs.getString("description"));
+                    competition.setClassId(rs.getInt("class_id"));
+                    competition.setQuizId(rs.getInt("quiz_id"));
+                    competition.setTimeLimit(rs.getInt("time_limit"));
+                    competition.setQuestionCount(rs.getInt("question_count"));
+                    competition.setShuffleQuestions(rs.getBoolean("shuffle_questions"));
+
+                    Timestamp startTS = rs.getTimestamp("access_start_time");
+                    Timestamp endTS = rs.getTimestamp("access_end_time");
+
+                    competition.setAccessStartTime(startTS != null ? new Date(startTS.getTime()) : null);
+                    competition.setAccessEndTime(endTS != null ? new Date(endTS.getTime()) : null);
+
+                    competition.setCreatedAt(rs.getTimestamp("created_at"));
+
+                    competitions.add(competition);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return competitions;
+    }
 }
