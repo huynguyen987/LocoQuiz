@@ -28,7 +28,7 @@ public class RegisterServlet extends HttpServlet {
         HttpSession session = request.getSession(true);
 
         String username = request.getParameter("username");
-        String password = request.getParameter("password_hash");
+        String password = request.getParameter("password");
         String hashedPassword = hashPassword(password);
         String email = request.getParameter("email");
         String gender = request.getParameter("gender");

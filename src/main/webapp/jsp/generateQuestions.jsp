@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="vi">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/common.css">
 <head>
     <meta charset="UTF-8">
     <title>Tạo Câu Hỏi</title>

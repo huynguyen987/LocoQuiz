@@ -4,6 +4,7 @@
 <%@ include file="/jsp/components/header.jsp" %>
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/competition_result.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/common.css">
 
 <div class="container">
     <h2>Kết Quả Cuộc Thi</h2>

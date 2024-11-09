@@ -4,15 +4,27 @@
 <%@ page import="dao.UsersDAO" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="dao.CompetitionResultDAO" %>
-<%@ page import="java.security.cert.Extension" %>
+<%@ page import="dao.QuizDAO" %>
+<%@ page import="java.sql.SQLException" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <%@ include file="/jsp/components/header.jsp" %>
+<%@ include file="/jsp/components/sidebar.jsp" %>
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Custom CSS -->
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/common.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/classDetails.css">
+
 <%
+  // Retrieve and set attributes
   classs classEntity = (classs) request.getAttribute("classEntity");
   List<Users> classmates = (List<Users>) request.getAttribute("classmates");
-  List<Competition> assignedQuizzes = (List<Competition>) request.getAttribute("assignedQuizzes");
   CompetitionResultDAO competitionResultDAO = new CompetitionResultDAO();
   UsersDAO usersDAO = new UsersDAO();
   int teacherId = classEntity.getTeacher_id();
@@ -21,77 +33,154 @@
   Users currentUser = (Users) request.getAttribute("currentUser");
   System.out.println("Current user view class: " + currentUser.getUsername());
 
-    request.setAttribute("classEntity", classEntity);
-    request.setAttribute("classmates", classmates);
-    request.setAttribute("assignedQuizzes", assignedQuizzes);
-    request.setAttribute("teacherName", teacherName);
-//    if user has taken competition, do not put it in the list assignedQuizzes
-    List<Competition> assignedQuizzesTemp = new ArrayList<>();
+  List<quiz> assignedQuizzes = null;
+  try {
+    QuizDAO quizDAO = new QuizDAO();
+    assignedQuizzes = quizDAO.getAssignedQuizzesByClassId(classEntity.getId());
+  } catch (SQLException | ClassNotFoundException e) {
+    e.printStackTrace();
+    assignedQuizzes = null;
+  }
+
+  // Filter out competitions the user has already taken
+  List<Competition> assignedQuizzesTemp = new ArrayList<>();
+  if (assignedQuizzes != null) {
     for (Competition competition : assignedQuizzes) {
       if (!competitionResultDAO.hasUserTakenCompetition(currentUser.getId(), competition.getId())) {
-            assignedQuizzesTemp.add(competition);
-        }
+        assignedQuizzesTemp.add(competition);
+      }
     }
-    request.setAttribute("assignedQuizzes", assignedQuizzesTemp);
+  }
+
+  request.setAttribute("classEntity", classEntity);
+  request.setAttribute("classmates", classmates);
+  request.setAttribute("assignedQuizzes", assignedQuizzesTemp);
+  request.setAttribute("teacherName", teacherName);
 %>
 
-<div class="container">
-  <h2>Class Details</h2>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar Column (Included via sidebar.jsp) -->
 
-  <div class="class-details-container">
-    <!-- Class Information -->
-    <div class="class-info">
-      <h3>Class Information</h3>
-      <p><strong>Name:</strong> <c:out value="${classEntity.name}" /></p>
-      <p><strong>Description:</strong> <c:out value="${classEntity.description}" /></p>
-      <p><strong>Teacher:</strong> <c:out value="${teacherName}" /></p>
-    </div>
+    <!-- Main Content Column -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="container my-5">
+        <h2 class="mb-4 text-center">Class Details</h2>
 
-    <!-- Classmates -->
-    <div class="classmates">
-      <h3>Classmates (<c:out value="${classmates.size()}" />)</h3>
-      <c:if test="${not empty classmates}">
-        <ul class="list">
-          <c:forEach var="student" items="${classmates}">
-            <li><c:out value="${student.username}" /></li>
-          </c:forEach>
-        </ul>
-      </c:if>
-      <c:if test="${empty classmates}">
-        <p>No classmates found.</p>
-      </c:if>
-    </div>
+        <div class="row">
+          <!-- Class Information -->
+          <div class="col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+              <div class="card-header bg-primary text-white">
+                <h4>Class Information</h4>
+              </div>
+              <div class="card-body">
+                <p><strong>Name:</strong> <c:out value="${classEntity.name}" /></p>
+                <p><strong>Description:</strong> <c:out value="${classEntity.description}" /></p>
+                <p><strong>Teacher:</strong> <c:out value="${teacherName}" /></p>
+              </div>
+            </div>
+          </div>
 
-    <!-- Assigned Competitions -->
-    <div class="assigned-competitions">
-      <h3>Assigned Competitions</h3>
-      <c:if test="${not empty assignedQuizzes}">
-        <ul class="list">
-          <c:forEach var="competition" items="${assignedQuizzes}">
-            <li>
-              <strong>Competition:</strong> <c:out value="${competition.name}" /><br>
-              <a href="<%= request.getContextPath() %>/TakeCompetitionController?competitionId=<c:out value='${competition.id}' />" class="button">
-                <i class="fas fa-tasks"></i> Take Quiz
-              </a>
-            </li>
-          </c:forEach>
-        </ul>
-      </c:if>
-      <c:if test="${empty assignedQuizzes}">
-        <p>No competitions assigned.</p>
-      </c:if>
-    </div>
+          <!-- Classmates -->
+          <div class="col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+              <div class="card-header bg-success text-white">
+                <h4>Classmates (<c:out value="${classmates.size()}" />)</h4>
+              </div>
+              <div class="card-body">
+                <c:if test="${not empty classmates}">
+                  <ul class="list-group list-group-flush">
+                    <c:forEach var="student" items="${classmates}">
+                      <li class="list-group-item"><c:out value="${student.username}" /></li>
+                    </c:forEach>
+                  </ul>
+                </c:if>
+                <c:if test="${empty classmates}">
+                  <p class="text-muted">No classmates found.</p>
+                </c:if>
+              </div>
+            </div>
+          </div>
 
-    <!-- Back Button -->
-    <div class="action-buttons">
-      <a href="<%= request.getContextPath() %>/jsp/student.jsp?action=Classrooms" class="button back-btn">
-        <i class="fas fa-arrow-left"></i> Back to Classes
-      </a>
-    </div>
+          <!-- Assigned Quizzes -->
+          <div class="col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+              <div class="card-header bg-warning text-white">
+                <h4>Assigned Quizzes</h4>
+              </div>
+              <div class="card-body">
+                <c:if test="${not empty assignedQuizzes}">
+                  <ul class="list-group list-group-flush">
+                    <c:forEach var="quiz" items="${assignedQuizzes}">
+                      <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                          <h5 class="mb-1"><c:out value="${quiz.name}" /></h5>
+                          <p class="mb-1"><c:out value="${quiz.description}" /></p>
+                        </div>
+                        <form action="${pageContext.request.contextPath}/TakeQuizServlet" method="get" class="mb-0">
+                          <input type="hidden" name="id" value="<c:out value='${quiz.id}' />">
+                          <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-pencil-alt"></i> Take Quiz
+                          </button>
+                        </form>
+                      </li>
+                    </c:forEach>
+                  </ul>
+                </c:if>
+                <c:if test="${empty assignedQuizzes}">
+                  <p class="text-muted">No quizzes assigned for this class.</p>
+                </c:if>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assigned Competitions -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card shadow-sm">
+              <div class="card-header bg-info text-white">
+                <h4>Assigned Competitions</h4>
+              </div>
+              <div class="card-body">
+                <c:if test="${not empty assignedQuizzes}">
+                  <div class="list-group">
+                    <c:forEach var="competition" items="${assignedQuizzes}">
+                      <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                          <h5 class="mb-1"><c:out value="${competition.name}" /></h5>
+                        </div>
+                        <a href="${pageContext.request.contextPath}/TakeCompetitionController?competitionId=${competition.id}" class="btn btn-success btn-sm">
+                          <i class="fas fa-tasks"></i> Take Quiz
+                        </a>
+                      </div>
+                    </c:forEach>
+                  </div>
+                </c:if>
+                <c:if test="${empty assignedQuizzes}">
+                  <p class="text-muted">No competitions assigned.</p>
+                </c:if>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="text-center">
+          <a href="${pageContext.request.contextPath}/jsp/student.jsp?action=Classrooms" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Classes
+          </a>
+        </div>
+      </div>
+    </main>
   </div>
 </div>
 
 <%@ include file="/jsp/components/footer.jsp" %>
 
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <!-- Optional: Include any specific JavaScript for class details -->
-<script src="<%= request.getContextPath() %>/js/classDetails.js"></script>
+<script src="${pageContext.request.contextPath}/js/classDetails.js"></script>
