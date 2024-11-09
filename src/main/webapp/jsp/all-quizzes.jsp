@@ -16,6 +16,7 @@
     <title>All Quizzes - QuizLoco</title>
     <!-- External CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/all-quizzes.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/common.css.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Font Awesome -->
@@ -26,14 +27,14 @@
 <header class="header">
     <div class="header-container">
         <h1>QuizLoco</h1>
-        <nav>
-            <ul>
-                <li><a href="${pageContext.request.contextPath}/index.jsp">Home</a></li>
-                <li><a href="#latest-quizzes">Latest</a></li>
-                <li><a href="#popular-quizzes">Popular</a></li>
-                <li><a href="#all-quizzes">All Quizzes</a></li>
-            </ul>
-        </nav>
+<%--        <nav>--%>
+<%--            <ul>--%>
+<%--                <li><a href="${pageContext.request.contextPath}/index.jsp">Home</a></li>--%>
+<%--                <li><a href="#latest-quizzes">Latest</a></li>--%>
+<%--                <li><a href="#popular-quizzes">Popular</a></li>--%>
+<%--                <li><a href="#all-quizzes">All Quizzes</a></li>--%>
+<%--            </ul>--%>
+<%--        </nav>--%>
         <a href="#" id="backToHome" class="btn-back-home" data-role="<%= role %>">
             <i class="fas fa-home"></i> Back to Home
         </a>

@@ -23,6 +23,7 @@
 <%@ include file="/jsp/components/sidebar.jsp" %>
 <%
     // Đảm bảo rằng currentUser được lấy từ session trước khi sử dụng
+
     Users currentUser = null;
     // HttpSession session = request.getSession(false); // Giữ lại nếu cần
     if (session != null) {

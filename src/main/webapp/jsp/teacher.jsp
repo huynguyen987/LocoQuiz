@@ -13,8 +13,15 @@
 <%
     ClassDAO classDAO = new ClassDAO();
     CompetitionDAO competitionDAO = new CompetitionDAO();
+    if (session.getAttribute("user") == null) {
+        response.sendRedirect(request.getContextPath() + "/jsp/loginServlet");
+        return;
+    }
     Users teacher = (Users) session.getAttribute("user");
-
+    if (teacher == null) {
+        response.sendRedirect(request.getContextPath() + "/jsp/loginServlet");
+        return;
+    }
     // Lấy tham số tìm kiếm từ request
     String classSearch = request.getParameter("classSearch");
     String competitionSearch = request.getParameter("competitionSearch");

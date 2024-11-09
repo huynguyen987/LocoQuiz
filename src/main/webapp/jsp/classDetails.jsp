@@ -32,6 +32,10 @@
   String teacherName = usersDAO.getUserById(teacherId).getUsername();
   System.out.println("Teacher name: " + teacherName);
   Users currentUser = (Users) request.getAttribute("currentUser");
+  if (currentUser == null) {
+    response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");
+    return;
+  }
   System.out.println("Current user view class: " + currentUser.getUsername());
 
   // Fetch Assigned Quizzes
