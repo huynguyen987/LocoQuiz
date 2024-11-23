@@ -19,6 +19,7 @@
       <li><a href="${pageContext.request.contextPath}/QuizController"><i class="fas fa-plus"></i> Create Quiz</a></li>
       <li><a href="${pageContext.request.contextPath}/jsp/flashcard.jsp"><i class="fas fa-plus"></i> Flashcard</a></li>
       <li><a href="${pageContext.request.contextPath}/LibraryServlet"><i class="fas fa-folder"></i> Library</a></li>
+      <li><a href="${pageContext.request.contextPath}/jsp/studyplanner.jsp"><i class="fas fa-folder"></i> Study's Plan</a></li>
       <li><a href="${pageContext.request.contextPath}/LogoutServlet"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
     </c:if>
 
