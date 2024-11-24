@@ -106,7 +106,7 @@
 
         <!-- Nút quay lại Dashboard -->
         <div class="action-buttons">
-            <a href="${pageContext.request.contextPath}/teacher/dashboard" class="btn btn-default">
+            <a href="${pageContext.request.contextPath}/jsp/teacher.jsp" class="btn btn-default">
                 <i class="fas fa-arrow-left"></i> Quay lại Dashboard
             </a>
         </div>
