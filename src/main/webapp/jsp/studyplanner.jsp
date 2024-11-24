@@ -25,7 +25,7 @@
             <a class="nav-link active" href="#planning">Lập Kế Hoạch</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#tasks">Danh Sách Nhiệm Vụ </a>
+            <a class="nav-link" href="#tasks">Danh Sách Nhiệm Vụ</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="#statistics">Thống Kê Học Tập</a>
@@ -86,6 +86,8 @@
             </div>
             <div class="card-body">
                 <div id='calendar'></div>
+                <!-- Download Calendar Button -->
+                <button id="downloadCalendar" class="btn btn-success mt-3">Tải Lịch Học</button>
             </div>
         </div>
     </div>
@@ -96,7 +98,9 @@
         <div class="mb-4">
             <h3>Tiến Độ Học Tập</h3>
             <div class="progress">
-                <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;"
+                     aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%
+                </div>
             </div>
             <p id="progressText" class="mt-2">Hôm nay: Hoàn thành 0/0 nhiệm vụ</p>
         </div>
@@ -109,7 +113,8 @@
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-md-4">
-                        <input type="text" id="searchKeyword" class="form-control" placeholder="Tìm kiếm theo từ khóa...">
+                        <input type="text" id="searchKeyword" class="form-control"
+                               placeholder="Tìm kiếm theo từ khóa...">
                     </div>
                     <div class="col-md-4">
                         <select id="filterStatus" class="form-select">
@@ -148,8 +153,12 @@
                     </div>
                 </div>
                 <div class="row g-3 mt-3">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <button id="clearFilters" class="btn btn-secondary w-100">Xóa Lọc</button>
+                    </div>
+                    <div class="col-md-6">
+                        <!-- Delete All Tasks Button -->
+                        <button id="deleteAllTasks" class="btn btn-danger w-100">Xóa Hết Nhiệm Vụ</button>
                     </div>
                 </div>
             </div>
@@ -158,7 +167,7 @@
         <!-- Task List -->
         <div class="card mb-4">
             <div class="card-header">
-                <h3>Danh Sách Nhiệm Vụ </h3>
+                <h3>Danh Sách Nhiệm Vụ</h3>
             </div>
             <div class="card-body">
                 <div id="taskList" class="list-group">
@@ -180,6 +189,50 @@
                 <h3>Thống Kê Học Tập</h3>
             </div>
             <div class="card-body">
+                <!-- Summary Statistics -->
+                <div class="row text-center mb-4">
+                    <div class="col-md-4">
+                        <h5>Tổng số nhiệm vụ</h5>
+                        <p id="totalTasks">0</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Hoàn thành</h5>
+                        <p id="completedTasks">0</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Chưa hoàn thành</h5>
+                        <p id="pendingTasks">0</p>
+                    </div>
+                </div>
+
+                <!-- Chart Controls -->
+                <div class="mb-4">
+                    <label for="statsTimeRange" class="form-label">Chọn khoảng thời gian:</label>
+                    <select id="statsTimeRange" class="form-select w-auto d-inline-block">
+                        <option value="All">Tất Cả</option>
+                        <option value="Today">Hôm Nay</option>
+                        <option value="PastWeek">Tuần Này</option>
+                        <option value="PastMonth">Tháng Này</option>
+                        <option value="Custom">Tùy Chọn</option>
+                    </select>
+                    <div id="customDateRange" class="mt-2" style="display: none;">
+                        <label for="statsDateFrom" class="form-label">Từ ngày:</label>
+                        <input type="date" id="statsDateFrom" class="form-control d-inline-block w-auto">
+                        <label for="statsDateTo" class="form-label ms-2">Đến ngày:</label>
+                        <input type="date" id="statsDateTo" class="form-control d-inline-block w-auto">
+                    </div>
+                </div>
+
+                <!-- Chart Type Controls -->
+                <div class="mb-4">
+                    <label for="chartType" class="form-label">Loại biểu đồ:</label>
+                    <select id="chartType" class="form-select w-auto d-inline-block">
+                        <option value="pie">Biểu đồ Tròn</option>
+                        <option value="bar">Biểu đồ Cột</option>
+                        <option value="line">Biểu đồ Đường</option>
+                    </select>
+                </div>
+
                 <canvas id="statsChart"></canvas>
             </div>
         </div>
@@ -209,6 +262,10 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+<!-- SheetJS -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<!-- FileSaver.js -->
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 <!-- Custom JS -->
 <script src="${pageContext.request.contextPath}/js/planner.js" defer></script>
 </body>

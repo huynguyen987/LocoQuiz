@@ -8,7 +8,19 @@ let points = parseInt(localStorage.getItem('points')) || 0;
 let rewards = JSON.parse(localStorage.getItem('rewards')) || [
     { id: 1, name: 'Badge Mới Bắt Đầu', requiredPoints: 10, claimed: false },
     { id: 2, name: 'Badge Tiến Bộ', requiredPoints: 20, claimed: false },
-    { id: 3, name: 'Badge Xuất Sắc', requiredPoints: 30, claimed: false },
+    { id: 3, name: 'Badge Chăm Chỉ', requiredPoints: 50, claimed: false },
+    { id: 4, name: 'Badge Chuyên Cần', requiredPoints: 100, claimed: false },
+    { id: 5, name: 'Badge Siêu Sao', requiredPoints: 200, claimed: false },
+    { id: 6, name: 'Badge Huyền Thoại', requiredPoints: 300, claimed: false },
+    { id: 7, name: 'Badge Bậc Thầy', requiredPoints: 400, claimed: false },
+    { id: 8, name: 'Badge Đỉnh Cao', requiredPoints: 500, claimed: false },
+    { id: 9, name: 'Badge Vô Địch', requiredPoints: 600, claimed: false },
+    { id: 10, name: 'Badge Siêu Việt', requiredPoints: 700, claimed: false },
+    { id: 11, name: 'Badge Huyền Thoại Sống', requiredPoints: 800, claimed: false },
+    { id: 12, name: 'Badge Bất Bại', requiredPoints: 900, claimed: false },
+    { id: 13, name: 'Badge Thần Thoại', requiredPoints: 1000, claimed: false },
+    { id: 14, name: 'Badge Huyền Thoại Bất Tử', requiredPoints: 1200, claimed: false },
+    { id: 15, name: 'Badge Vĩ Đại Nhất', requiredPoints: 1500, claimed: false },
 ];
 
 // Pagination variables
@@ -44,7 +56,8 @@ function initializeCalendar() {
             color: getPriorityColor(task.priority),
             extendedProps: {
                 description: task.description,
-                status: task.status
+                status: task.status,
+                priority: task.priority // Added priority here
             }
         })),
         eventClick: function(info) {
@@ -105,6 +118,9 @@ function setupEventListeners() {
         clearFilters();
     });
 
+    // Delete All Tasks Button
+    document.getElementById('deleteAllTasks').addEventListener('click', deleteAllTasks);
+
     // Navigation tabs
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
@@ -121,6 +137,26 @@ function setupEventListeners() {
 
     // Claim reward button
     document.getElementById('claimReward').addEventListener('click', claimReward);
+
+    // Download Calendar button
+    document.getElementById('downloadCalendar').addEventListener('click', function() {
+        exportCalendarToExcel();
+    });
+
+    // Statistics controls
+    document.getElementById('statsTimeRange').addEventListener('change', function() {
+        const timeRange = this.value;
+        if (timeRange === 'Custom') {
+            document.getElementById('customDateRange').style.display = 'block';
+        } else {
+            document.getElementById('customDateRange').style.display = 'none';
+            updateStatistics();
+        }
+    });
+
+    document.getElementById('statsDateFrom').addEventListener('change', updateStatistics);
+    document.getElementById('statsDateTo').addEventListener('change', updateStatistics);
+    document.getElementById('chartType').addEventListener('change', updateStatistics);
 }
 
 // Function to show the selected section
@@ -164,6 +200,7 @@ function addTask() {
     resetForm();
     refreshCalendar();
     updateStatistics();
+    showToast('Nhiệm vụ đã được thêm thành công.', 'success');
 }
 
 // Function to display tasks with pagination
@@ -310,6 +347,20 @@ function deleteTask(taskId) {
     }
 }
 
+// Function to delete all tasks
+function deleteAllTasks() {
+    if (confirm('Bạn có chắc muốn xóa hết nhiệm vụ không?')) {
+        tasks = [];
+        saveData();
+        currentPage = 1;
+        displayTasks();
+        updateDailyProgress();
+        refreshCalendar();
+        updateStatistics();
+        showToast('Tất cả nhiệm vụ đã được xóa.', 'success');
+    }
+}
+
 // Function to update daily progress
 function updateDailyProgress() {
     const today = new Date().toISOString().split('T')[0];
@@ -342,7 +393,8 @@ function refreshCalendar() {
         color: getPriorityColor(task.priority),
         extendedProps: {
             description: task.description,
-            status: task.status
+            status: task.status,
+            priority: task.priority // Added priority here
         }
     })));
 }
@@ -359,14 +411,14 @@ function checkNotifications() {
 
             // Notify 1 hour before
             if (timeDiff > 0 && timeDiff <= oneHour && !task.notifiedOneHour) {
-                showToast(`Nhiệm vụ "${task.title}" sẽ đến hạn trong 1 giờ.`);
+                showToast(`Nhiệm vụ "${task.title}" sẽ đến hạn trong 1 giờ.`, 'warning');
                 task.notifiedOneHour = true;
                 saveData();
             }
 
             // Notify 5 minutes before
             if (timeDiff > 0 && timeDiff <= fiveMinutes && !task.notifiedFiveMinutes) {
-                showToast(`Nhiệm vụ "${task.title}" sẽ đến hạn trong 5 phút.`);
+                showToast(`Nhiệm vụ "${task.title}" sẽ đến hạn trong 5 phút.`, 'warning');
                 task.notifiedFiveMinutes = true;
                 saveData();
             }
@@ -375,7 +427,7 @@ function checkNotifications() {
 }
 
 // Function to show toast notifications
-function showToast(message) {
+function showToast(message, type = 'info') {
     // Create toast container if not exists
     let toastContainer = document.getElementById('toastContainer');
     if (!toastContainer) {
@@ -385,9 +437,19 @@ function showToast(message) {
         document.body.appendChild(toastContainer);
     }
 
+    // Determine the appropriate Bootstrap classes based on the type
+    let toastClass = 'text-bg-primary'; // default is 'info' (blue)
+    if (type === 'success') {
+        toastClass = 'text-bg-success';
+    } else if (type === 'warning') {
+        toastClass = 'text-bg-warning';
+    } else if (type === 'error') {
+        toastClass = 'text-bg-danger';
+    }
+
     // Create toast element
     const toastEl = document.createElement('div');
-    toastEl.className = 'toast align-items-center text-bg-primary border-0';
+    toastEl.className = `toast align-items-center ${toastClass} border-0`;
     toastEl.setAttribute('role', 'alert');
     toastEl.setAttribute('aria-live', 'assertive');
     toastEl.setAttribute('aria-atomic', 'true');
@@ -510,14 +572,22 @@ function saveData() {
 
 // Statistics Initialization
 function initializeStatistics() {
-    const ctx = document.getElementById('statsChart').getContext('2d');
-    window.statsChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
+    window.statsChart = null;
+    updateStatistics();
+}
+
+// Function to get statistics data
+function getStatisticsData(tasksList, chartType) {
+    if (chartType === 'pie' || chartType === 'bar') {
+        const notDone = tasksList.filter(t => t.status === 'Chưa làm').length;
+        const inProgress = tasksList.filter(t => t.status === 'Đang làm').length;
+        const completed = tasksList.filter(t => t.status === 'Hoàn thành').length;
+
+        return {
             labels: ['Chưa làm', 'Đang làm', 'Hoàn thành'],
             datasets: [{
                 label: 'Thống Kê Nhiệm Vụ',
-                data: getStatisticsData(),
+                data: [notDone, inProgress, completed],
                 backgroundColor: [
                     '#6c757d',
                     '#ffc107',
@@ -525,32 +595,158 @@ function initializeStatistics() {
                 ],
                 hoverOffset: 4
             }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom' },
-                title: { display: true, text: 'Thống Kê Nhiệm Vụ Theo Trạng Thái' }
-            }
-        }
-    });
-    updateStatistics();
-}
+        };
+    } else if (chartType === 'line') {
+        // For line chart, show tasks statuses over time
+        const dateStatusCounts = {};
 
-// Function to get statistics data
-function getStatisticsData() {
-    const notDone = tasks.filter(t => t.status === 'Chưa làm').length;
-    const inProgress = tasks.filter(t => t.status === 'Đang làm').length;
-    const completed = tasks.filter(t => t.status === 'Hoàn thành').length;
-    return [notDone, inProgress, completed];
+        tasksList.forEach(task => {
+            const date = task.date;
+            if (!dateStatusCounts[date]) {
+                dateStatusCounts[date] = { 'Chưa làm': 0, 'Đang làm': 0, 'Hoàn thành': 0 };
+            }
+            dateStatusCounts[date][task.status]++;
+        });
+
+        const labels = Object.keys(dateStatusCounts).sort();
+        const notDoneData = labels.map(date => dateStatusCounts[date]['Chưa làm']);
+        const inProgressData = labels.map(date => dateStatusCounts[date]['Đang làm']);
+        const completedData = labels.map(date => dateStatusCounts[date]['Hoàn thành']);
+
+        return {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Chưa làm',
+                    data: notDoneData,
+                    fill: false,
+                    borderColor: '#6c757d',
+                    tension: 0.1
+                },
+                {
+                    label: 'Đang làm',
+                    data: inProgressData,
+                    fill: false,
+                    borderColor: '#ffc107',
+                    tension: 0.1
+                },
+                {
+                    label: 'Hoàn thành',
+                    data: completedData,
+                    fill: false,
+                    borderColor: '#198754',
+                    tension: 0.1
+                }
+            ]
+        };
+    }
 }
 
 // Function to update statistics chart
 function updateStatistics() {
-    if (window.statsChart) {
-        window.statsChart.data.datasets[0].data = getStatisticsData();
-        window.statsChart.update();
+    const timeRange = document.getElementById('statsTimeRange').value;
+    let filteredTasks = filterTasksByTimeRange(tasks, timeRange);
+
+    // If custom date range is selected
+    if (timeRange === 'Custom') {
+        const dateFrom = document.getElementById('statsDateFrom').value;
+        const dateTo = document.getElementById('statsDateTo').value;
+        filteredTasks = filterTasksByCustomDateRange(filteredTasks, dateFrom, dateTo);
     }
+
+    const chartType = document.getElementById('chartType').value;
+
+    // Update summary statistics
+    const totalTasks = filteredTasks.length;
+    const completedTasks = filteredTasks.filter(t => t.status === 'Hoàn thành').length;
+    const pendingTasks = totalTasks - completedTasks;
+
+    document.getElementById('totalTasks').textContent = totalTasks;
+    document.getElementById('completedTasks').textContent = completedTasks;
+    document.getElementById('pendingTasks').textContent = pendingTasks;
+
+    // Get data for chart
+    const chartData = getStatisticsData(filteredTasks, chartType);
+
+    // If chart already exists, destroy it before creating a new one
+    if (window.statsChart) {
+        window.statsChart.destroy();
+    }
+
+    // Create new chart
+    const ctx = document.getElementById('statsChart').getContext('2d');
+    window.statsChart = new Chart(ctx, {
+        type: chartType,
+        data: chartData,
+        options: getChartOptions(chartType)
+    });
+}
+
+// Function to get chart options based on chart type
+function getChartOptions(chartType) {
+    let options = {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' },
+            title: { display: true, text: 'Thống Kê Nhiệm Vụ' }
+        }
+    };
+    if (chartType === 'line' || chartType === 'bar') {
+        options.scales = {
+            y: {
+                beginAtZero: true,
+                precision: 0
+            }
+        };
+    }
+    return options;
+}
+
+// Function to filter tasks by time range
+function filterTasksByTimeRange(tasksList, timeRange) {
+    const now = new Date();
+    let filteredTasks = tasksList;
+
+    switch(timeRange) {
+        case 'Today':
+            filteredTasks = tasksList.filter(task => isSameDay(new Date(task.date), now));
+            break;
+        case 'PastWeek':
+            const weekStart = new Date(now);
+            weekStart.setDate(now.getDate() - 7);
+            filteredTasks = tasksList.filter(task => new Date(task.date) >= weekStart && new Date(task.date) <= now);
+            break;
+        case 'PastMonth':
+            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+            filteredTasks = tasksList.filter(task => new Date(task.date) >= monthStart && new Date(task.date) <= now);
+            break;
+        case 'All':
+        default:
+            // No filtering
+            break;
+    }
+    return filteredTasks;
+}
+
+// Function to filter tasks by custom date range
+function filterTasksByCustomDateRange(tasksList, dateFrom, dateTo) {
+    if (!dateFrom && !dateTo) return tasksList;
+
+    const dateFromObj = dateFrom ? new Date(dateFrom) : null;
+    const dateToObj = dateTo ? new Date(dateTo) : null;
+
+    return tasksList.filter(task => {
+        const taskDate = new Date(task.date);
+        if (dateFromObj && dateToObj) {
+            return taskDate >= dateFromObj && taskDate <= dateToObj;
+        } else if (dateFromObj) {
+            return taskDate >= dateFromObj;
+        } else if (dateToObj) {
+            return taskDate <= dateToObj;
+        } else {
+            return true;
+        }
+    });
 }
 
 // Reward System
@@ -585,7 +781,7 @@ function claimReward() {
     } else {
         eligibleRewards.forEach(reward => {
             reward.claimed = true;
-            showToast(`Bạn đã nhận được phần thưởng: ${reward.name}!`);
+            showToast(`Bạn đã nhận được phần thưởng: ${reward.name}!`, 'success');
         });
         saveData();
         updateRewardsUI();
@@ -596,9 +792,48 @@ function checkRewards() {
     const eligibleRewards = rewards.filter(reward => !reward.claimed && points >= reward.requiredPoints);
     if (eligibleRewards.length > 0) {
         eligibleRewards.forEach(reward => {
-            showToast(`Bạn có thể nhận phần thưởng: ${reward.name}!`);
+            showToast(`Bạn có thể nhận phần thưởng: ${reward.name}!`, 'info');
         });
     }
     saveData();
     updateRewardsUI();
+}
+
+// Function to export calendar events to Excel
+function exportCalendarToExcel() {
+    // Get events from FullCalendar
+    const events = window.calendar.getEvents();
+
+    // Map events to an array of objects
+    const data = events.map(event => ({
+        'Tiêu đề': event.title,
+        'Mô tả': event.extendedProps.description,
+        'Ngày giờ bắt đầu': event.start ? event.start.toLocaleString() : '',
+        'Ngày giờ kết thúc': event.end ? event.end.toLocaleString() : '',
+        'Trạng thái': event.extendedProps.status,
+        'Độ ưu tiên': event.extendedProps.priority
+    }));
+
+    // Create worksheet
+    const worksheet = XLSX.utils.json_to_sheet(data);
+
+    // Create workbook and add the worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Lịch Học');
+
+    // Generate binary string from workbook
+    const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
+
+    // Save the file
+    saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), 'lich_hoc.xlsx');
+}
+
+// Helper function to convert string to ArrayBuffer
+function s2ab(s) {
+    const buf = new ArrayBuffer(s.length); //convert s to arrayBuffer
+    const view = new Uint8Array(buf);
+    for (let i=0; i<s.length; i++) {
+        view[i] = s.charCodeAt(i) & 0xFF;
+    }
+    return buf;
 }

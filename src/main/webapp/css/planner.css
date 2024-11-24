@@ -51,7 +51,7 @@ h1, h3 {
 
 #statsChart {
     max-width: 100%;
-    height: auto;
+    height: 400px; /* Adjusted height */
 }
 
 @media (max-width: 768px) {
@@ -72,4 +72,10 @@ h1, h3 {
 /* Added styles for pagination */
 .pagination {
     justify-content: center;
+}
+
+/* Additional styles for custom date range */
+#customDateRange .form-control {
+    display: inline-block;
+    width: auto;
 }
