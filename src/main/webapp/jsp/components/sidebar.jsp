@@ -9,6 +9,7 @@
       <li><a href="${pageContext.request.contextPath}/QuizController"><i class="fas fa-plus"></i> Create Quiz</a></li>
       <li><a href="${pageContext.request.contextPath}/AllQuizzesServlet"><i class="fas fa-eye"></i> View Quiz</a></li>
       <li><a href="${pageContext.request.contextPath}/LibraryServlet"><i class="fas fa-folder"></i> Library</a></li>
+      <li><a href="${pageContext.request.contextPath}/jsp/reference-materials.jsp"><i class="fas fa-book"></i> Reference Materials</a></li>
       <li><a href="${pageContext.request.contextPath}/generate-questions"><i class="fas fa-file-alt"></i> Generate Question</a></li>
     </c:if>
 

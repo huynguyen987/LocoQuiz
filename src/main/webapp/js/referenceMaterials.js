@@ -201,6 +201,133 @@ function initializeSampleData() {
             url: 'https://www.youtube.com/watch?v=PkZNo7MFNFg',
             type: 'Article',
             description: 'An article covering advanced JavaScript topics.'
+        },
+        // Thêm thêm 20 tài liệu mẫu từ các lĩnh vực khác nhau
+        {
+            id: currentId++,
+            title: 'Calculus Made Easy',
+            url: 'https://www.amazon.com/Calculus-Made-Easy-Stephen-Stewart/dp/0071816457',
+            type: 'Book',
+            description: 'A beginner-friendly book on calculus concepts.'
+        },
+        {
+            id: currentId++,
+            title: 'Quantum Mechanics Basics',
+            url: 'https://www.khanacademy.org/science/physics/quantum-physics',
+            type: 'Website',
+            description: 'Khan Academy course on the fundamentals of quantum mechanics.'
+        },
+        {
+            id: currentId++,
+            title: 'Introduction to Algorithms',
+            url: 'https://www.youtube.com/watch?v=RBSGKlAvoiM',
+            type: 'Video',
+            description: 'A comprehensive lecture series on algorithms by MIT.'
+        },
+        {
+            id: currentId++,
+            title: 'Modern Art Overview',
+            url: 'https://www.tate.org.uk/art/art-terms/m/modern-art',
+            type: 'Article',
+            description: 'An overview of modern art movements and artists.'
+        },
+        {
+            id: currentId++,
+            title: 'Data Structures in C++',
+            url: 'https://www.geeksforgeeks.org/data-structures/',
+            type: 'Website',
+            description: 'GeeksforGeeks tutorials on various data structures implemented in C++.'
+        },
+        {
+            id: currentId++,
+            title: 'The Great Gatsby',
+            url: 'https://www.sparknotes.com/lit/gatsby/',
+            type: 'Book',
+            description: 'SparkNotes analysis and summaries of "The Great Gatsby".'
+        },
+        {
+            id: currentId++,
+            title: 'Introduction to Machine Learning',
+            url: 'https://www.coursera.org/learn/machine-learning',
+            type: 'Course',
+            description: 'Andrew Ng’s course on Machine Learning on Coursera.'
+        },
+        {
+            id: currentId++,
+            title: 'Thermodynamics Principles',
+            url: 'https://www.youtube.com/watch?v=HgPjbnGiSSE',
+            type: 'Video',
+            description: 'Lecture on thermodynamics principles by Professor Leonard.'
+        },
+        {
+            id: currentId++,
+            title: 'Shakespearean Literature',
+            url: 'https://www.sparknotes.com/shakespeare/',
+            type: 'Article',
+            description: 'Analysis and summaries of Shakespeare’s plays.'
+        },
+        {
+            id: currentId++,
+            title: 'Linear Algebra Explained',
+            url: 'https://www.khanacademy.org/math/linear-algebra',
+            type: 'Website',
+            description: 'Khan Academy resources on linear algebra.'
+        },
+        {
+            id: currentId++,
+            title: 'Astrophysics for People in a Hurry',
+            url: 'https://www.amazon.com/Astrophysics-People-Hurry-Neil-deGrasse-Tyson/dp/0393609399',
+            type: 'Book',
+            description: 'A book by Neil deGrasse Tyson explaining astrophysics in an accessible way.'
+        },
+        {
+            id: currentId++,
+            title: 'Biology 101',
+            url: 'https://www.khanacademy.org/science/biology',
+            type: 'Website',
+            description: 'Khan Academy’s introductory course on biology.'
+        },
+        {
+            id: currentId++,
+            title: 'History of the Renaissance',
+            url: 'https://www.youtube.com/watch?v=6HjBi6B1_Vk',
+            type: 'Video',
+            description: 'Documentary on the Renaissance period.'
+        },
+        {
+            id: currentId++,
+            title: 'Introduction to Artificial Intelligence',
+            url: 'https://www.coursera.org/learn/ai',
+            type: 'Course',
+            description: 'An introductory course on Artificial Intelligence.'
+        },
+        {
+            id: currentId++,
+            title: 'Organic Chemistry Basics',
+            url: 'https://www.khanacademy.org/science/organic-chemistry',
+            type: 'Website',
+            description: 'Khan Academy’s resources on organic chemistry.'
+        },
+        {
+            id: currentId++,
+            title: 'Principles of Economics',
+            url: 'https://www.youtube.com/watch?v=2r6Gx9zLZg4',
+            type: 'Video',
+            description: 'Lecture series on basic economic principles.'
+        },
+        {
+            id: currentId++,
+            title: 'World War II Overview',
+            url: 'https://www.history.com/topics/world-war-ii/world-war-ii-history',
+            type: 'Article',
+            description: 'Comprehensive overview of World War II.'
+        },
+        {
+            id: currentId++,
+            title: 'Psychology 101',
+            url: 'https://www.coursera.org/learn/psychology',
+            type: 'Course',
+            description: 'An introductory course on psychology.'
         }
     ];
 

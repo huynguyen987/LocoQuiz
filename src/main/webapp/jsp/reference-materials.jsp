@@ -14,6 +14,9 @@
 <div class="container my-4">
   <h1 class="text-center mb-4">Quản Lý Tài Liệu Tham Khảo</h1>
 
+
+    <a href="${pageContext.request.contextPath}/jsp/student.jsp" class="btn btn-primary mb-4">Trang Chủ</a>
+
   <!-- Reference Material Creation Form -->
   <div class="card mb-4">
     <div class="card-header">
@@ -38,6 +41,10 @@
             <option value="Article">Bài báo</option>
             <option value="Video">Video</option>
             <option value="Website">Website</option>
+            <option value="Course">Khóa học</option> <!-- Thêm loại mới -->
+            <option value="Podcast">Podcast</option>
+            <option value="Lecture Notes">Lecture Notes</option>
+            <option value="Research Paper">Research Paper</option>
           </select>
         </div>
 
@@ -68,6 +75,10 @@
             <option value="Article">Bài báo</option>
             <option value="Video">Video</option>
             <option value="Website">Website</option>
+            <option value="Course">Khóa học</option>
+            <option value="Podcast">Podcast</option>
+            <option value="Lecture Notes">Lecture Notes</option>
+            <option value="Research Paper">Research Paper</option>
           </select>
         </div>
         <div class="col-md-2">
