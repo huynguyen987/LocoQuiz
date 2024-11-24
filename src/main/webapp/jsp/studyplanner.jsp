@@ -18,7 +18,8 @@
 <body>
 <div class="container my-4">
     <h1 class="text-center mb-4">Study Planner - Lập Kế Hoạch Học Tập</h1>
-
+    <!-- Back to home button (back to student page) -->
+    <a href="${pageContext.request.contextPath}/jsp/student.jsp" class="back-button">← Back to Home</a>
     <!-- Navigation Tabs -->
     <ul class="nav nav-tabs mb-4">
         <li class="nav-item">
@@ -251,6 +252,8 @@
                     <!-- Rewards will be dynamically added here -->
                 </div>
                 <button id="claimReward" class="btn btn-success mt-3">Nhận Phần Thưởng</button>
+                <!-- Added Reset Rewards Button -->
+                <button id="resetRewards" class="btn btn-danger mt-3">Reset Phần Thưởng</button>
             </div>
         </div>
     </div>

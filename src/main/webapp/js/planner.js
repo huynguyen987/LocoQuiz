@@ -1,11 +1,19 @@
 // Initialize tasks from localStorage or as empty array
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+let tasks = [];
+try {
+    tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    if (!Array.isArray(tasks)) {
+        tasks = [];
+    }
+} catch (e) {
+    tasks = [];
+}
 
 // Initialize points from localStorage or set to 0
 let points = parseInt(localStorage.getItem('points')) || 0;
 
-// Initialize rewards from localStorage or default array
-let rewards = JSON.parse(localStorage.getItem('rewards')) || [
+// Default rewards array
+const defaultRewards = [
     { id: 1, name: 'Badge Mới Bắt Đầu', requiredPoints: 10, claimed: false },
     { id: 2, name: 'Badge Tiến Bộ', requiredPoints: 20, claimed: false },
     { id: 3, name: 'Badge Chăm Chỉ', requiredPoints: 50, claimed: false },
@@ -23,9 +31,101 @@ let rewards = JSON.parse(localStorage.getItem('rewards')) || [
     { id: 15, name: 'Badge Vĩ Đại Nhất', requiredPoints: 1500, claimed: false },
 ];
 
+// Function to initialize rewards
+function initializeRewardsData() {
+    const storedRewards = JSON.parse(localStorage.getItem('rewards'));
+
+    if (storedRewards) {
+        // Merge storedRewards with defaultRewards
+        const rewardsMap = {};
+        storedRewards.forEach(r => rewardsMap[r.id] = r);
+
+        defaultRewards.forEach(dr => {
+            if (rewardsMap[dr.id]) {
+                dr.claimed = rewardsMap[dr.id].claimed;
+            }
+        });
+    }
+    // Save the merged rewards to localStorage
+    localStorage.setItem('rewards', JSON.stringify(defaultRewards));
+    return defaultRewards;
+}
+
+// Initialize rewards
+let rewards = initializeRewardsData();
+
 // Pagination variables
 let currentPage = 1;
 const tasksPerPage = 10;
+
+// Check if tasks are empty and populate with sample tasks
+if (tasks.length === 0) {
+    populateSampleTasks();
+    saveData();
+}
+
+// Initialize FullCalendar
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCalendar();
+    displayTasks();
+    updateDailyProgress();
+    setupEventListeners();
+    initializeStatistics();
+    initializeRewards();
+    checkNotifications(); // Initial check
+});
+
+// Function to populate sample tasks
+function populateSampleTasks() {
+    const sampleTasks = [
+        // Past tasks
+        { title: 'Ôn tập Toán', description: 'Ôn tập chương 1', date: getRelativeDate(-10), time: '09:00', priority: 'Cao', status: 'Hoàn thành' },
+        { title: 'Đọc sách Văn', description: 'Đọc tác phẩm "Chí Phèo"', date: getRelativeDate(-8), time: '14:00', priority: 'Trung bình', status: 'Hoàn thành' },
+        { title: 'Học Tiếng Anh', description: 'Học từ vựng Unit 2', date: getRelativeDate(-7), time: '16:00', priority: 'Thấp', status: 'Hoàn thành' },
+        { title: 'Làm bài tập Lý', description: 'Giải bài tập chương 3', date: getRelativeDate(-5), time: '10:00', priority: 'Cao', status: 'Hoàn thành' },
+        { title: 'Thực hành Hóa', description: 'Làm thí nghiệm về axit-bazơ', date: getRelativeDate(-3), time: '13:00', priority: 'Trung bình', status: 'Hoàn thành' },
+        { title: 'Ôn tập Sinh', description: 'Ôn tập di truyền học', date: getRelativeDate(-2), time: '15:00', priority: 'Thấp', status: 'Hoàn thành' },
+        // Today's tasks
+        { title: 'Học Lịch Sử', description: 'Chiến tranh thế giới thứ 2', date: getRelativeDate(0), time: '09:00', priority: 'Cao', status: 'Đang làm' },
+        { title: 'Thể dục', description: 'Chạy bộ 5km', date: getRelativeDate(0), time: '17:00', priority: 'Trung bình', status: 'Chưa làm' },
+        { title: 'Học Địa Lý', description: 'Khí hậu nhiệt đới gió mùa', date: getRelativeDate(0), time: '14:00', priority: 'Thấp', status: 'Chưa làm' },
+        // Future tasks
+        { title: 'Làm bài tập Toán', description: 'Giải hệ phương trình', date: getRelativeDate(1), time: '10:00', priority: 'Cao', status: 'Chưa làm' },
+        { title: 'Đọc sách Văn', description: 'Đọc tác phẩm "Số Đỏ"', date: getRelativeDate(2), time: '15:00', priority: 'Trung bình', status: 'Chưa làm' },
+        { title: 'Học Tiếng Anh', description: 'Ngữ pháp thì hiện tại hoàn thành', date: getRelativeDate(3), time: '16:00', priority: 'Thấp', status: 'Chưa làm' },
+        { title: 'Làm bài tập Lý', description: 'Bài tập về điện trường', date: getRelativeDate(4), time: '09:00', priority: 'Cao', status: 'Chưa làm' },
+        { title: 'Thực hành Hóa', description: 'Thí nghiệm về oxi hóa khử', date: getRelativeDate(5), time: '13:00', priority: 'Trung bình', status: 'Chưa làm' },
+        { title: 'Ôn tập Sinh', description: 'Sinh học phân tử', date: getRelativeDate(6), time: '15:00', priority: 'Thấp', status: 'Chưa làm' },
+        { title: 'Học Lịch Sử', description: 'Cách mạng tháng Tám', date: getRelativeDate(7), time: '09:00', priority: 'Cao', status: 'Chưa làm' },
+        { title: 'Thể dục', description: 'Bơi lội', date: getRelativeDate(8), time: '17:00', priority: 'Trung bình', status: 'Chưa làm' },
+        { title: 'Học Địa Lý', description: 'Địa lý các châu lục', date: getRelativeDate(9), time: '14:00', priority: 'Thấp', status: 'Chưa làm' },
+        // Multiple tasks on the same day
+        { title: 'Ôn tập Toán nâng cao', description: 'Giải bất phương trình', date: getRelativeDate(1), time: '11:00', priority: 'Cao', status: 'Chưa làm' },
+        { title: 'Học Tiếng Anh giao tiếp', description: 'Chủ đề du lịch', date: getRelativeDate(2), time: '16:30', priority: 'Trung bình', status: 'Chưa làm' },
+        { title: 'Đọc sách', description: 'Đọc "Đắc Nhân Tâm"', date: getRelativeDate(0), time: '20:00', priority: 'Thấp', status: 'Chưa làm' },
+        { title: 'Làm bài tập Hóa', description: 'Bài tập hữu cơ', date: getRelativeDate(3), time: '14:00', priority: 'Cao', status: 'Chưa làm' },
+        { title: 'Ôn tập Lý', description: 'Động lực học', date: getRelativeDate(4), time: '09:30', priority: 'Trung bình', status: 'Chưa làm' },
+        { title: 'Thực hành Sinh', description: 'Quan sát tế bào', date: getRelativeDate(5), time: '13:30', priority: 'Thấp', status: 'Chưa làm' },
+        { title: 'Học Lịch Sử', description: 'Chiến tranh lạnh', date: getRelativeDate(6), time: '10:00', priority: 'Cao', status: 'Chưa làm' },
+        { title: 'Thể dục', description: 'Yoga', date: getRelativeDate(7), time: '18:00', priority: 'Trung bình', status: 'Chưa làm' },
+    ];
+
+    // Assign unique IDs and notification flags
+    sampleTasks.forEach(task => {
+        task.id = Date.now() + Math.floor(Math.random() * 100000);
+        task.notifiedOneHour = false;
+        task.notifiedFiveMinutes = false;
+    });
+
+    tasks = sampleTasks;
+}
+
+// Helper function to get date relative to today
+function getRelativeDate(offset) {
+    const date = new Date();
+    date.setDate(date.getDate() + offset);
+    return date.toISOString().split('T')[0];
+}
 
 // Initialize FullCalendar
 document.addEventListener('DOMContentLoaded', function() {
@@ -57,7 +157,7 @@ function initializeCalendar() {
             extendedProps: {
                 description: task.description,
                 status: task.status,
-                priority: task.priority // Added priority here
+                priority: task.priority
             }
         })),
         eventClick: function(info) {
@@ -137,6 +237,9 @@ function setupEventListeners() {
 
     // Claim reward button
     document.getElementById('claimReward').addEventListener('click', claimReward);
+
+    // Reset rewards button
+    document.getElementById('resetRewards').addEventListener('click', resetRewards);
 
     // Download Calendar button
     document.getElementById('downloadCalendar').addEventListener('click', function() {
@@ -394,7 +497,7 @@ function refreshCalendar() {
         extendedProps: {
             description: task.description,
             status: task.status,
-            priority: task.priority // Added priority here
+            priority: task.priority
         }
     })));
 }
@@ -785,6 +888,23 @@ function claimReward() {
         });
         saveData();
         updateRewardsUI();
+    }
+}
+
+function resetRewards() {
+    if (confirm('Bạn có chắc chắn muốn reset toàn bộ phần thưởng không?')) {
+        // Reset points to 0
+        points = 0;
+        document.getElementById('pointsText').textContent = `Điểm của bạn: ${points}`;
+
+        // Reset claimed status of rewards
+        rewards.forEach(reward => {
+            reward.claimed = false;
+        });
+
+        saveData();
+        updateRewardsUI();
+        showToast('Phần thưởng đã được reset.', 'success');
     }
 }
 
