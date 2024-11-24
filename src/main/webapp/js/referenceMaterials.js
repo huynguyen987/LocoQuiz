@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     displayMaterials();
     setupEventListeners();
+    setupFormValidation();
+    setupEditFormValidation();
 });
 
 // Thiết lập các sự kiện
@@ -24,21 +26,50 @@ function setupEventListeners() {
     document.getElementById('searchKeyword').addEventListener('input', filterMaterials);
     document.getElementById('filterType').addEventListener('change', filterMaterials);
     document.getElementById('clearFilters').addEventListener('click', clearFilters);
+
+    // Thiết lập sự kiện cho form chỉnh sửa
+    const editForm = document.getElementById('editMaterialForm');
+    editForm.addEventListener('submit', updateMaterial);
+}
+
+// Hàm thiết lập xác thực cho form thêm mới
+function setupFormValidation() {
+    const form = document.getElementById('materialForm');
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+    }, false);
+}
+
+// Hàm thiết lập xác thực cho form chỉnh sửa
+function setupEditFormValidation() {
+    const form = document.getElementById('editMaterialForm');
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+    }, false);
 }
 
 // Hàm thêm tài liệu mới
 function addMaterial(e) {
     e.preventDefault();
 
+    const form = document.getElementById('materialForm');
+    if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        return;
+    }
+
     const title = document.getElementById('title').value.trim();
     const url = document.getElementById('url').value.trim();
     const type = document.getElementById('type').value;
     const description = document.getElementById('description').value.trim();
-
-    if (!title) {
-        alert('Vui lòng nhập tiêu đề tài liệu.');
-        return;
-    }
 
     const material = {
         id: currentId++,
@@ -55,6 +86,9 @@ function addMaterial(e) {
     saveData();
     displayMaterials();
     resetForm();
+
+    // Hiển thị thông báo thành công
+    showSuccessToast('Thêm tài liệu thành công!');
 }
 
 // Hàm hiển thị danh sách tài liệu
@@ -80,7 +114,7 @@ function displayMaterials(filteredMaterials = null) {
                 ${material.url ? `<a href="${encodeURI(material.url)}" target="_blank">${escapeHtml(material.url)}</a>` : ''}
             </div>
             <div class="material-actions">
-                <button class="btn btn-sm btn-outline-primary" onclick="editMaterial(${material.id})">Sửa</button>
+                <button class="btn btn-sm btn-outline-primary" onclick="openEditModal(${material.id})">Sửa</button>
                 <button class="btn btn-sm btn-outline-danger" onclick="deleteMaterial(${material.id})">Xóa</button>
             </div>
         `;
@@ -91,7 +125,9 @@ function displayMaterials(filteredMaterials = null) {
 
 // Hàm reset biểu mẫu
 function resetForm() {
-    document.getElementById('materialForm').reset();
+    const form = document.getElementById('materialForm');
+    form.reset();
+    form.classList.remove('was-validated');
 }
 
 // Hàm lưu dữ liệu vào localStorage
@@ -132,43 +168,69 @@ function deleteMaterial(materialId) {
     }
 }
 
-// Hàm chỉnh sửa một tài liệu
-function editMaterial(materialId) {
+// Hàm mở modal chỉnh sửa và điền thông tin tài liệu vào modal
+function openEditModal(materialId) {
     const material = materials.find(m => m.id === Number(materialId));
     if (!material) return;
 
-    // Pre-fill the form với dữ liệu hiện tại của tài liệu
-    document.getElementById('title').value = material.title;
-    document.getElementById('url').value = material.url;
-    document.getElementById('type').value = material.type;
-    document.getElementById('description').value = material.description;
+    // Điền thông tin vào modal
+    document.getElementById('editMaterialId').value = material.id;
+    document.getElementById('editTitle').value = material.title;
+    document.getElementById('editUrl').value = material.url;
+    document.getElementById('editType').value = material.type;
+    document.getElementById('editDescription').value = material.description;
 
-    // Thêm một biến để lưu trữ trạng thái đang chỉnh sửa
-    let isEditing = true;
+    // Reset xác thực modal trước khi hiển thị
+    const editForm = document.getElementById('editMaterialForm');
+    editForm.classList.remove('was-validated');
 
-    // Cập nhật sự kiện submit của form để cập nhật tài liệu thay vì thêm mới
-    const form = document.getElementById('materialForm');
-    form.removeEventListener('submit', addMaterial);
-    form.addEventListener('submit', function updateMaterial(e) {
-        e.preventDefault();
+    // Mở modal
+    const editModal = new bootstrap.Modal(document.getElementById('editMaterialModal'));
+    editModal.show();
+}
 
-        // Cập nhật thông tin tài liệu
-        material.title = document.getElementById('title').value.trim();
-        material.url = document.getElementById('url').value.trim();
-        material.type = document.getElementById('type').value;
-        material.description = document.getElementById('description').value.trim();
+// Hàm cập nhật tài liệu sau khi chỉnh sửa
+function updateMaterial(e) {
+    e.preventDefault();
 
-        // Lưu dữ liệu và hiển thị lại danh sách
-        saveData();
-        displayMaterials();
-        resetForm();
+    const form = document.getElementById('editMaterialForm');
+    if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        return;
+    }
 
-        // Khôi phục sự kiện submit ban đầu
-        form.removeEventListener('submit', updateMaterial);
-        form.addEventListener('submit', addMaterial);
+    const id = Number(document.getElementById('editMaterialId').value);
+    const title = document.getElementById('editTitle').value.trim();
+    const url = document.getElementById('editUrl').value.trim();
+    const type = document.getElementById('editType').value;
+    const description = document.getElementById('editDescription').value.trim();
 
-        isEditing = false;
-    });
+    // Tìm vị trí của tài liệu trong mảng
+    const index = materials.findIndex(m => m.id === id);
+    if (index === -1) {
+        alert('Không tìm thấy tài liệu để chỉnh sửa.');
+        return;
+    }
+
+    // Cập nhật thông tin tài liệu
+    materials[index].title = title;
+    materials[index].url = url;
+    materials[index].type = type;
+    materials[index].description = description;
+
+    saveData();
+    displayMaterials();
+    closeEditModal();
+
+    // Hiển thị thông báo thành công
+    showSuccessToast('Chỉnh sửa tài liệu thành công!');
+}
+
+// Hàm đóng modal chỉnh sửa
+function closeEditModal() {
+    const editModalEl = document.getElementById('editMaterialModal');
+    const editModal = bootstrap.Modal.getInstance(editModalEl);
+    editModal.hide();
 }
 
 // Hàm khởi tạo mẫu dữ liệu
@@ -344,4 +406,14 @@ function escapeHtml(text) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+// Hàm hiển thị Toast Notification
+function showSuccessToast(message) {
+    const toastEl = document.getElementById('successToast');
+    const toastBody = toastEl.querySelector('.toast-body');
+    toastBody.textContent = message;
+
+    const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+    toast.show();
 }

@@ -30,3 +30,17 @@ h1, h3 {
 #materialList .material-actions button {
     margin-left: 5px;
 }
+
+/* Tùy chỉnh Toast Notification nếu cần */
+.toast-body {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Thay đổi vị trí của Toast sang góc dưới bên phải */
+.position-fixed {
+    bottom: 20px;
+    right: 20px;
+    top: auto;
+    left: auto;
+}
