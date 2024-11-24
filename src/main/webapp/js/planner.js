@@ -1,23 +1,25 @@
-// script.js
-
 // Initialize tasks from localStorage or as empty array
 let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
 // Initialize points from localStorage or set to 0
 let points = parseInt(localStorage.getItem('points')) || 0;
 
-// Define rewards based on points
-const rewards = [
-    { id: 1, name: 'Badge Mới Bắt Đầu', requiredPoints: 10, obtained: false },
-    { id: 2, name: 'Badge Tiến Bộ', requiredPoints: 20, obtained: false },
-    { id: 3, name: 'Badge Xuất Sắc', requiredPoints: 30, obtained: false },
+// Initialize rewards from localStorage or default array
+let rewards = JSON.parse(localStorage.getItem('rewards')) || [
+    { id: 1, name: 'Badge Mới Bắt Đầu', requiredPoints: 10, claimed: false },
+    { id: 2, name: 'Badge Tiến Bộ', requiredPoints: 20, claimed: false },
+    { id: 3, name: 'Badge Xuất Sắc', requiredPoints: 30, claimed: false },
 ];
+
+// Pagination variables
+let currentPage = 1;
+const tasksPerPage = 10;
 
 // Initialize FullCalendar
 document.addEventListener('DOMContentLoaded', function() {
     initializeCalendar();
     displayTasks();
-    updateProgress();
+    updateDailyProgress();
     setupEventListeners();
     initializeStatistics();
     initializeRewards();
@@ -74,16 +76,59 @@ function setupEventListeners() {
         addTask();
     });
 
-    document.getElementById('searchKeyword').addEventListener('input', filterTasks);
-    document.getElementById('filterStatus').addEventListener('change', filterTasks);
-    document.getElementById('filterPriority').addEventListener('change', filterTasks);
-    document.getElementById('clearFilters').addEventListener('click', clearFilters);
+    document.getElementById('searchKeyword').addEventListener('input', function() {
+        currentPage = 1;
+        filterTasks();
+    });
+    document.getElementById('filterStatus').addEventListener('change', function() {
+        currentPage = 1;
+        filterTasks();
+    });
+    document.getElementById('filterPriority').addEventListener('change', function() {
+        currentPage = 1;
+        filterTasks();
+    });
+    document.getElementById('filterTimeRange').addEventListener('change', function() {
+        currentPage = 1;
+        filterTasks();
+    });
+    document.getElementById('filterDateFrom').addEventListener('change', function() {
+        currentPage = 1;
+        filterTasks();
+    });
+    document.getElementById('filterDateTo').addEventListener('change', function() {
+        currentPage = 1;
+        filterTasks();
+    });
+    document.getElementById('clearFilters').addEventListener('click', function() {
+        currentPage = 1;
+        clearFilters();
+    });
+
+    // Navigation tabs
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            showSection(this.getAttribute('href').substring(1));
+            navLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
 
     // Check notifications every minute
     setInterval(checkNotifications, 60000);
 
     // Claim reward button
     document.getElementById('claimReward').addEventListener('click', claimReward);
+}
+
+// Function to show the selected section
+function showSection(sectionId) {
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(sec => {
+        sec.style.display = sec.id === sectionId ? 'block' : 'none';
+    });
 }
 
 // Function to add a new task
@@ -113,14 +158,15 @@ function addTask() {
 
     tasks.push(task);
     saveData();
+    currentPage = 1;
     displayTasks();
-    updateProgress();
+    updateDailyProgress();
     resetForm();
     refreshCalendar();
     updateStatistics();
 }
 
-// Function to display tasks
+// Function to display tasks with pagination
 function displayTasks(filteredTasks = null) {
     const taskList = document.getElementById('taskList');
     taskList.innerHTML = '';
@@ -129,10 +175,16 @@ function displayTasks(filteredTasks = null) {
 
     if (displayData.length === 0) {
         taskList.innerHTML = '<p class="text-center">Không có nhiệm vụ nào.</p>';
+        document.getElementById('pagination').innerHTML = '';
         return;
     }
 
-    displayData.forEach(task => {
+    const totalPages = Math.ceil(displayData.length / tasksPerPage);
+    const startIndex = (currentPage - 1) * tasksPerPage;
+    const endIndex = startIndex + tasksPerPage;
+    const tasksToShow = displayData.slice(startIndex, endIndex);
+
+    tasksToShow.forEach(task => {
         const taskItem = document.createElement('div');
         taskItem.className = `list-group-item task-item ${getStatusClass(task.status)}`;
 
@@ -155,6 +207,38 @@ function displayTasks(filteredTasks = null) {
 
         taskList.appendChild(taskItem);
     });
+
+    // Render pagination
+    renderPagination(totalPages);
+}
+
+// Function to render pagination buttons
+function renderPagination(totalPages) {
+    const paginationEl = document.getElementById('pagination');
+    paginationEl.innerHTML = '';
+
+    if (totalPages <= 1) return;
+
+    const ul = document.createElement('ul');
+    ul.className = 'pagination';
+
+    for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement('li');
+        li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+        const a = document.createElement('a');
+        a.className = 'page-link';
+        a.href = '#';
+        a.textContent = i;
+        a.addEventListener('click', function(e) {
+            e.preventDefault();
+            currentPage = i;
+            filterTasks();
+        });
+        li.appendChild(a);
+        ul.appendChild(li);
+    }
+
+    paginationEl.appendChild(ul);
 }
 
 // Function to get badge color based on priority
@@ -195,13 +279,19 @@ function updateStatus(taskId, newStatus) {
     if (!task) return;
 
     if (['Chưa làm', 'Đang làm', 'Hoàn thành'].includes(newStatus)) {
+        const oldStatus = task.status;
         task.status = newStatus;
+        if (oldStatus !== 'Hoàn thành' && newStatus === 'Hoàn thành') {
+            // Task was just completed
+            points += 5; // Add 5 points for completing a task
+            document.getElementById('pointsText').textContent = `Điểm của bạn: ${points}`;
+            checkRewards();
+        }
         saveData();
         displayTasks();
-        updateProgress();
+        updateDailyProgress();
         refreshCalendar();
         updateStatistics();
-        checkRewards();
     } else {
         alert('Trạng thái không hợp lệ.');
     }
@@ -213,17 +303,19 @@ function deleteTask(taskId) {
         tasks = tasks.filter(t => t.id !== taskId);
         saveData();
         displayTasks();
-        updateProgress();
+        updateDailyProgress();
         refreshCalendar();
         updateStatistics();
         checkRewards();
     }
 }
 
-// Function to update progress bar
-function updateProgress() {
-    const total = tasks.length;
-    const completed = tasks.filter(t => t.status === 'Hoàn thành').length;
+// Function to update daily progress
+function updateDailyProgress() {
+    const today = new Date().toISOString().split('T')[0];
+    const tasksToday = tasks.filter(task => task.date === today);
+    const total = tasksToday.length;
+    const completed = tasksToday.filter(t => t.status === 'Hoàn thành').length;
     const progressPercent = total === 0 ? 0 : Math.round((completed / total) * 100);
 
     const progressBar = document.getElementById('progressBar');
@@ -232,7 +324,7 @@ function updateProgress() {
     progressBar.textContent = `${progressPercent}%`;
 
     const progressText = document.getElementById('progressText');
-    progressText.textContent = `Hoàn thành ${completed}/${total} nhiệm vụ`;
+    progressText.textContent = `Hôm nay: Hoàn thành ${completed}/${total} nhiệm vụ`;
 }
 
 // Function to reset the task creation form
@@ -324,15 +416,75 @@ function filterTasks() {
     const keyword = document.getElementById('searchKeyword').value.toLowerCase();
     const status = document.getElementById('filterStatus').value;
     const priority = document.getElementById('filterPriority').value;
+    const timeRange = document.getElementById('filterTimeRange').value;
+    const dateFrom = document.getElementById('filterDateFrom').value;
+    const dateTo = document.getElementById('filterDateTo').value;
 
     let filtered = tasks.filter(task => {
         const matchesKeyword = task.title.toLowerCase().includes(keyword) || task.description.toLowerCase().includes(keyword);
         const matchesStatus = status === 'All' || task.status === status;
         const matchesPriority = priority === 'All' || task.priority === priority;
-        return matchesKeyword && matchesStatus && matchesPriority;
+        const matchesTimeRange = matchesTimeRangeFilter(task.date, timeRange);
+        const matchesDateRange = matchesDateRangeFilter(task.date, dateFrom, dateTo);
+        return matchesKeyword && matchesStatus && matchesPriority && matchesTimeRange && matchesDateRange;
     });
 
     displayTasks(filtered);
+}
+
+// Function to check if task date matches the selected time range
+function matchesTimeRangeFilter(taskDate, timeRange) {
+    if (timeRange === 'All') return true;
+
+    const taskDateObj = new Date(taskDate);
+    const now = new Date();
+    let pastDate;
+
+    switch(timeRange) {
+        case 'Today':
+            return isSameDay(taskDateObj, now);
+        case 'PastWeek':
+            pastDate = new Date();
+            pastDate.setDate(now.getDate() - 7);
+            return taskDateObj >= pastDate && taskDateObj <= now;
+        case 'PastMonth':
+            pastDate = new Date();
+            pastDate.setMonth(now.getMonth() - 1);
+            return taskDateObj >= pastDate && taskDateObj <= now;
+        case 'PastYear':
+            pastDate = new Date();
+            pastDate.setFullYear(now.getFullYear() - 1);
+            return taskDateObj >= pastDate && taskDateObj <= now;
+        default:
+            return true;
+    }
+}
+
+function isSameDay(date1, date2) {
+    return date1.getDate() === date2.getDate()
+        && date1.getMonth() === date2.getMonth()
+        && date1.getFullYear() === date2.getFullYear();
+}
+
+// Function to check if task date falls within the selected date range
+function matchesDateRangeFilter(taskDate, dateFrom, dateTo) {
+    if (!dateFrom && !dateTo) return true;
+
+    const taskDateObj = new Date(taskDate);
+    if (dateFrom && !dateTo) {
+        const dateFromObj = new Date(dateFrom);
+        return taskDateObj >= dateFromObj;
+    }
+    if (!dateFrom && dateTo) {
+        const dateToObj = new Date(dateTo);
+        return taskDateObj <= dateToObj;
+    }
+    if (dateFrom && dateTo) {
+        const dateFromObj = new Date(dateFrom);
+        const dateToObj = new Date(dateTo);
+        return taskDateObj >= dateFromObj && taskDateObj <= dateToObj;
+    }
+    return true;
 }
 
 // Function to clear all filters
@@ -340,6 +492,10 @@ function clearFilters() {
     document.getElementById('searchKeyword').value = '';
     document.getElementById('filterStatus').value = 'All';
     document.getElementById('filterPriority').value = 'All';
+    document.getElementById('filterTimeRange').value = 'All';
+    document.getElementById('filterDateFrom').value = '';
+    document.getElementById('filterDateTo').value = '';
+    currentPage = 1;
     displayTasks();
 }
 
@@ -347,16 +503,15 @@ function clearFilters() {
 function saveData() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
     localStorage.setItem('points', points.toString());
+    localStorage.setItem('rewards', JSON.stringify(rewards));
     updateStatistics();
     updateRewardsUI();
 }
 
 // Statistics Initialization
-let statsChart;
-
 function initializeStatistics() {
     const ctx = document.getElementById('statsChart').getContext('2d');
-    statsChart = new Chart(ctx, {
+    window.statsChart = new Chart(ctx, {
         type: 'pie',
         data: {
             labels: ['Chưa làm', 'Đang làm', 'Hoàn thành'],
@@ -374,13 +529,8 @@ function initializeStatistics() {
         options: {
             responsive: true,
             plugins: {
-                legend: {
-                    position: 'bottom',
-                },
-                title: {
-                    display: true,
-                    text: 'Thống Kê Nhiệm Vụ'
-                }
+                legend: { position: 'bottom' },
+                title: { display: true, text: 'Thống Kê Nhiệm Vụ Theo Trạng Thái' }
             }
         }
     });
@@ -397,42 +547,29 @@ function getStatisticsData() {
 
 // Function to update statistics chart
 function updateStatistics() {
-    if (statsChart) {
-        statsChart.data.datasets[0].data = getStatisticsData();
-        statsChart.update();
+    if (window.statsChart) {
+        window.statsChart.data.datasets[0].data = getStatisticsData();
+        window.statsChart.update();
     }
 }
 
-// Reward System Initialization
+// Reward System
 function initializeRewards() {
-    const rewardsContainer = document.getElementById('rewards');
-    rewardsContainer.innerHTML = '';
-    rewards.forEach(reward => {
-        const badge = document.createElement('span');
-        badge.className = `badge ${reward.obtained ? 'bg-success unlocked' : 'bg-secondary locked'}`;
-        badge.textContent = reward.name;
-        if (!reward.obtained) {
-            badge.title = `Cần ${reward.requiredPoints} điểm để mở khóa`;
-        } else {
-            badge.title = `Đã mở khóa`;
-        }
-        rewardsContainer.appendChild(badge);
-    });
     updateRewardsUI();
+    document.getElementById('pointsText').textContent = `Điểm của bạn: ${points}`;
 }
 
-// Function to update rewards UI
 function updateRewardsUI() {
     const rewardsContainer = document.getElementById('rewards');
     rewardsContainer.innerHTML = '';
     rewards.forEach(reward => {
         const badge = document.createElement('span');
-        if (reward.obtained) {
+        if (reward.claimed) {
             badge.className = 'badge bg-success me-2 mb-2';
-            badge.textContent = `${reward.name} (Đã mở khóa)`;
+            badge.textContent = `${reward.name} (Đã nhận)`;
         } else if (points >= reward.requiredPoints) {
             badge.className = 'badge bg-warning text-dark me-2 mb-2';
-            badge.textContent = `${reward.name} (Có thể mở khóa)`;
+            badge.textContent = `${reward.name} (Có thể nhận)`;
         } else {
             badge.className = 'badge bg-secondary me-2 mb-2';
             badge.textContent = `${reward.name} (Cần ${reward.requiredPoints} điểm)`;
@@ -441,85 +578,27 @@ function updateRewardsUI() {
     });
 }
 
-// Function to check and update rewards based on points
-function checkRewards() {
-    rewards.forEach(reward => {
-        if (!reward.obtained && points >= reward.requiredPoints) {
-            reward.obtained = true;
-            saveData();
-            showToast(`Bạn đã mở khóa phần thưởng: ${reward.name}!`);
-        }
-    });
-    updateRewardsUI();
-}
-
-// Function to claim reward
 function claimReward() {
-    // For simplicity, claiming a reward just displays a message
-    const availableRewards = rewards.filter(r => r.obtained && !r.claimed);
-    if (availableRewards.length === 0) {
-        alert('Không có phần thưởng nào để nhận.');
-        return;
+    const eligibleRewards = rewards.filter(reward => !reward.claimed && points >= reward.requiredPoints);
+    if (eligibleRewards.length === 0) {
+        alert('Bạn chưa đủ điểm để nhận phần thưởng.');
+    } else {
+        eligibleRewards.forEach(reward => {
+            reward.claimed = true;
+            showToast(`Bạn đã nhận được phần thưởng: ${reward.name}!`);
+        });
+        saveData();
+        updateRewardsUI();
     }
-    availableRewards.forEach(reward => {
-        alert(`Bạn đã nhận được phần thưởng: ${reward.name}!`);
-        // Mark as claimed if you want to implement claimed status
-    });
 }
 
-// Function to check and update points based on completed tasks
 function checkRewards() {
-    const completedTasks = tasks.filter(t => t.status === 'Hoàn thành').length;
-    points = completedTasks * 5; // Example: 5 points per completed task
-    localStorage.setItem('points', points.toString());
-    document.getElementById('pointsText').textContent = `Điểm của bạn: ${points}`;
-
-    rewards.forEach(reward => {
-        if (!reward.obtained && points >= reward.requiredPoints) {
-            reward.obtained = true;
-            showToast(`Bạn đã mở khóa phần thưởng: ${reward.name}!`);
-        }
-    });
+    const eligibleRewards = rewards.filter(reward => !reward.claimed && points >= reward.requiredPoints);
+    if (eligibleRewards.length > 0) {
+        eligibleRewards.forEach(reward => {
+            showToast(`Bạn có thể nhận phần thưởng: ${reward.name}!`);
+        });
+    }
     saveData();
     updateRewardsUI();
 }
-
-// Function to initialize points and rewards UI
-function initializeRewards() {
-    const rewardsContainer = document.getElementById('rewards');
-    rewardsContainer.innerHTML = '';
-    rewards.forEach(reward => {
-        const badge = document.createElement('span');
-        if (reward.obtained) {
-            badge.className = 'badge bg-success me-2 mb-2';
-            badge.textContent = `${reward.name} (Đã mở khóa)`;
-        } else if (points >= reward.requiredPoints) {
-            badge.className = 'badge bg-warning text-dark me-2 mb-2';
-            badge.textContent = `${reward.name} (Có thể mở khóa)`;
-        } else {
-            badge.className = 'badge bg-secondary me-2 mb-2';
-            badge.textContent = `${reward.name} (Cần ${reward.requiredPoints} điểm)`;
-        }
-        rewardsContainer.appendChild(badge);
-    });
-    document.getElementById('pointsText').textContent = `Điểm của bạn: ${points}`;
-}
-
-// Function to initialize statistics and rewards on load
-function initializeStatisticsAndRewards() {
-    initializeStatistics();
-    initializeRewards();
-    updateStatistics();
-    updateRewardsUI();
-}
-
-// Initial setup
-function initializeSetup() {
-    initializeStatistics();
-    initializeRewards();
-    updateStatistics();
-    updateRewardsUI();
-}
-
-// Call initial setup
-initializeSetup();
