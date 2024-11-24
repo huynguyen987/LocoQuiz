@@ -44,3 +44,17 @@ h1, h3 {
     top: auto;
     left: auto;
 }
+
+/* Tùy chỉnh phân trang nếu cần */
+.pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.pagination .page-link {
+    color: #0d6efd;
+}
+
+.pagination .page-link:hover {
+    background-color: #e9ecef;
+}

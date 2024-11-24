@@ -108,6 +108,14 @@
         <!-- Materials will be dynamically added here -->
       </div>
     </div>
+    <!-- Pagination Controls -->
+    <div class="card-footer">
+      <nav>
+        <ul id="pagination" class="pagination justify-content-center">
+          <!-- Pagination buttons will be dynamically added here -->
+        </ul>
+      </nav>
+    </div>
   </div>
 </div>
 

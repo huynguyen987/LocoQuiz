@@ -6,6 +6,10 @@ let materials = JSON.parse(localStorage.getItem('materials')) || [];
 // Khởi tạo currentId từ localStorage hoặc đặt lại thành 1
 let currentId = JSON.parse(localStorage.getItem('currentId')) || 1;
 
+// Phân trang
+let currentPage = 1;
+const itemsPerPage = 4;
+
 // Khởi tạo khi DOM đã được tải
 document.addEventListener('DOMContentLoaded', function() {
     // Nếu chưa có dữ liệu, thêm một số mẫu dữ liệu
@@ -23,9 +27,18 @@ function setupEventListeners() {
     const form = document.getElementById('materialForm');
     form.addEventListener('submit', addMaterial);
 
-    document.getElementById('searchKeyword').addEventListener('input', filterMaterials);
-    document.getElementById('filterType').addEventListener('change', filterMaterials);
-    document.getElementById('clearFilters').addEventListener('click', clearFilters);
+    document.getElementById('searchKeyword').addEventListener('input', function() {
+        currentPage = 1; // Reset trang khi tìm kiếm
+        filterMaterials();
+    });
+    document.getElementById('filterType').addEventListener('change', function() {
+        currentPage = 1; // Reset trang khi lọc
+        filterMaterials();
+    });
+    document.getElementById('clearFilters').addEventListener('click', function() {
+        currentPage = 1; // Reset trang khi xóa lọc
+        clearFilters();
+    });
 
     // Thiết lập sự kiện cho form chỉnh sửa
     const editForm = document.getElementById('editMaterialForm');
@@ -91,36 +104,101 @@ function addMaterial(e) {
     showSuccessToast('Thêm tài liệu thành công!');
 }
 
-// Hàm hiển thị danh sách tài liệu
+// Hàm hiển thị danh sách tài liệu với phân trang
 function displayMaterials(filteredMaterials = null) {
     const materialList = document.getElementById('materialList');
     materialList.innerHTML = '';
 
-    const displayData = filteredMaterials !== null ? filteredMaterials : materials;
+    const data = filteredMaterials !== null ? filteredMaterials : materials;
 
-    if (displayData.length === 0) {
+    // Tính toán số lượng trang
+    const totalPages = Math.ceil(data.length / itemsPerPage);
+
+    // Lấy dữ liệu của trang hiện tại
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedData = data.slice(startIndex, endIndex);
+
+    if (paginatedData.length === 0) {
         materialList.innerHTML = '<p class="text-center">Không có tài liệu nào.</p>';
-        return;
+    } else {
+        paginatedData.forEach(material => {
+            const materialItem = document.createElement('div');
+            materialItem.className = 'list-group-item material-item';
+
+            materialItem.innerHTML = `
+                <div class="material-info">
+                    <h5 class="mb-1">${escapeHtml(material.title)} <span class="badge bg-secondary">${escapeHtml(material.type)}</span></h5>
+                    <p class="mb-1">${escapeHtml(material.description)}</p>
+                    ${material.url ? `<a href="${encodeURI(material.url)}" target="_blank">${escapeHtml(material.url)}</a>` : ''}
+                </div>
+                <div class="material-actions">
+                    <button class="btn btn-sm btn-outline-primary" onclick="openEditModal(${material.id})">Sửa</button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteMaterial(${material.id})">Xóa</button>
+                </div>
+            `;
+
+            materialList.appendChild(materialItem);
+        });
     }
 
-    displayData.forEach(material => {
-        const materialItem = document.createElement('div');
-        materialItem.className = 'list-group-item material-item';
+    // Hiển thị phân trang
+    displayPaginationControls(data.length, totalPages);
+}
 
-        materialItem.innerHTML = `
-            <div class="material-info">
-                <h5 class="mb-1">${escapeHtml(material.title)} <span class="badge bg-secondary">${escapeHtml(material.type)}</span></h5>
-                <p class="mb-1">${escapeHtml(material.description)}</p>
-                ${material.url ? `<a href="${encodeURI(material.url)}" target="_blank">${escapeHtml(material.url)}</a>` : ''}
-            </div>
-            <div class="material-actions">
-                <button class="btn btn-sm btn-outline-primary" onclick="openEditModal(${material.id})">Sửa</button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteMaterial(${material.id})">Xóa</button>
-            </div>
-        `;
+// Hàm hiển thị phân trang
+function displayPaginationControls(totalItems, totalPages) {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
 
-        materialList.appendChild(materialItem);
+    if (totalPages <= 1) return; // Không cần phân trang nếu chỉ có 1 trang
+
+    // Nút "Previous"
+    const prevLi = document.createElement('li');
+    prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+    prevLi.innerHTML = `
+        <a class="page-link" href="#" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+        </a>
+    `;
+    prevLi.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (currentPage > 1) {
+            currentPage--;
+            displayMaterials();
+        }
     });
+    pagination.appendChild(prevLi);
+
+    // Các nút số trang
+    for (let i = 1; i <= totalPages; i++) {
+        const pageLi = document.createElement('li');
+        pageLi.className = `page-item ${currentPage === i ? 'active' : ''}`;
+        pageLi.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+        pageLi.addEventListener('click', function(e) {
+            e.preventDefault();
+            currentPage = i;
+            displayMaterials();
+        });
+        pagination.appendChild(pageLi);
+    }
+
+    // Nút "Next"
+    const nextLi = document.createElement('li');
+    nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+    nextLi.innerHTML = `
+        <a class="page-link" href="#" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+        </a>
+    `;
+    nextLi.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (currentPage < totalPages) {
+            currentPage++;
+            displayMaterials();
+        }
+    });
+    pagination.appendChild(nextLi);
 }
 
 // Hàm reset biểu mẫu
