@@ -419,3 +419,25 @@ CREATE TABLE user_library (
   FOREIGN KEY (user_id) REFERENCES users(id),
   FOREIGN KEY (quiz_id) REFERENCES quiz(id)
 );
+
+-- Giả lập dữ liệu cho bảng result
+INSERT INTO result (user_id, quiz_id, class_id, score, created_at) VALUES
+(2, 1, 1, 80.0, '2024-04-01 10:00:00'),
+(3, 1, 1, 90.0, '2024-04-01 11:00:00'),
+(2, 2, 2, 85.0, '2024-04-02 10:00:00'),
+(3, 2, 2, 88.0, '2024-04-02 11:00:00');
+
+-- Giả lập dữ liệu cho bảng competition_results
+INSERT INTO competition_results (competition_id, user_id, class_id, score, timeTaken, created_at) VALUES
+(1, 2, 1, 75.0, 300, '2024-04-03 10:00:00'),
+(1, 3, 1, 85.0, 280, '2024-04-03 11:00:00'),
+(2, 7, 5, 70.0, 400, '2024-04-04 10:00:00'),
+(2, 8, 5, 65.0, 420, '2024-04-04 11:00:00'),
+(3, 9, 6, 60.0, 450, '2024-04-05 10:00:00'),
+(3, 10, 6, 95.0, 280, '2024-04-05 11:00:00'),
+(4, 11, 7, 85.0, 330, '2024-04-06 10:00:00'),
+(4, 12, 7, 90.0, 310, '2024-04-06 11:00:00');
+
+
+
+
