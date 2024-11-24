@@ -257,6 +257,56 @@
             </div>
         </div>
     </div>
+
+    <!-- Edit Task Modal -->
+    <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editTaskModalLabel">Chỉnh Sửa Nhiệm Vụ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editTaskForm">
+                        <input type="hidden" id="editTaskId">
+                        <div class="mb-3">
+                            <label for="editTitle" class="form-label">Tiêu đề:</label>
+                            <input type="text" class="form-control" id="editTitle" name="editTitle" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="editDescription" class="form-label">Mô tả:</label>
+                            <textarea class="form-control" id="editDescription" name="editDescription" rows="3"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editDate" class="form-label">Ngày thực hiện:</label>
+                                <input type="date" class="form-control" id="editDate" name="editDate" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editTime" class="form-label">Giờ thực hiện:</label>
+                                <input type="time" class="form-control" id="editTime" name="editTime" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="editPriority" class="form-label">Độ ưu tiên:</label>
+                            <select class="form-select" id="editPriority" name="editPriority">
+                                <option value="Cao">Cao</option>
+                                <option value="Trung bình">Trung bình</option>
+                                <option value="Thấp">Thấp</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="saveEditTask">Lưu Thay Đổi</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Bootstrap JS -->

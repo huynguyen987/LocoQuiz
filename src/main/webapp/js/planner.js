@@ -64,6 +64,17 @@ if (tasks.length === 0) {
     saveData();
 }
 
+// Initialize FullCalendar and other functionalities once DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCalendar();
+    displayTasks();
+    updateDailyProgress();
+    setupEventListeners();
+    initializeStatistics();
+    initializeRewards();
+    checkNotifications(); // Initial check
+});
+
 // Function to populate sample tasks
 function populateSampleTasks() {
     const sampleTasks = [
@@ -78,6 +89,7 @@ function populateSampleTasks() {
         { title: 'Học Lịch Sử', description: 'Chiến tranh thế giới thứ 2', date: getRelativeDate(0), time: '09:00', priority: 'Cao', status: 'Đang làm' },
         { title: 'Thể dục', description: 'Chạy bộ 5km', date: getRelativeDate(0), time: '17:00', priority: 'Trung bình', status: 'Chưa làm' },
         { title: 'Học Địa Lý', description: 'Khí hậu nhiệt đới gió mùa', date: getRelativeDate(0), time: '14:00', priority: 'Thấp', status: 'Chưa làm' },
+        { title: 'Đọc sách', description: 'Đọc "Đắc Nhân Tâm"', date: getRelativeDate(0), time: '20:00', priority: 'Thấp', status: 'Chưa làm' },
         // Future tasks
         { title: 'Làm bài tập Toán', description: 'Giải hệ phương trình', date: getRelativeDate(1), time: '10:00', priority: 'Cao', status: 'Chưa làm' },
         { title: 'Đọc sách Văn', description: 'Đọc tác phẩm "Số Đỏ"', date: getRelativeDate(2), time: '15:00', priority: 'Trung bình', status: 'Chưa làm' },
@@ -91,7 +103,6 @@ function populateSampleTasks() {
         // Multiple tasks on the same day
         { title: 'Ôn tập Toán nâng cao', description: 'Giải bất phương trình', date: getRelativeDate(1), time: '11:00', priority: 'Cao', status: 'Chưa làm' },
         { title: 'Học Tiếng Anh giao tiếp', description: 'Chủ đề du lịch', date: getRelativeDate(2), time: '16:30', priority: 'Trung bình', status: 'Chưa làm' },
-        { title: 'Đọc sách', description: 'Đọc "Đắc Nhân Tâm"', date: getRelativeDate(0), time: '20:00', priority: 'Thấp', status: 'Chưa làm' },
         { title: 'Làm bài tập Hóa', description: 'Bài tập hữu cơ', date: getRelativeDate(3), time: '14:00', priority: 'Cao', status: 'Chưa làm' },
         { title: 'Ôn tập Lý', description: 'Động lực học', date: getRelativeDate(4), time: '09:30', priority: 'Trung bình', status: 'Chưa làm' },
         { title: 'Thực hành Sinh', description: 'Quan sát tế bào', date: getRelativeDate(5), time: '13:30', priority: 'Thấp', status: 'Chưa làm' },
@@ -113,21 +124,14 @@ function populateSampleTasks() {
 function getRelativeDate(offset) {
     const date = new Date();
     date.setDate(date.getDate() + offset);
-    return date.toISOString().split('T')[0];
+    // Ensure the date is in 'YYYY-MM-DD' format
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2,'0');
+    const day = String(date.getDate()).padStart(2,'0');
+    return `${year}-${month}-${day}`;
 }
 
 // Initialize FullCalendar
-document.addEventListener('DOMContentLoaded', function() {
-    initializeCalendar();
-    displayTasks();
-    updateDailyProgress();
-    setupEventListeners();
-    initializeStatistics();
-    initializeRewards();
-    checkNotifications(); // Initial check
-});
-
-// Function to initialize FullCalendar
 function initializeCalendar() {
     const calendarEl = document.getElementById('calendar');
     window.calendar = new FullCalendar.Calendar(calendarEl, {
@@ -249,6 +253,9 @@ function setupEventListeners() {
     document.getElementById('statsDateFrom').addEventListener('change', updateStatistics);
     document.getElementById('statsDateTo').addEventListener('change', updateStatistics);
     document.getElementById('chartType').addEventListener('change', updateStatistics);
+
+    // Edit Task Modal Save Button
+    document.getElementById('saveEditTask').addEventListener('click', updateTask);
 }
 
 // Function to show the selected section
@@ -330,6 +337,7 @@ function displayTasks(filteredTasks = null) {
                     <option value="Đang làm" ${task.status === 'Đang làm' ? 'selected' : ''}>Đang làm</option>
                     <option value="Hoàn thành" ${task.status === 'Hoàn thành' ? 'selected' : ''}>Hoàn thành</option>
                 </select>
+                <button class="btn btn-sm btn-outline-primary ms-2" onclick="openEditModal(${task.id})">Chỉnh sửa</button>
                 <button class="btn btn-sm btn-outline-danger ms-auto" onclick="deleteTask(${task.id})">Xóa</button>
             </div>
         `;
@@ -455,19 +463,34 @@ function deleteAllTasks() {
 
 // Function to update daily progress
 function updateDailyProgress() {
-    const today = new Date().toISOString().split('T')[0];
-    const tasksToday = tasks.filter(task => task.date === today);
+    // Accurate calculation of today's date in 'YYYY-MM-DD' format based on local timezone
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2,'0');
+    const day = String(today.getDate()).padStart(2,'0');
+    const todayStr = `${year}-${month}-${day}`;
+
+    // Filter tasks for today
+    const tasksToday = tasks.filter(task => task.date === todayStr);
     const total = tasksToday.length;
     const completed = tasksToday.filter(t => t.status === 'Hoàn thành').length;
     const progressPercent = total === 0 ? 0 : Math.round((completed / total) * 100);
 
+    // Update progress bar
     const progressBar = document.getElementById('progressBar');
     progressBar.style.width = `${progressPercent}%`;
     progressBar.setAttribute('aria-valuenow', progressPercent);
     progressBar.textContent = `${progressPercent}%`;
 
+    // Update progress text
     const progressText = document.getElementById('progressText');
     progressText.textContent = `Hôm nay: Hoàn thành ${completed}/${total} nhiệm vụ`;
+
+    // Debugging Logs (Optional)
+    console.log(`Today's Date: ${todayStr}`);
+    console.log(`Total Tasks Today: ${total}`);
+    console.log(`Completed Tasks Today: ${completed}`);
+    console.log(`Progress: ${progressPercent}%`);
 }
 
 // Function to reset the task creation form
@@ -598,16 +621,14 @@ function matchesTimeRangeFilter(taskDate, timeRange) {
         case 'Today':
             return isSameDay(taskDateObj, now);
         case 'PastWeek':
-            pastDate = new Date();
+            pastDate = new Date(now);
             pastDate.setDate(now.getDate() - 7);
             return taskDateObj >= pastDate && taskDateObj <= now;
         case 'PastMonth':
-            pastDate = new Date();
-            pastDate.setMonth(now.getMonth() - 1);
+            pastDate = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
             return taskDateObj >= pastDate && taskDateObj <= now;
         case 'PastYear':
-            pastDate = new Date();
-            pastDate.setFullYear(now.getFullYear() - 1);
+            pastDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
             return taskDateObj >= pastDate && taskDateObj <= now;
         default:
             return true;
@@ -821,7 +842,7 @@ function filterTasksByTimeRange(tasksList, timeRange) {
             filteredTasks = tasksList.filter(task => new Date(task.date) >= weekStart && new Date(task.date) <= now);
             break;
         case 'PastMonth':
-            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+            const monthStart = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
             filteredTasks = tasksList.filter(task => new Date(task.date) >= monthStart && new Date(task.date) <= now);
             break;
         case 'All':
@@ -957,4 +978,70 @@ function s2ab(s) {
         view[i] = s.charCodeAt(i) & 0xFF;
     }
     return buf;
+}
+
+// Edit Task Functionality
+
+// Function to open the edit modal with task details
+function openEditModal(taskId) {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    // Populate the modal with task details
+    document.getElementById('editTaskId').value = task.id;
+    document.getElementById('editTitle').value = task.title;
+    document.getElementById('editDescription').value = task.description;
+    document.getElementById('editDate').value = task.date;
+    document.getElementById('editTime').value = task.time;
+    document.getElementById('editPriority').value = task.priority;
+
+    // Show the modal
+    const editTaskModal = new bootstrap.Modal(document.getElementById('editTaskModal'));
+    editTaskModal.show();
+}
+
+// Function to update the task with new details
+function updateTask() {
+    const taskId = parseInt(document.getElementById('editTaskId').value);
+    const title = document.getElementById('editTitle').value.trim();
+    const description = document.getElementById('editDescription').value.trim();
+    const date = document.getElementById('editDate').value;
+    const time = document.getElementById('editTime').value;
+    const priority = document.getElementById('editPriority').value;
+
+    if (!title || !date || !time) {
+        alert('Vui lòng nhập đầy đủ các trường bắt buộc.');
+        return;
+    }
+
+    const taskIndex = tasks.findIndex(t => t.id === taskId);
+    if (taskIndex === -1) {
+        alert('Nhiệm vụ không tồn tại.');
+        return;
+    }
+
+    // Update task details
+    tasks[taskIndex].title = title;
+    tasks[taskIndex].description = description;
+    tasks[taskIndex].date = date;
+    tasks[taskIndex].time = time;
+    tasks[taskIndex].priority = priority;
+
+    // If the task was completed before and is now marked as completed again, ensure points are not duplicated
+    if (tasks[taskIndex].status === 'Hoàn thành') {
+        // No change in status, so do not alter points
+    }
+
+    saveData();
+    displayTasks();
+    updateDailyProgress();
+    refreshCalendar();
+    updateStatistics();
+
+    // Hide the modal
+    const editTaskModalEl = document.getElementById('editTaskModal');
+    const editTaskModal = bootstrap.Modal.getInstance(editTaskModalEl);
+    editTaskModal.hide();
+
+    showToast('Nhiệm vụ đã được cập nhật thành công.', 'success');
 }
