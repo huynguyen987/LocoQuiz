@@ -104,9 +104,6 @@
         <a href="${pageContext.request.contextPath}/TakeCompetitionServlet?action=configure&classId=<%= classEntity.getId() %>" class="button create-competition-btn">
           <i class="fas fa-trophy"></i> Tạo Cuộc Thi
         </a>
-        <a href="${pageContext.request.contextPath}/teacher/analytics" class="button btn-info">
-          <i class="fas fa-chart-bar"></i> Phân tích Dữ liệu
-        </a>
       </div>
       <% } %>
 
