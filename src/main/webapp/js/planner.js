@@ -64,17 +64,6 @@ if (tasks.length === 0) {
     saveData();
 }
 
-// Initialize FullCalendar
-document.addEventListener('DOMContentLoaded', function() {
-    initializeCalendar();
-    displayTasks();
-    updateDailyProgress();
-    setupEventListeners();
-    initializeStatistics();
-    initializeRewards();
-    checkNotifications(); // Initial check
-});
-
 // Function to populate sample tasks
 function populateSampleTasks() {
     const sampleTasks = [
@@ -669,8 +658,6 @@ function saveData() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
     localStorage.setItem('points', points.toString());
     localStorage.setItem('rewards', JSON.stringify(rewards));
-    updateStatistics();
-    updateRewardsUI();
 }
 
 // Statistics Initialization
@@ -724,6 +711,7 @@ function getStatisticsData(tasksList, chartType) {
                     data: notDoneData,
                     fill: false,
                     borderColor: '#6c757d',
+                    backgroundColor: '#6c757d',
                     tension: 0.1
                 },
                 {
@@ -731,6 +719,7 @@ function getStatisticsData(tasksList, chartType) {
                     data: inProgressData,
                     fill: false,
                     borderColor: '#ffc107',
+                    backgroundColor: '#ffc107',
                     tension: 0.1
                 },
                 {
@@ -738,6 +727,7 @@ function getStatisticsData(tasksList, chartType) {
                     data: completedData,
                     fill: false,
                     borderColor: '#198754',
+                    backgroundColor: '#198754',
                     tension: 0.1
                 }
             ]
@@ -794,11 +784,22 @@ function getChartOptions(chartType) {
             title: { display: true, text: 'Thống Kê Nhiệm Vụ' }
         }
     };
-    if (chartType === 'line' || chartType === 'bar') {
+    if (chartType === 'line') {
         options.scales = {
+            x: { title: { display: true, text: 'Ngày' } },
             y: {
                 beginAtZero: true,
-                precision: 0
+                title: { display: true, text: 'Số lượng nhiệm vụ' },
+                ticks: { precision: 0 }
+            }
+        };
+    } else if (chartType === 'bar') {
+        options.scales = {
+            x: { title: { display: true, text: 'Trạng thái' } },
+            y: {
+                beginAtZero: true,
+                title: { display: true, text: 'Số lượng nhiệm vụ' },
+                ticks: { precision: 0 }
             }
         };
     }
