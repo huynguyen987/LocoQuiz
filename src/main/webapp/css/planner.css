@@ -1,11 +1,12 @@
-/* styles.css */
-
+/* Use fonts that support Vietnamese characters */
 body {
     background-color: #f8f9fa;
+    font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 }
 
 h1, h3 {
     color: #343a40;
+    font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 }
 
 #progressBar {
@@ -57,4 +58,18 @@ h1, h3 {
     #statsChart, #calendar {
         width: 100%;
     }
+}
+
+/* Added styles for navigation tabs */
+.nav-tabs .nav-link {
+    color: #343a40;
+}
+
+.nav-tabs .nav-link.active {
+    color: #0d6efd;
+}
+
+/* Added styles for pagination */
+.pagination {
+    justify-content: center;
 }
